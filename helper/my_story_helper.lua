@@ -33,6 +33,7 @@ function MyStoryHelper:playerEnterGame (objid)
   PlayerHelper:rotateCamera(objid, ActorHelper.FACE_YAW.WEST, 0) -- 看向正东方
   PlayerHelper:setActionAttrState(objid, PLAYERATTR.ENABLE_BEATTACKED, false) -- 不可被攻击
   player:setMyPosition(self.initPosition)
+  PlayerHelper:setRevivePoint(objid, self.initPosition.x, self.initPosition.y, self.initPosition.z)
   StoryHelper:recover(player) -- 恢复剧情
 end
 

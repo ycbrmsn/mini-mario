@@ -251,6 +251,10 @@ function PlayerHelper:setMaxHp (objid, hp)
   return self:setAttr(objid, PLAYERATTR.MAX_HP, hp)
 end
 
+function PlayerHelper:setWalkSpeed (objid, speed)
+  return self:setAttr(objid, PLAYERATTR.WALK_SPEED, speed)
+end
+
 function PlayerHelper:addAttr (objid, attrtype, addVal)
   local curVal = self:getAttr(objid, attrtype)
   self:setAttr(objid, attrtype, curVal + addVal)
@@ -621,5 +625,15 @@ function PlayerHelper:stopMusic (objid)
   local finillyFailMessage = StringHelper:concat('停止播放玩家背景音乐失败，参数：objid=', objid)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Player:stopMusic(objid)
+  end, nil, onceFailMessage, finillyFailMessage)
+end
+
+-- 改变玩家复活点位置
+function PlayerHelper:setRevivePoint (objid, x, y, z)
+  local onceFailMessage = '改变玩家复活点位置失败一次'
+  local finillyFailMessage = StringHelper:concat('改变玩家复活点位置失败，参数：objid=', objid,
+    ',x=', x, ',y=', y, ',z=', z)
+  return CommonHelper:callIsSuccessMethod(function (p)
+    return Player:setRevivePoint(objid, x, y, z)
   end, nil, onceFailMessage, finillyFailMessage)
 end

@@ -33,6 +33,30 @@ end
 function MyActorHelper:actorCollide (objid, toobjid)
   ActorHelper:actorCollide(objid, toobjid)
   MyStoryHelper:actorCollide(objid, toobjid)
+  -- body
+  if (ActorHelper:isPlayer(toobjid)) then -- 与玩家碰撞
+    local eyeHeight
+    local actorid = CreatureHelper:getActorID(objid)
+    if (actorid == 3400) then -- 鸡
+      eyeHeight = 0.2
+    else
+      eyeHeight = ActorHelper:getEyeHeight(objid)
+    end
+    local x, y, z = ActorHelper:getPosition(objid)
+    local player = PlayerHelper:getPlayer(toobjid)
+    LogHelper:debug(y + eyeHeight)
+    LogHelper:debug(player.y)
+    if (y + eyeHeight < player.y) then -- 在玩家下方
+      ActorHelper:killSelf(objid)
+      local yaw = ActorHelper:getFaceYaw(toobjid)
+      local pitch = ActorHelper:getFacePitch(toobjid)
+      PlayerHelper:setPosition(toobjid, player.x, player.y, player.z)
+      -- PlayerHelper:rotateCamera(toobjid, yaw, pitch)
+      ActorHelper:appendSpeed(toobjid, 0, 0.5, 0)
+    else
+      ActorHelper:killSelf(toobjid)
+    end
+  end
 end
 
 -- 生物攻击命中

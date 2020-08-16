@@ -83,12 +83,15 @@ end
 function MyPlayerHelper:playerDie (objid, toobjid)
   PlayerHelper:playerDie(objid, toobjid)
   MyStoryHelper:playerDie(objid, toobjid)
+  -- body
+  
 end
 
 -- 玩家复活
 function MyPlayerHelper:playerRevive (objid, toobjid)
   PlayerHelper:playerRevive(objid, toobjid)
   MyStoryHelper:playerRevive(objid, toobjid)
+  -- body
 end
 
 -- 玩家选择快捷栏
@@ -109,7 +112,7 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   MyStoryHelper:playerMotionStateChange(objid, playermotion)
   -- body
   if (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
-    ActorHelper:appendSpeed(objid, 0, 0.7, 0)
+    ActorHelper:appendSpeed(objid, 0, 0.6, 0)
   end
 end
 
