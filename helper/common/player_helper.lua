@@ -16,6 +16,8 @@ function PlayerHelper:addPlayer (objid)
   if (not(player)) then
     player = MyPlayer:new(objid)
     table.insert(self:getAllPlayers(), player)
+  else
+    player:setActive(true)
   end
   return player
 end
@@ -273,6 +275,9 @@ function PlayerHelper:playerLeaveGame (objid)
   end
   SkillHelper:clearHuitian(objid) -- 清除玩家的环绕回仙剑
   SkillHelper:stopAirArmour(objid) -- 停止气甲术
+  -- 设置玩家不活跃
+  local player = PlayerHelper:getPlayer(objid)
+  player:setActive(false)
 end
 
 -- 玩家进入区域

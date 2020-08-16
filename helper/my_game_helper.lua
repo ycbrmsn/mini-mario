@@ -15,6 +15,13 @@ end
 -- 游戏运行时
 function MyGameHelper:runGame ()
   GameHelper:runGame()
+  -- body
+  -- 每帧更新玩家朝向
+  for i, v in ipairs(PlayerHelper:getAllPlayers()) do
+    if (v:isActive()) then
+      v.direction = ActorHelper:getCurPlaceDir(objid)
+    end
+  end
 end
 
 -- 结束游戏
