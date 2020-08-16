@@ -84,7 +84,8 @@ function MyPlayerHelper:playerDie (objid, toobjid)
   PlayerHelper:playerDie(objid, toobjid)
   MyStoryHelper:playerDie(objid, toobjid)
   -- body
-  
+  local player = PlayerHelper:getPlayer(objid)
+  player.notDead = false
 end
 
 -- 玩家复活
@@ -92,6 +93,8 @@ function MyPlayerHelper:playerRevive (objid, toobjid)
   PlayerHelper:playerRevive(objid, toobjid)
   MyStoryHelper:playerRevive(objid, toobjid)
   -- body
+  local player = PlayerHelper:getPlayer(objid)
+  player.notDead = true
 end
 
 -- 玩家选择快捷栏

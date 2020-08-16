@@ -5,11 +5,13 @@ function MyPlayer:new (objid)
   local o = {
     objid = objid,
     x = nil,
-    y = nil,
+    y = 0,
     z = nil,
     dir = FACE_DIRECTION.DIR_NEG_Z, -- 默认朝南
-    speed = 0, -- 速度，此处是位移表示
-    walkSpeed = 0
+    ySpeed = 0, -- 纵向速度
+    zSpeed = 0, -- 横向速度，此处是位移表示
+    walkSpeed = 0,
+    notDead = true -- 未死亡
   }
   o.action = BasePlayerAction:new(o)
   o.attr = BasePlayerAttr:new(o)
