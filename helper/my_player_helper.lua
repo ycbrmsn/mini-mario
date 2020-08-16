@@ -1,7 +1,5 @@
 -- 我的玩家工具类
-MyPlayerHelper = {
-  hourseid = 4300173509
-}
+MyPlayerHelper = {}
 
 -- 事件
 
@@ -36,11 +34,6 @@ function MyPlayerHelper:playerClickBlock (objid, blockid, x, y, z)
   PlayerHelper:playerClickBlock(objid, blockid, x, y, z)
   MyStoryHelper:playerClickBlock(objid, blockid, x, y, z)
   -- body
-  local blockid = BlockHelper:getBlockID(x, y, z)
-  if (MyBed:isBed(blockid)) then
-    -- 处理床
-    PlayerHelper:showToast(objid, '你无法在别人的床上睡觉')
-  end
 end
 
 -- 玩家点击生物
@@ -78,13 +71,6 @@ function MyPlayerHelper:playerDefeatActor (objid, toobjid)
   PlayerHelper:playerDefeatActor(objid, toobjid)
   MyStoryHelper:playerDefeatActor(objid, toobjid)
   -- body
-  if (ActorHelper:isPlayer(toobjid)) then -- 击败玩家获得碎片
-    local toPlayer = PlayerHelper:getPlayer(toobjid)
-    local num = math.random(5, 9)
-    BackpackHelper:addItem(objid, MyConstant.ITEM.ENERGY_FRAGMENT_ID, num)
-    local msg = StringHelper:concat('击败#G', toPlayer:getName(), '#n获得', num, '枚碎片')
-    ChatHelper:sendSystemMsg(msg, objid)
-  end
 end
 
 -- 玩家受到伤害
@@ -121,6 +107,10 @@ end
 function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   PlayerHelper:playerMotionStateChange(objid, playermotion)
   MyStoryHelper:playerMotionStateChange(objid, playermotion)
+  -- body
+  if (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
+    ActorHelper:appendSpeed(objid, 0, 0.7, 0)
+  end
 end
 
 -- 玩家移动一格
@@ -128,56 +118,6 @@ function MyPlayerHelper:playerMoveOneBlockSize (objid)
   PlayerHelper:playerMoveOneBlockSize(objid)
   MyStoryHelper:playerMoveOneBlockSize(objid)
   -- body
-  local player = PlayerHelper:getPlayer(objid)
-  local pos = player:getMyPosition()
-  -- 高度
-  local t = objid .. 'flyTooHigh'
-  if (pos.y >= 100 and not(player.isTooHigh)) then
-    player.isTooHigh = true
-    local idx = 0
-    TimeHelper:callFnContinueRuns(function ()
-      if (idx % 20 == 0) then
-        player:recoverHp(-5)
-      end
-      idx = idx + 1
-    end, -1, t)
-    ChatHelper:sendSystemMsg('飞行过高，你觉得有些不适', objid)
-  elseif (player.isTooHigh and pos.y < 100) then
-    player.isTooHigh = false
-    TimeHelper:delFnContinueRuns(t)
-    ChatHelper:sendSystemMsg('你觉得好多了', objid)
-  end
-  -- 四周太远
-  local t2 = objid .. 'flyTooFar'
-  if ((pos.x >= 129 or pos.x <= -111 or pos.z >= 161 or pos.z <= -99) and not(player.isTooFar)) then
-    player.isTooFar = true
-    local idx2 = 0
-    local timeGap = 200
-    TimeHelper:callFnContinueRuns(function ()
-      idx2 = idx2 + 1
-      if (idx2 % timeGap == 0) then
-        local p = player:getDistancePosition(10)
-        local playerPos = player:getMyPosition()
-        playerPos.x = playerPos.x + math.random(-2, 2)
-        playerPos.y = playerPos.y + math.random(-2, 3)
-        playerPos.z = playerPos.z + math.random(-2, 2)
-        WorldHelper:spawnProjectileByPos(self.hourseid, 
-          MyWeaponAttr.tenThousandsSword.projectileid, p, playerPos, 100)
-        -- 重置计数
-        idx2 = 0
-        if (timeGap > 20) then
-          timeGap = timeGap - 20
-        elseif (timeGap > 5) then
-          timeGap = timeGap - 5
-        end
-      end
-    end, -1, t2)
-    ChatHelper:sendSystemMsg('飞行过远，你仿佛觉得被什么东西盯住了', objid)
-  elseif (player.isTooFar and (pos.x > -111 and pos.x < 129 and pos.z > -99 and pos.z < 161)) then
-    player.isTooFar = false
-    TimeHelper:delFnContinueRuns(t2)
-    ChatHelper:sendSystemMsg('被盯住的感觉消失了，你觉得轻松多了', objid)
-  end
 end
 
 -- 玩家骑乘
