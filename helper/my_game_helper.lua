@@ -40,7 +40,7 @@ end
 function MyGameHelper:headHitBlock (player, y)
   local ySpeed = y - player.y
   if (ySpeed == 0 and player.ySpeed > 0) then -- 突然变为0
-    ActorHelper:appendSpeed(player.objid, 0, -player.ySpeed, 0)
+    player:headHitBlock()
   end
   player.ySpeed = ySpeed
 end

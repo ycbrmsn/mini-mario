@@ -21,3 +21,9 @@ function MyPlayer:new (objid)
   self.__index = self
   return o
 end
+
+-- 头顶方块
+function MyPlayer:headHitBlock ()
+  ActorHelper:appendSpeed(self.objid, 0, -self.ySpeed, 0)
+  self.walkSpeed = MyGameHelper.defaultWalkSpeed
+end

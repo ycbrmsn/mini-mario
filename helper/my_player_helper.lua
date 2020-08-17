@@ -21,6 +21,14 @@ end
 function MyPlayerHelper:playerEnterArea (objid, areaid)
   PlayerHelper:playerEnterArea(objid, areaid)
   MyStoryHelper:playerEnterArea(objid, areaid)
+  -- body
+  if (MyAreaHelper:doesEnterHideBlockArea(areaid)) then -- 进入隐藏方块区域
+    local player = PlayerHelper:getPlayer(objid)
+    if (player.ySpeed > 0) then -- 在上升中
+      AreaHelper:fillBlock(areaid, 100) -- 填充草块
+      player:headHitBlock()
+    end
+  end
 end
 
 -- 玩家离开区域
@@ -34,6 +42,7 @@ function MyPlayerHelper:playerClickBlock (objid, blockid, x, y, z)
   PlayerHelper:playerClickBlock(objid, blockid, x, y, z)
   MyStoryHelper:playerClickBlock(objid, blockid, x, y, z)
   -- body
+  BlockHelper:setBlockAllForNotify(x, y, z, 0)
 end
 
 -- 玩家点击生物
