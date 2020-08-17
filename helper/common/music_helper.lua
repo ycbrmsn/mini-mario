@@ -41,8 +41,7 @@ function MusicHelper:getNoteTimbre (note, category)
 end
 
 -- 播放一个音符
-function MusicHelper:play (objid, noteInfo)
-  local pitch, multiple = MusicHelper:parseNoteInfo(noteInfo)
+function MusicHelper:play (objid, pitch)
   if (pitch) then
     PlayerHelper:playMusic(objid, self.musicid, 100, pitch)
     -- ActorHelper:playSoundEffectById(objid, self.musicid, 100, pitch)
@@ -63,7 +62,7 @@ function MusicHelper:playBGM (objid, musicInfo, isLoop, index, delay)
         index = 1
       end
       if (index <= #musicInfo.notes) then
-        local multiple = MusicHelper:play(objid, musicInfo.notes[index])
+        local pitch, multiple = MusicHelper:parseNoteInfo(musicInfo.notes[index])
         local nextDelay
         if (not(musicInfo.method) or musicInfo.method == 'mul') then
           nextDelay = musicInfo.delay * multiple
@@ -71,6 +70,7 @@ function MusicHelper:playBGM (objid, musicInfo, isLoop, index, delay)
           nextDelay = musicInfo.delay / multiple
         end
         MusicHelper:playBGM(objid, musicInfo, isLoop, index + 1, nextDelay)
+        MusicHelper:play(objid, pitch)
       end
     end
   end, delay, objid .. 'playBGM')
