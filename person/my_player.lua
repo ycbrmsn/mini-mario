@@ -26,4 +26,10 @@ end
 function MyPlayer:headHitBlock ()
   ActorHelper:appendSpeed(self.objid, 0, -self.ySpeed, 0)
   self.walkSpeed = MyGameHelper.defaultWalkSpeed
+  -- 破坏方块
+  local height = self.y + ActorHelper:getEyeHeight(self.objid) + 0.5
+  local blockid = BlockHelper:getBlockID(self.x, height, self.z)
+  if (blockid == 100) then -- 草块
+    BlockHelper:destroyBlock(self.x, height, self.z)
+  end
 end
