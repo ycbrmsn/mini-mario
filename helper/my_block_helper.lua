@@ -21,9 +21,27 @@ end
 
 -- 事件
 
+-- 方块被破坏
+function MyBlockHelper:blockDestroyBy (objid, blockid, x, y, z)
+  BlockHelper:blockDestroyBy(objid, blockid, x, y, z)
+  -- body
+end
+
 -- 完成方块挖掘
 function MyBlockHelper:blockDigEnd (objid, blockid, x, y, z)
   BlockHelper:blockDigEnd(objid, blockid, x, y, z)
+  -- body
+end
+
+-- 方块被放置
+function MyBlockHelper:blockPlaceBy (objid, blockid, x, y, z)
+  BlockHelper:blockPlaceBy(objid, blockid, x, y, z)
+  -- body
+end
+
+-- 方块被移除
+function MyBlockHelper:blockRemove (blockid, x, y, z)
+  BlockHelper:blockRemove(blockid, x, y, z)
   -- body
 end
 
