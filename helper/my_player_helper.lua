@@ -28,7 +28,7 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
       local pos = player:getMyPosition()
       local height = pos.y + ActorHelper:getEyeHeight(objid) + 0.5 -- 眼睛上方半格高度
       if (AreaHelper:posInArea(MyPosition:new(pos.x, height, pos.z), areaid)) then
-        AreaHelper:fillBlock(areaid, 100) -- 填充草块
+        AreaHelper:fillBlock(areaid, 104) -- 填充岩石
         player:headHitBlock(true)
       end
     end
