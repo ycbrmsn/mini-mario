@@ -25,8 +25,12 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
   if (MyAreaHelper:doesEnterHideBlockArea(areaid)) then -- 进入隐藏方块区域
     local player = PlayerHelper:getPlayer(objid)
     if (player.ySpeed > 0) then -- 在上升中
-      player:headHitBlock()
-      AreaHelper:fillBlock(areaid, 100) -- 填充草块
+      local pos = player:getMyPosition()
+      local height = pos.y + ActorHelper:getEyeHeight(objid) + 0.5 -- 眼睛上方半格高度
+      if (AreaHelper:posInArea(MyPosition:new(pos.x, height, pos.z), areaid)) then
+        AreaHelper:fillBlock(areaid, 100) -- 填充草块
+        player:headHitBlock(true)
+      end
     end
   end
 end

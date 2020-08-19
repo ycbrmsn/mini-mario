@@ -23,8 +23,12 @@ function MyPlayer:new (objid)
 end
 
 -- 头顶方块
-function MyPlayer:headHitBlock ()
-  ActorHelper:appendSpeed(self.objid, 0, -self.ySpeed, 0)
+function MyPlayer:headHitBlock (isHide)
+  local forceSpeed = -self.ySpeed
+  if (isHide) then
+    forceSpeed = forceSpeed * 2
+  end
+  ActorHelper:appendSpeed(self.objid, 0, forceSpeed, 0)
   self.walkSpeed = MyGameHelper.defaultWalkSpeed
   -- 破坏方块
   local height = self.y + ActorHelper:getEyeHeight(self.objid) + 0.5

@@ -3,9 +3,9 @@ MyAreaHelper = {
   doorPositionData = {},
   doorPositions = {},
   hideBlock = {
-    { 0, 10.5, -61 }, -- 关卡一坑
-    { 0, 10.5, -62 }, -- 关卡一坑
-    { 0, 10.5, -63 }, -- 关卡一坑
+    { 0, 10, -61 }, -- 关卡一坑
+    { 0, 10, -62 }, -- 关卡一坑
+    { 0, 10, -63 }, -- 关卡一坑
   },
   hideBlockAreas = {}
 }
