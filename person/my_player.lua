@@ -31,9 +31,11 @@ function MyPlayer:headHitBlock (isHide)
   ActorHelper:appendSpeed(self.objid, 0, forceSpeed, 0)
   self.walkSpeed = MyGameHelper.defaultWalkSpeed
   -- 破坏方块
-  local height = self.y + ActorHelper:getEyeHeight(self.objid) + 0.5
-  local blockid = BlockHelper:getBlockID(self.x, height, self.z)
+  local pos = self:getMyPosition()
+  local height = pos.y + ActorHelper:getEyeHeight(self.objid) + 0.5
+  local blockid = BlockHelper:getBlockID(pos.x, height, pos.z)
   if (blockid == 100) then -- 草块
-    BlockHelper:destroyBlock(self.x, height, self.z)
+    BlockHelper:destroyBlock(pos.x, height, pos.z)
+    WorldHelper:playPlaceBlockSoundOnPos(MyPosition:new(pos.x, height, pos.z))
   end
 end
