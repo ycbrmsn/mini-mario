@@ -44,15 +44,25 @@ function MyActorHelper:actorCollide (objid, toobjid)
     end
     local x, y, z = ActorHelper:getPosition(objid)
     local player = PlayerHelper:getPlayer(toobjid)
-    LogHelper:debug(y + eyeHeight)
-    LogHelper:debug(player.y)
+    -- LogHelper:debug(y + eyeHeight)
+    -- LogHelper:debug(player.y)
     if (y + eyeHeight < player.y) then -- 在玩家下方
-      ActorHelper:killSelf(objid)
+      -- 生物假死30秒
+      -- ActorHelper:killSelf(objid)
+      CreatureHelper:setHp(objid, 0)
+      TimeHelper:callFnAfterSecond(function ()
+        CreatureHelper:setHp(objid, CreatureHelper:getMaxHp(objid))
+      end, 30)
+
+      -- 玩家一个小跳效果
       local yaw = ActorHelper:getFaceYaw(toobjid)
       local pitch = ActorHelper:getFacePitch(toobjid)
       PlayerHelper:setPosition(toobjid, player.x, player.y, player.z)
-      -- PlayerHelper:rotateCamera(toobjid, yaw, pitch)
+      ActorHelper:setFaceYaw(toobjid, yaw)
+      ActorHelper:setFacePitch(toobjid, pitch)
       ActorHelper:appendSpeed(toobjid, 0, 0.5, 0)
+      -- ActorHelper:appendSpeed(toobjid, 0, -player.ySpeed, 0)
+      
     else
       ActorHelper:killSelf(toobjid)
     end
