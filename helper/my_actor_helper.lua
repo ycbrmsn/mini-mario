@@ -60,7 +60,7 @@ function MyActorHelper:actorCollide (objid, toobjid)
       PlayerHelper:setPosition(toobjid, player.x, player.y, player.z)
       ActorHelper:setFaceYaw(toobjid, yaw)
       ActorHelper:setFacePitch(toobjid, pitch)
-      ActorHelper:appendSpeed(toobjid, 0, 0.5, 0)
+      ActorHelper:appendSpeed(toobjid, 0, 0.6, 0)
       -- ActorHelper:appendSpeed(toobjid, 0, -player.ySpeed, 0)
       
     else
