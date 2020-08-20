@@ -12,13 +12,8 @@ PlayerHelper = {
 
 -- 如果玩家信息不存在则添加玩家信息
 function PlayerHelper:addPlayer (objid)
-  local player = self:getPlayer(objid)
-  if (not(player)) then
-    player = MyPlayer:new(objid)
-    table.insert(self:getAllPlayers(), player)
-  else
-    player:setActive(true)
-  end
+  local player = MyPlayer:new(objid)
+  table.insert(self:getAllPlayers(), player)
   return player
 end
 
@@ -251,13 +246,33 @@ function PlayerHelper:setMaxHp (objid, hp)
   return self:setAttr(objid, PLAYERATTR.MAX_HP, hp)
 end
 
+function PlayerHelper:getExp (objid)
+  return self:getAttr(objid, 26)
+end
+
+function PlayerHelper:setExp (objid, exp)
+  return self:setAttr(objid, 26, exp)
+end
+
+function PlayerHelper:getTotalLevel (objid)
+  return self:getAttr(objid, 27)
+end
+
+function PlayerHelper:setTotalLevel (objid, totalLevel)
+  return self:setAttr(objid, 27, totalLevel)
+end
+
 function PlayerHelper:setWalkSpeed (objid, speed)
   return self:setAttr(objid, PLAYERATTR.WALK_SPEED, speed)
 end
 
 function PlayerHelper:addAttr (objid, attrtype, addVal)
   local curVal = self:getAttr(objid, attrtype)
-  self:setAttr(objid, attrtype, curVal + addVal)
+  return self:setAttr(objid, attrtype, curVal + addVal)
+end
+
+function PlayerHelper:addExp (objid, exp)
+  return PlayerHelper:addAttr(objid, 26, exp)
 end
 
 function PlayerHelper:recoverAttr (objid, attrtype)
@@ -266,9 +281,16 @@ end
 
 -- 事件
 
--- 玩家进入游戏
+-- 玩家进入游戏 是否之前已存在
 function PlayerHelper:playerEnterGame (objid)
-  PlayerHelper:addPlayer(objid)
+  local player = self:getPlayer(objid)
+  if (not(player)) then
+    PlayerHelper:addPlayer(objid)
+    return false
+  else
+    player:setActive(true)
+    return true
+  end
 end
 
 -- 玩家离开游戏
