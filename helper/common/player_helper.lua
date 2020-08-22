@@ -266,6 +266,14 @@ function PlayerHelper:setWalkSpeed (objid, speed)
   return self:setAttr(objid, PLAYERATTR.WALK_SPEED, speed)
 end
 
+function PlayerHelper:getDimension (objid)
+  return self:getAttr(objid, PLAYERATTR.DIMENSION)
+end
+
+function PlayerHelper:setDimension (objid, dimension)
+  return self:setAttr(objid, PLAYERATTR.DIMENSION, dimension)
+end
+
 function PlayerHelper:addAttr (objid, attrtype, addVal)
   local curVal = self:getAttr(objid, attrtype)
   return self:setAttr(objid, attrtype, curVal + addVal)

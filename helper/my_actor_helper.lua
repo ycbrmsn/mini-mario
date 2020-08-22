@@ -64,7 +64,13 @@ function MyActorHelper:actorCollide (objid, toobjid)
       -- ActorHelper:appendSpeed(toobjid, 0, -player.ySpeed, 0)
       
     else
-      ActorHelper:killSelf(toobjid)
+      local dimension = PlayerHelper:getDimension(toobjid)
+      if (dimension > 1) then
+        ActorHelper:addBuff(toobjid, MyMap.BUFF.PROTECT, 1, 60)
+        PlayerHelper:setDimension(toobjid, 1)
+      else
+        ActorHelper:killSelf(toobjid)
+      end
     end
   end
 end

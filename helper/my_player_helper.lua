@@ -98,6 +98,7 @@ function MyPlayerHelper:playerDie (objid, toobjid)
   -- body
   local player = PlayerHelper:getPlayer(objid)
   player.notDead = false
+  PlayerHelper:setDimension(objid, 1) -- 尺寸恢复1
 end
 
 -- 玩家复活
@@ -107,6 +108,8 @@ function MyPlayerHelper:playerRevive (objid, toobjid)
   -- body
   local player = PlayerHelper:getPlayer(objid)
   player.notDead = true
+  ActorHelper:setFaceYaw(objid, 0)
+  PlayerHelper:rotateCamera(objid, 90, 0)
 end
 
 -- 玩家选择快捷栏
