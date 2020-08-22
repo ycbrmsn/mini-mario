@@ -2,7 +2,8 @@
 MyGameHelper = {
   defaultWalkSpeed = 10, -- 初始速度
   onceAppendWalkSpeed = 1, -- 一次增加速度
-  maxWalkSpeed = 40 -- 最大增加速度
+  maxWalkSpeed = 40, -- 最大增加速度
+  gravity = 0.005, -- 每秒追加重力
 }
 
 -- 判断是否因为位置过低需要死去
@@ -39,8 +40,18 @@ end
 -- 头顶到方块
 function MyGameHelper:headHitBlock (player, y)
   local ySpeed = y - player.y
-  if (ySpeed == 0 and player.ySpeed > 0) then -- 突然变为0
-    player:headHitBlock()
+  -- if (ySpeed == 0) then -- 突然变为0
+  --   if (player.ySpeed > 0) then -- 处于上升状态
+  --     player:headHitBlock()
+  --   end
+  -- end
+  if (player.ySpeed >= 0 and ySpeed < 0) then -- 开始下落
+    player.fallHeight = player.y
+  elseif (ySpeed >= 0 and player.ySpeed < 0) then -- 停止下落
+    player.fallHeight = player.fallHeight - y
+    if (player.fallHeight >= 4) then -- 四格高度则踩碎方块
+      player:trampleBlock()
+    end
   end
   player.ySpeed = ySpeed
 end
@@ -60,16 +71,16 @@ end
 function MyGameHelper:runGame ()
   GameHelper:runGame()
   -- body
-  -- 同向加速
   for i, v in ipairs(PlayerHelper:getAllPlayers()) do
     if (v:isActive()) then
+      ActorHelper:appendSpeed(objid, 0, -self.gravity, 0) -- 添加重力
       local x, y, z = ActorHelper:getPosition(v.objid)
       if (x) then
         if (not(MyGameHelper:judgeDeath(v, y))) then -- 玩家没有位置过低死亡
-          MyGameHelper:fasterTheSameDir(v, z)
+          MyGameHelper:fasterTheSameDir(v, z) -- 同向加速
           MyGameHelper:headHitBlock(v, y)
           v.x, v.y, v.z = x, y, z
-          -- LogHelper:debug(v.dir, '-', v.walkSpeed)
+          -- LogHelper:debug(v.ySpeed)
         end
       end
     end

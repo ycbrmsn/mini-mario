@@ -1,5 +1,7 @@
 -- 我的玩家工具类
-MyPlayerHelper = {}
+MyPlayerHelper = {
+  initPosition = MyPosition:new(0.5, 7.5, 0.5)
+}
 
 -- 事件
 
@@ -7,6 +9,13 @@ MyPlayerHelper = {}
 function MyPlayerHelper:playerEnterGame (objid)
   PlayerHelper:playerEnterGame(objid)
   MyStoryHelper:playerEnterGame(objid)
+  -- body
+  -- PlayerHelper:rotateCamera(objid, ActorHelper.FACE_YAW.WEST, 0) -- 看向正东方
+  PlayerHelper:setActionAttrState(objid, PLAYERATTR.ENABLE_BEATTACKED, false) -- 不可被攻击
+  ActorHelper:setMyPosition(objid, self.initPosition)
+  ActorHelper:setFaceYaw(objid, 0)
+  PlayerHelper:rotateCamera(objid, 90, 0)
+  PlayerHelper:setRevivePoint(objid, self.initPosition.x, self.initPosition.y, self.initPosition.z)
   MusicHelper:playBGM(objid, BGM[1], true)
 end
 

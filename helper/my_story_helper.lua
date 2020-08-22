@@ -1,7 +1,5 @@
 -- 我的剧情工具类
-MyStoryHelper = {
-  initPosition = MyPosition:new(0.5, 7.5, 0.5)
-}
+MyStoryHelper = {}
 
 function MyStoryHelper:init ()
   story1 = Story1:new()
@@ -19,21 +17,6 @@ end
 -- 玩家进入游戏
 function MyStoryHelper:playerEnterGame (objid)
   local player = PlayerHelper:getPlayer(objid)
-  local hostPlayer = PlayerHelper:getHostPlayer()
-  -- if (player == hostPlayer) then -- 房主
-  --   if (not(GameDataHelper:updateStoryData())) then -- 刚开始游戏
-  --   end
-  -- end
-  -- 更新玩家数据
-  -- if (GameDataHelper:updatePlayerData(player)) then -- 再次进入游戏
-  --   -- do nothing
-  -- else -- 刚进入游戏
-  -- end
-  -- PlayerHelper:changeVMode(objid, VIEWPORTTYPE.CUSTOMVIEW, true) -- 锁定自定义视角
-  PlayerHelper:rotateCamera(objid, ActorHelper.FACE_YAW.WEST, 0) -- 看向正东方
-  PlayerHelper:setActionAttrState(objid, PLAYERATTR.ENABLE_BEATTACKED, false) -- 不可被攻击
-  player:setMyPosition(self.initPosition)
-  PlayerHelper:setRevivePoint(objid, self.initPosition.x, self.initPosition.y, self.initPosition.z)
   StoryHelper:recover(player) -- 恢复剧情
 end
 
