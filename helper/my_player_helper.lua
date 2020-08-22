@@ -152,3 +152,15 @@ function MyPlayerHelper:playerDismountActor (objid, toobjid)
   PlayerHelper:playerDismountActor(objid, toobjid)
   MyStoryHelper:playerDismountActor(objid, toobjid)
 end
+
+-- 聊天输出界面变化
+function MyPlayerHelper:playerInputContent(objid, content)
+  PlayerHelper:playerInputContent(objid, content)
+  MyStoryHelper:playerInputContent(objid, content)
+end
+
+-- 输入字符串
+function MyPlayerHelper:playerNewInputContent(objid, content)
+  PlayerHelper:playerNewInputContent(objid, content)
+  MyStoryHelper:playerNewInputContent(objid, content)
+end

@@ -452,6 +452,16 @@ function PlayerHelper:playerDismountActor (objid, toobjid)
   -- body
 end
 
+-- 聊天输出界面变化
+function PlayerHelper:playerInputContent(objid, content)
+  -- body
+end
+
+-- 输入字符串
+function PlayerHelper:playerNewInputContent(objid, content)
+  -- body
+end
+
 -- 封装原始接口
 
 -- 获取玩家昵称

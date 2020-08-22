@@ -132,6 +132,16 @@ function MyStoryHelper:playerDismountActor (objid, toobjid)
   -- body
 end
 
+-- 聊天输出界面变化
+function MyStoryHelper:playerInputContent(objid, content)
+  -- body
+end
+
+-- 输入字符串
+function MyStoryHelper:playerNewInputContent(objid, content)
+  -- body
+end
+
 -- 生物进入区域
 function MyStoryHelper:actorEnterArea (objid, areaid)
   -- body
