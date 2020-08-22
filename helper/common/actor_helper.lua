@@ -812,12 +812,7 @@ end
 
 -- 是否已经有了指定BUFF
 function ActorHelper:hasBuff (objid, buffid)
-  local onceFailMessage = '是否已经有了指定BUFF失败一次'
-  local finillyFailMessage = StringHelper:concat('是否已经有了指定BUFF失败，参数：objid=', objid,
-    ', buffid=', buffid)
-  return CommonHelper:callOneResultMethod(function (p)
-    return Actor:hasBuff(objid, buffid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  return Actor:hasBuff(objid, buffid) == ErrorCode.OK
 end
 
 -- 设置actor原地旋转偏移角度
@@ -942,15 +937,6 @@ function ActorHelper:killSelf (objid)
   local finillyFailMessage = StringHelper:concat('杀死自己失败，参数：objid=', objid)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:killSelf(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
-end
-
--- 清除全部减益BUFF
-function ActorHelper:clearAllBadBuff (objid)
-  local onceFailMessage = '清除全部减益BUFF失败一次'
-  local finillyFailMessage = StringHelper:concat('清除全部减益BUFF失败，参数：objid=', objid)
-  return CommonHelper:callIsSuccessMethod(function (p)
-    return Actor:clearAllBadBuff(objid)
   end, nil, onceFailMessage, finillyFailMessage)
 end
 

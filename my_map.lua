@@ -7,7 +7,7 @@ MyMap = {
 
   },
   BUFF = {
-    PROTECT = 50000001001, -- 缩小保护
+    PROTECT = 50000001, -- 缩小保护
   },
   CUSTOM = {
 
