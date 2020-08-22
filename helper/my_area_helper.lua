@@ -35,7 +35,7 @@ function MyAreaHelper:initDoorAreas ()
   for i, v in ipairs(self.doorPositionData) do
     local pos = MyPosition:new(v[1], v[2], v[3])
     local areaid = AreaHelper:getAreaByPos(pos)
-    table.insert(AreaHelper.allDoorAreas, areaid)
+    table.insert(AreaHelper.allDoorAreas, areaid, pos)
   end
 end
 

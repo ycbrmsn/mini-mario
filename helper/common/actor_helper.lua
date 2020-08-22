@@ -971,3 +971,12 @@ function ActorHelper:getFaceDirection (objid)
     return Actor:getFaceDirection(objid)
   end, nil, onceFailMessage, finillyFailMessage)
 end
+
+-- 获取身体尺寸 w, h
+function ActorHelper:getBodySize (objid)
+  local onceFailMessage = '获取身体尺寸失败一次'
+  local finillyFailMessage = StringHelper:concat('获取身体尺寸失败，参数：objid=', objid)
+  return CommonHelper:callTwoResultMethod(function (p)
+    return Actor:getBodySize(objid)
+  end, nil, onceFailMessage, finillyFailMessage)
+end

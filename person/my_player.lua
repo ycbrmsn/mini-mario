@@ -25,10 +25,11 @@ end
 
 -- 头顶方块
 function MyPlayer:headHitBlock (isHide)
-  local forceSpeed = -self.ySpeed
-  if (isHide) then
-    forceSpeed = forceSpeed * 2
-  end
+  -- local forceSpeed = -self.ySpeed
+  -- if (isHide) then
+  --   forceSpeed = forceSpeed * 2
+  -- end
+  local forceSpeed = -1
   ActorHelper:appendSpeed(self.objid, 0, forceSpeed, 0)
   self.walkSpeed = MyGameHelper.defaultWalkSpeed
   -- 破坏方块
@@ -46,7 +47,7 @@ end
 
 -- 踩方块
 function MyPlayer:trampleBlock ()
-  local brokeBlockid = 100
+  local brokeBlockid = 999
   local pos = self:getMyPosition()
   local x, y, z = pos.x, pos.y - 0.5, pos.z
   local blockid = BlockHelper:getBlockID(x, y, z)

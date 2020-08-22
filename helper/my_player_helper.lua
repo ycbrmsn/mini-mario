@@ -33,10 +33,11 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
   -- body
   if (MyAreaHelper:doesEnterHideBlockArea(areaid)) then -- 进入隐藏方块区域
     local player = PlayerHelper:getPlayer(objid)
-    if (player.ySpeed > 0) then -- 在上升中
-      local pos = player:getMyPosition()
-      local height = pos.y + ActorHelper:getEyeHeight(objid) + 0.5 -- 眼睛上方半格高度
-      if (AreaHelper:posInArea(MyPosition:new(pos.x, height, pos.z), areaid)) then
+    local pos = player:getMyPosition()
+    if (pos.y - player.y > 0) then -- 在上升中
+      local dimension = PlayerHelper:getDimension(objid)
+      local height = (ActorHelper:getEyeHeight(objid) + 0.6) * dimension
+      if (AreaHelper:posInArea(MyPosition:new(pos.x, pos.y + height, pos.z), areaid)) then
         AreaHelper:fillBlock(areaid, 104) -- 填充岩石
         player:headHitBlock(true)
       end

@@ -40,11 +40,11 @@ end
 -- 头顶到方块
 function MyGameHelper:headHitBlock (player, y)
   local ySpeed = y - player.y
-  -- if (ySpeed == 0) then -- 突然变为0
-  --   if (player.ySpeed > 0) then -- 处于上升状态
-  --     player:headHitBlock()
-  --   end
-  -- end
+  if (ySpeed == 0) then -- 突然变为0
+    if (player.ySpeed > 0) then -- 处于上升状态
+      player:headHitBlock()
+    end
+  end
   if (player.ySpeed >= 0 and ySpeed < 0) then -- 开始下落
     player.fallHeight = player.y
   elseif (ySpeed >= 0 and player.ySpeed < 0) then -- 停止下落
@@ -80,7 +80,7 @@ function MyGameHelper:runGame ()
           MyGameHelper:fasterTheSameDir(v, z) -- 同向加速
           MyGameHelper:headHitBlock(v, y)
           v.x, v.y, v.z = x, y, z
-          -- LogHelper:debug(v.ySpeed)
+          -- LogHelper:debug(v.y)
         end
       end
     end
