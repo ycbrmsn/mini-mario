@@ -35,43 +35,58 @@ function MyActorHelper:actorCollide (objid, toobjid)
   MyStoryHelper:actorCollide(objid, toobjid)
   -- body
   if (ActorHelper:isPlayer(toobjid)) then -- 与玩家碰撞
-    local eyeHeight
     local actorid = CreatureHelper:getActorID(objid)
-    if (actorid == 3400) then -- 鸡
-      eyeHeight = 0.2
-    else
-      eyeHeight = ActorHelper:getEyeHeight(objid)
-    end
-    local x, y, z = ActorHelper:getPosition(objid)
-    local player = PlayerHelper:getPlayer(toobjid)
-    -- LogHelper:debug(y + eyeHeight)
-    -- LogHelper:debug(player.y)
-    if (y + eyeHeight < player.y) then -- 在玩家下方
-      -- 生物假死30秒
-      -- ActorHelper:killSelf(objid)
-      CreatureHelper:setHp(objid, 0)
-      TimeHelper:callFnAfterSecond(function ()
-        CreatureHelper:setHp(objid, CreatureHelper:getMaxHp(objid))
-      end, 30)
-
-      -- 玩家一个小跳效果
-      local yaw = ActorHelper:getFaceYaw(toobjid)
-      local pitch = ActorHelper:getFacePitch(toobjid)
-      PlayerHelper:setPosition(toobjid, player.x, player.y, player.z)
-      ActorHelper:setFaceYaw(toobjid, yaw)
-      ActorHelper:setFacePitch(toobjid, pitch)
-      ActorHelper:appendSpeed(toobjid, 0, 0.6, 0)
-      -- ActorHelper:appendSpeed(toobjid, 0, -player.ySpeed, 0)
-    else
-      local hasProtectBuff = ActorHelper:hasBuff(toobjid, MyMap.BUFF.PROTECT)
-      if (hasProtectBuff) then
-      else
+    if (actorid == MyMap.ACTOR.STAR) then -- 黄星星
+      if (WorldHelper:despawnActor(objid)) then -- 销毁成功
+        ActorHelper:addBuff(toobjid, MyMap.BUFF.FEARLESS, nil, 15 * 20)
+      end
+    elseif (actorid == MyMap.ACTOR.MUSHROOM) then -- 红蘑菇
+      if (WorldHelper:despawnActor(objid)) then -- 销毁成功
         local dimension = PlayerHelper:getDimension(toobjid)
-        if (dimension > 1) then
-          ActorHelper:addBuff(toobjid, MyMap.BUFF.PROTECT, nil, 60)
-          PlayerHelper:setDimension(toobjid, 1)
+        if (dimension == 1) then
+          PlayerHelper:setDimension(toobjid, 1.5) -- 尺寸1.5
         else
-          ActorHelper:killSelf(toobjid)
+          LogHelper:debug('获得武器')
+        end
+      end
+    else
+      local eyeHeight
+      if (actorid == 3400) then -- 鸡
+        eyeHeight = 0.2
+      else
+        eyeHeight = ActorHelper:getEyeHeight(objid)
+      end
+      local x, y, z = ActorHelper:getPosition(objid)
+      local player = PlayerHelper:getPlayer(toobjid)
+      -- LogHelper:debug(y + eyeHeight)
+      -- LogHelper:debug(player.y)
+      if (y + eyeHeight < player.y) then -- 在玩家下方
+        -- 生物假死30秒
+        -- ActorHelper:killSelf(objid)
+        CreatureHelper:setHp(objid, 0)
+        TimeHelper:callFnAfterSecond(function ()
+          CreatureHelper:setHp(objid, CreatureHelper:getMaxHp(objid))
+        end, 30)
+
+        -- 玩家一个小跳效果
+        local yaw = ActorHelper:getFaceYaw(toobjid)
+        local pitch = ActorHelper:getFacePitch(toobjid)
+        PlayerHelper:setPosition(toobjid, player.x, player.y, player.z)
+        ActorHelper:setFaceYaw(toobjid, yaw)
+        ActorHelper:setFacePitch(toobjid, pitch)
+        ActorHelper:appendSpeed(toobjid, 0, 0.6, 0)
+        -- ActorHelper:appendSpeed(toobjid, 0, -player.ySpeed, 0)
+      else
+        local hasProtectBuff = ActorHelper:hasBuff(toobjid, MyMap.BUFF.PROTECT)
+        if (hasProtectBuff) then
+        else
+          local dimension = PlayerHelper:getDimension(toobjid)
+          if (dimension > 1) then
+            ActorHelper:addBuff(toobjid, MyMap.BUFF.PROTECT, nil, 60)
+            PlayerHelper:setDimension(toobjid, 1)
+          else
+            ActorHelper:killSelf(toobjid)
+          end
         end
       end
     end

@@ -129,7 +129,7 @@ function MyPosition:toString ()
 end
 
 function MyPosition:toSimpleString ()
-  return StringHelper:concat(x, ',', y, ',', z)
+  return StringHelper:concat(self.x, ',', self.y, ',', self.z)
 end
 
 -- 三维向量

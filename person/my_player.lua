@@ -98,7 +98,6 @@ function MyPlayer:hitLuckyBlock (x, y, z)
     end, 0.2, t)
     BackpackHelper:addItem(self.objid, MyMap.ITEM.COIN, 1)
   elseif (category == 2) then -- 无畏星星
-    LogHelper:debug(MyMap.ACTOR.STAR)
     local objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.STAR, 1)
     CreatureHelper:closeAI(objids[1])
     ActorHelper:setFaceYaw(objids[1], 90)
