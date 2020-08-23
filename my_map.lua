@@ -10,7 +10,8 @@ MyMap = {
     ROAST_CHICKEN = 12558 -- 烤鸡
   },
   ACTOR = {
-
+    STAR = 3, -- 黄星星
+    MUSHROOM = 4 -- 红蘑菇
   },
   BUFF = {
     PROTECT = 50000001, -- 缩小保护

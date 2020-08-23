@@ -76,12 +76,36 @@ end
 
 -- 踩幸运方块
 function MyPlayer:hitLuckyBlock (x, y, z)
-  BlockHelper:placeBlock(MyMap.BLOCK.COIN, x + 2, y + 1, z, FACE_DIRECTION.DIR_POS_X)
-  local t = 'place' .. x .. ',' .. y .. ',' .. z
-  TimeHelper:delFnFastRuns(t)
-  TimeHelper:callFnFastRuns(function ()
-    BlockHelper:destroyBlock(x + 2, y + 1, z)
-  end, 0.2, t)
-  BackpackHelper:addItem(self.objid, MyMap.ITEM.COIN, 1)
+  local luckyBlockInfo = MyBlockHelper:getLuckyBlockInfo(x, y, z)
+  if (luckyBlockInfo.num <= 0) then -- 如果已经耗尽
+    return
+  end
+  luckyBlockInfo.num = luckyBlockInfo.num - 1 -- 数量减1
+  if (luckyBlockInfo.num == 0) then -- 当前耗尽
+    BlockHelper:placeBlock(104, x, y, z)
+  elseif (luckyBlockInfo.num < 0) then
+    return
+  end
+
+  local category = luckyBlockInfo.category
+  if (category == 1) then -- 幸运金币
+    local cx, cy, cz = x + 2, y + 1, z
+    BlockHelper:placeBlock(MyMap.BLOCK.COIN, cx, cy, cz, FACE_DIRECTION.DIR_POS_X)
+    local t = 'place' .. x .. ',' .. y .. ',' .. z
+    TimeHelper:delFnFastRuns(t)
+    TimeHelper:callFnFastRuns(function ()
+      BlockHelper:destroyBlock(cx, cy, cz)
+    end, 0.2, t)
+    BackpackHelper:addItem(self.objid, MyMap.ITEM.COIN, 1)
+  elseif (category == 2) then -- 无畏星星
+    LogHelper:debug(MyMap.ACTOR.STAR)
+    local objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.STAR, 1)
+    CreatureHelper:closeAI(objids[1])
+    ActorHelper:setFaceYaw(objids[1], 90)
+  elseif (category == 3) then -- 长大蘑菇
+    local objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.MUSHROOM, 1)
+    CreatureHelper:closeAI(objids[1])
+    ActorHelper:setFaceYaw(objids[1], 90)
+  end
   WorldHelper:playSoundEffectOnPos(MyPosition:new(x, y, z), BaseConstant.SOUND_EFFECT.PROMPT19, 150, 1)
 end

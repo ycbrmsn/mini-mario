@@ -1,13 +1,18 @@
 -- 我的方块工具类
 MyBlockHelper = {
   unableBeoperated = {},
-  unableDestroyed = {}
+  unableDestroyed = {},
+  luckyBlockData = { -- x, y, z, category, num
+    { 0, 10, -8, 3, 1 }
+  },
+  luckyBlockInfos = {}
 }
 
 -- 初始化
 function MyBlockHelper:init ()
   -- body
   MyBlockHelper:initBlocks()
+  MyBlockHelper:initLuckyBlocks()
 end
 
 function MyBlockHelper:initBlocks ()
@@ -17,6 +22,26 @@ function MyBlockHelper:initBlocks ()
   for i, v in ipairs(self.unableDestroyed) do
     BlockHelper:setBlockSettingAttState(v, BLOCKATTR.ENABLE_DESTROYED, false) -- 不可被破坏
   end
+end
+
+-- 初始化幸运方块
+function MyBlockHelper:initLuckyBlocks ()
+  for i, v in ipairs(self.luckyBlockData) do
+    local pos = MyPosition:new(v[1], v[2], v[3])
+    self.luckyBlockInfos[pos:toSimpleString()] = { pos = pos, category = v[4], num = v[5] }
+  end
+end
+
+-- 获取幸运方块信息
+function MyBlockHelper:getLuckyBlockInfo (x, y, z)
+  x, y, z = math.floor(x), math.floor(y), math.floor(z)
+  local pos = MyPosition:new(x, y, z)
+  local luckyBlockInfo = self.luckyBlockInfos[pos:toSimpleString()]
+  if (not(luckyBlockInfo)) then
+    luckyBlockInfo = { pos = pos, category = 1, num = 1 }
+    self.luckyBlockInfos[pos:toSimpleString()] = luckyBlockInfo
+  end
+  return luckyBlockInfo
 end
 
 -- 事件
