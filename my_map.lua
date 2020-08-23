@@ -8,6 +8,7 @@ MyMap = {
   },
   BUFF = {
     PROTECT = 50000001, -- 缩小保护
+    FEARLESS = 50000002 -- 无畏
   },
   CUSTOM = {
 
