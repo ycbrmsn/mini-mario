@@ -25,6 +25,7 @@ BaseConstant = {
   SOUND_EFFECT = {
     ACTION4 = 10007, -- 放置/破坏方块的声音
     ACTION5 = 10010, -- 放置/破坏方块的声音
-    SKILL9 = 10086 -- 一阵风的声音
+    SKILL9 = 10086, -- 一阵风的声音
+    PROMPT19 = 10963 -- 长音
   }
 }

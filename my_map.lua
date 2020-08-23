@@ -1,7 +1,13 @@
 -- 地图相关数据
 MyMap = {
+  BLOCK = {
+    DESTROY = 999, -- 大形态踩碎方块
+    LUCKY = 2001, -- 幸运方块
+    COIN = 2002 -- 幸运金币
+  },
   ITEM = {
-
+    COIN = 4099, -- 幸运币
+    ROAST_CHICKEN = 12558 -- 烤鸡
   },
   ACTOR = {
 
@@ -12,7 +18,7 @@ MyMap = {
   },
   CUSTOM = {
 
-  },
+  }
 }
 
 -- 模板

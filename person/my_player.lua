@@ -49,19 +49,39 @@ end
 function MyPlayer:trampleBlock ()
   local brokeBlockid = 999
   local pos = self:getMyPosition()
-  local x, y, z = pos.x, pos.y - 0.5, pos.z
+  local x, y, z = math.floor(pos.x), math.floor(pos.y - 0.5), math.floor(pos.z)
   local blockid = BlockHelper:getBlockID(x, y, z)
-  if (blockid == brokeBlockid) then -- 草块
-    BlockHelper:destroyBlock(x, y, z)
-  elseif (blockid == BLOCKID.AIR) then
-    local nz = z + 0.5
-    local nextBlockid = BlockHelper:getBlockID(x, y, nz) -- 后半格方块
-    if (nextBlockid == BLOCKID.AIR) then
-      nz = z - 0.5
-      nextBlockid = BlockHelper:getBlockID(x, y, nz) -- 前半格方块
-    end
-    if (nextBlockid == brokeBlockid) then
-      BlockHelper:destroyBlock(x, y, nz)
+  if (blockid == BLOCKID.AIR) then
+    z = math.floor(pos.z + 0.5)
+    blockid = BlockHelper:getBlockID(x, y, z) -- 后半格方块
+    if (blockid == BLOCKID.AIR) then
+      z = math.floor(pos.z - 0.5)
+      blockid = BlockHelper:getBlockID(x, y, z) -- 前半格方块
     end
   end
+  if (blockid == MyMap.BLOCK.DESTROY) then
+    self:destroyBlock(x, y, z)
+  elseif (blockid == MyMap.BLOCK.LUCKY) then
+    self:hitLuckyBlock(x, y, z)
+  end
+end
+
+-- 踩碎方块
+function MyPlayer:destroyBlock (x, y, z)
+  local dimension = PlayerHelper:getDimension(self.objid)
+  if (dimension > 1) then
+    BlockHelper:destroyBlock(x, y, z)
+  end
+end
+
+-- 踩幸运方块
+function MyPlayer:hitLuckyBlock (x, y, z)
+  BlockHelper:placeBlock(MyMap.BLOCK.COIN, x + 2, y + 1, z, FACE_DIRECTION.DIR_POS_X)
+  local t = 'place' .. x .. ',' .. y .. ',' .. z
+  TimeHelper:delFnFastRuns(t)
+  TimeHelper:callFnFastRuns(function ()
+    BlockHelper:destroyBlock(x + 2, y + 1, z)
+  end, 0.2, t)
+  BackpackHelper:addItem(self.objid, MyMap.ITEM.COIN, 1)
+  WorldHelper:playSoundEffectOnPos(MyPosition:new(x, y, z), BaseConstant.SOUND_EFFECT.PROMPT19, 150, 1)
 end
