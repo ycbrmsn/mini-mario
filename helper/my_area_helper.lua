@@ -2,11 +2,7 @@
 MyAreaHelper = {
   doorPositionData = {},
   doorPositions = {},
-  hideBlock = {
-    { 0, 10, -61 }, -- 关卡一坑
-    { 0, 10, -62 }, -- 关卡一坑
-    { 0, 10, -63 }, -- 关卡一坑
-  },
+  hideBlock = {},
   hideBlockAreas = {}
 }
 

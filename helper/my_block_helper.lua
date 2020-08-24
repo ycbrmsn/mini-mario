@@ -3,7 +3,7 @@ MyBlockHelper = {
   unableBeoperated = {},
   unableDestroyed = {},
   luckyBlockData = { -- x, y, z, category, num
-    { 0, 10, -8, 3, 1 }
+    { 0, 60, -8, 3, 1 }
   },
   luckyBlockInfos = {}
 }

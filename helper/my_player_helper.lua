@@ -1,6 +1,6 @@
 -- 我的玩家工具类
 MyPlayerHelper = {
-  initPosition = MyPosition:new(0.5, 7.5, 0.5)
+  initPosition = MyPosition:new(0.5, 57.5, 0.5)
 }
 
 -- 事件

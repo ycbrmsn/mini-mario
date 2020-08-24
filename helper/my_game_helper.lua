@@ -8,7 +8,7 @@ MyGameHelper = {
 
 -- 判断是否因为位置过低需要死去
 function MyGameHelper:judgeDeath (player, y)
-  if (y < 4 and player.notDead) then
+  if (y > 40 and y < 52 and player.notDead) then
     ActorHelper:killSelf(player.objid)
     player.notDead = false
     return true

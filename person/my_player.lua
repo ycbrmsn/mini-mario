@@ -82,7 +82,7 @@ function MyPlayer:hitLuckyBlock (x, y, z)
   end
   luckyBlockInfo.num = luckyBlockInfo.num - 1 -- 数量减1
   if (luckyBlockInfo.num == 0) then -- 当前耗尽
-    BlockHelper:placeBlock(104, x, y, z)
+    BlockHelper:placeBlock(MyMap.BLOCK.INVALID, x, y, z)
   elseif (luckyBlockInfo.num < 0) then
     return
   end

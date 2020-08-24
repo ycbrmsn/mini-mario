@@ -3,7 +3,8 @@ MyMap = {
   BLOCK = {
     DESTROY = 999, -- 大形态踩碎方块
     LUCKY = 2001, -- 幸运方块
-    COIN = 2002 -- 幸运金币
+    COIN = 2002, -- 幸运金币
+    INVALID = 2003 -- 无效方块
   },
   ITEM = {
     COIN = 4099, -- 幸运币
