@@ -50,46 +50,47 @@ function MyActorHelper:actorCollide (objid, toobjid)
         end
       end
     else
-      local eyeHeight
-      if (actorid == 3400) then -- 鸡
-        eyeHeight = 0.2
-      else
-        eyeHeight = ActorHelper:getEyeHeight(objid)
-      end
-      local x, y, z = ActorHelper:getPosition(objid)
       local player = PlayerHelper:getPlayer(toobjid)
-      -- LogHelper:debug(y + eyeHeight)
-      -- LogHelper:debug(player.y)
-      if (y + eyeHeight < player.y) then -- 在玩家下方
-        -- 生物假死30秒
-        -- ActorHelper:killSelf(objid)
-        CreatureHelper:setHp(objid, 0)
-        TimeHelper:callFnAfterSecond(function ()
-          CreatureHelper:setHp(objid, CreatureHelper:getMaxHp(objid))
-        end, 30)
-
-        -- 玩家一个小跳效果
-        local yaw = ActorHelper:getFaceYaw(toobjid)
-        local pitch = ActorHelper:getFacePitch(toobjid)
-        PlayerHelper:setPosition(toobjid, player.x, player.y, player.z)
-        ActorHelper:setFaceYaw(toobjid, yaw)
-        ActorHelper:setFacePitch(toobjid, pitch)
-        ActorHelper:appendSpeed(toobjid, 0, 0.6, 0)
-        -- ActorHelper:appendSpeed(toobjid, 0, -player.ySpeed, 0)
-      else
-        local hasProtectBuff = ActorHelper:hasBuff(toobjid, MyMap.BUFF.PROTECT)
-        if (hasProtectBuff) then
+      if (ActorHelper:hasBuff(toobjid, MyMap.BUFF.FEARLESS)) then -- 玩家有了无畏buff
+        player:knockCreature(objid)
+      else -- 正常情况
+        local eyeHeight
+        if (actorid == 3400) then -- 鸡
+          eyeHeight = 0.2
         else
-          local dimension = PlayerHelper:getDimension(toobjid)
-          if (dimension > 1) then
-            ActorHelper:addBuff(toobjid, MyMap.BUFF.PROTECT, nil, 60)
-            PlayerHelper:setDimension(toobjid, 1)
+          eyeHeight = ActorHelper:getEyeHeight(objid)
+        end
+        local x, y, z = ActorHelper:getPosition(objid)
+        -- LogHelper:debug(y + eyeHeight)
+        -- LogHelper:debug(player.y)
+        if (y + eyeHeight < player.y) then -- 在玩家下方
+          -- 生物假死30秒
+          -- ActorHelper:killSelf(objid)
+          player:knockCreature(objid)
+
+          -- 玩家一个小跳效果
+          local yaw = ActorHelper:getFaceYaw(toobjid)
+          local pitch = ActorHelper:getFacePitch(toobjid)
+          PlayerHelper:setPosition(toobjid, player.x, player.y, player.z)
+          ActorHelper:setFaceYaw(toobjid, yaw)
+          ActorHelper:setFacePitch(toobjid, pitch)
+          ActorHelper:appendSpeed(toobjid, 0, 0.6, 0)
+          -- ActorHelper:appendSpeed(toobjid, 0, -player.ySpeed, 0)
+        else
+          local hasProtectBuff = ActorHelper:hasBuff(toobjid, MyMap.BUFF.PROTECT)
+          if (hasProtectBuff) then
           else
-            ActorHelper:killSelf(toobjid)
+            local dimension = PlayerHelper:getDimension(toobjid)
+            if (dimension > 1) then
+              ActorHelper:addBuff(toobjid, MyMap.BUFF.PROTECT, nil, 60)
+              PlayerHelper:setDimension(toobjid, 1)
+            else
+              ActorHelper:killSelf(toobjid)
+            end
           end
         end
       end
-    end
+    end -- 碰撞怪物结束
   end
 end
 

@@ -23,6 +23,19 @@ function MyPlayer:new (objid)
   return o
 end
 
+-- 打倒生物
+function MyPlayer:knockCreature (objid)
+  CreatureHelper:setHp(objid, 0)
+  TimeHelper:callFnAfterSecond(function ()
+    local maxHp = CreatureHelper:getMaxHp(objid)
+    if (maxHp) then
+      CreatureHelper:setHp(objid, maxHp)
+    else
+      self:knockCreature(objid)
+    end
+  end, 30)
+end
+
 -- 头顶方块
 function MyPlayer:headHitBlock (isHide)
   -- local forceSpeed = -self.ySpeed
