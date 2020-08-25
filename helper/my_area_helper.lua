@@ -3,7 +3,10 @@ MyAreaHelper = {
   doorPositionData = {},
   doorPositions = {},
   hideBlock = {},
-  hideBlockAreas = {}
+  hideBlockAreas = {},
+  checkPoint = {
+    { 0.5, 57.5 }
+  }
 }
 
 -- 初始化

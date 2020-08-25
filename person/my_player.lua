@@ -12,7 +12,8 @@ function MyPlayer:new (objid)
     zSpeed = 0, -- 横向速度，此处是位移表示
     walkSpeed = 0,
     notDead = true, -- 未死亡
-    fallHeight = 0 -- 下落高度
+    fallHeight = 0, -- 下落高度
+    checkPoint = 1 -- 当前关卡
   }
   o.action = BasePlayerAction:new(o)
   o.attr = BasePlayerAttr:new(o)

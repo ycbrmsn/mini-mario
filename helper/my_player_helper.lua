@@ -110,6 +110,11 @@ function MyPlayerHelper:playerDie (objid, toobjid)
   local player = PlayerHelper:getPlayer(objid)
   player.notDead = false
   PlayerHelper:setDimension(objid, 1) -- 尺寸恢复1
+  -- 设置重生位置
+  local checkPointInfo = MyAreaHelper.checkPoint[player.checkPoint]
+  local pos = player:getMyPosition()
+  local x, y, z = checkPointInfo[1], checkPointInfo[2], math.ceil(pos.z / 100) * 100 + 0.5
+  PlayerHelper:setRevivePoint(objid, x, y, z)
 end
 
 -- 玩家复活
@@ -120,7 +125,7 @@ function MyPlayerHelper:playerRevive (objid, toobjid)
   local player = PlayerHelper:getPlayer(objid)
   player.notDead = true
   ActorHelper:setFaceYaw(objid, 0)
-  PlayerHelper:rotateCamera(objid, 90, 0)
+  ActorHelper:addBuff(objid, MyMap.BUFF.PROTECT, nil, 60)
 end
 
 -- 玩家选择快捷栏
