@@ -13,7 +13,9 @@ function MyPlayer:new (objid)
     walkSpeed = 0,
     notDead = true, -- 未死亡
     fallHeight = 0, -- 下落高度
-    checkPoint = 1 -- 当前关卡
+    checkPoint = 1, -- 当前关卡
+    revivePoint = nil, -- 重生点
+    isWatchStyle = false -- 是否是观战模式
   }
   o.action = BasePlayerAction:new(o)
   o.attr = BasePlayerAttr:new(o)

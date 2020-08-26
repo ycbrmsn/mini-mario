@@ -78,7 +78,8 @@ function MyActorHelper:actorCollide (objid, toobjid)
           -- ActorHelper:appendSpeed(toobjid, 0, -player.ySpeed, 0)
         else
           local hasProtectBuff = ActorHelper:hasBuff(toobjid, MyMap.BUFF.PROTECT)
-          if (hasProtectBuff) then
+          local hasContinueBuff = ActorHelper:hasBuff(toobjid, MyMap.BUFF.CONTINUE)
+          if (hasProtectBuff or hasContinueBuff) then
           else
             local dimension = PlayerHelper:getDimension(toobjid)
             if (dimension > 1) then

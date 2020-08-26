@@ -10,8 +10,8 @@ function MyPlayerHelper:playerEnterGame (objid)
   PlayerHelper:playerEnterGame(objid)
   MyStoryHelper:playerEnterGame(objid)
   -- body
-  -- PlayerHelper:rotateCamera(objid, ActorHelper.FACE_YAW.WEST, 0) -- 看向正东方
   PlayerHelper:setActionAttrState(objid, PLAYERATTR.ENABLE_BEATTACKED, false) -- 不可被攻击
+  BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 5) -- 五颗续命药丸
   ActorHelper:setMyPosition(objid, self.initPosition)
   ActorHelper:setFaceYaw(objid, 0)
   PlayerHelper:rotateCamera(objid, 90, 0)
@@ -69,6 +69,20 @@ end
 function MyPlayerHelper:playerAddItem (objid, itemid, itemnum)
   PlayerHelper:playerAddItem(objid, itemid, itemnum)
   MyStoryHelper:playerAddItem(objid, itemid, itemnum)
+  -- body
+  local player = PlayerHelper:getPlayer(objid)
+  if (itemid == MyMap.ITEM.BOTTLE) then
+    BackpackHelper:removeGridItemByItemID(objid, itemid, itemnum)
+    if (player.isWatchStyle) then -- 观战模式
+      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5 - 1)
+      ActorHelper:addBuff(objid, MyMap.BUFF.CONTINUE, 1, 60)
+      player.isWatchStyle = false
+      local pos = player.revivePoint
+      player:setMyPosition(pos.x, pos.y, pos.z) -- 重回复活点
+    else
+      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5) -- 五倍
+    end
+  end
 end
 
 -- 玩家使用道具
@@ -114,6 +128,7 @@ function MyPlayerHelper:playerDie (objid, toobjid)
   local checkPointInfo = MyAreaHelper.checkPoint[player.checkPoint]
   local pos = player:getMyPosition()
   local x, y, z = checkPointInfo[1], checkPointInfo[2], math.ceil(pos.z / 100) * 100 + 0.5
+  player.revivePoint = MyPosition:new(x, y, z)
   PlayerHelper:setRevivePoint(objid, x, y, z)
 end
 
@@ -125,7 +140,15 @@ function MyPlayerHelper:playerRevive (objid, toobjid)
   local player = PlayerHelper:getPlayer(objid)
   player.notDead = true
   ActorHelper:setFaceYaw(objid, 0)
-  ActorHelper:addBuff(objid, MyMap.BUFF.PROTECT, nil, 60)
+  local pillNum = BackpackHelper:getItemNumAndGrid2(objid, MyMap.ITEM.PILL)
+  if (pillNum > 0) then -- 还有续命药丸
+    BackpackHelper:removeGridItemByItemID(objid, MyMap.ITEM.PILL, 1)
+  else -- 没有续命药丸了
+    player.isWatchStyle = true
+    local pos = player.revivePoint
+    player:setMyPosition(pos.x - 2, pos.y, pos.z)
+    ChatHelper:sendMsg(objid, '生命耗尽，可在商店购买续命药瓶')
+  end
 end
 
 -- 玩家选择快捷栏

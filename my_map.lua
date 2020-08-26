@@ -8,13 +8,16 @@ MyMap = {
   },
   ITEM = {
     COIN = 4099, -- 幸运币
-    ROAST_CHICKEN = 12558 -- 烤鸡
+    BOTTLE = 4102, -- 续命药瓶
+    PILL = 4103, -- 续命药丸
+    ROAST_CHICKEN = 12558, -- 烤鸡
   },
   ACTOR = {
     STAR = 3, -- 黄星星
     MUSHROOM = 4 -- 红蘑菇
   },
   BUFF = {
+    CONTINUE = 999, -- 继续探险
     PROTECT = 50000001, -- 缩小保护
     FEARLESS = 50000002 -- 无畏
   },
