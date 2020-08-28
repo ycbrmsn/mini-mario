@@ -22,7 +22,7 @@ MyMap = {
     FEARLESS = 50000002 -- 无畏
   },
   CUSTOM = {
-
+    PROJECTILE_HURT = 6, -- 通用投掷物固定伤害
   }
 }
 
