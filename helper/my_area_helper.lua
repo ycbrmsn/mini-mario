@@ -6,7 +6,11 @@ MyAreaHelper = {
   hideBlockAreas = {},
   checkPoint = {
     { 0.5, 57.5 }
-  }
+  },
+  passPoints = { -- 过关区域点
+    { 0, 57, -330 }
+  },
+  passAreas = {} -- 过关区域
 }
 
 -- 初始化
@@ -15,6 +19,7 @@ function MyAreaHelper:init ()
   self:initShowToastAreas()
   -- body
   MyAreaHelper:initHideBlocks()
+  MyAreaHelper:initPassAreas()
 end
 
 -- 初始化显示飘窗区域
@@ -43,13 +48,23 @@ function MyAreaHelper:getDoorPositions ()
   return self.doorPositions
 end
 
--- 初始化隐藏方块
-function MyAreaHelper:initHideBlocks ()
-  for i, v in ipairs(self.hideBlock) do
+-- 根据位置数据初始化区域
+function MyAreaHelper:initAreaByData (data, areas)
+  for i, v in ipairs(data) do
     local pos = MyPosition:new(v[1], v[2], v[3])
     local areaid = AreaHelper:getAreaByPos(pos)
-    table.insert(self.hideBlockAreas, areaid)
+    table.insert(areas, areaid)
   end
+end
+
+-- 初始化隐藏方块
+function MyAreaHelper:initHideBlocks ()
+  MyAreaHelper:initAreaByData(self.hideBlock, self.hideBlockAreas)
+end
+
+-- 初始化过关区域
+function MyAreaHelper:initPassAreas ()
+  MyAreaHelper:initAreaByData(self.passPoints, self.passAreas)
 end
 
 -- 是否进入隐藏方块区域
@@ -60,4 +75,13 @@ function MyAreaHelper:doesEnterHideBlockArea (areaid)
     end
   end
   return false
+end
+
+-- 是否进入过关区域 返回boolean、 number
+function MyAreaHelper:doesEnterPassArea (areaid)
+  for i, v in ipairs(self.passAreas) do
+    if (v == areaid) then
+      return true, i
+    end
+  end
 end

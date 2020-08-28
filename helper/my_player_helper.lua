@@ -31,19 +31,21 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
   PlayerHelper:playerEnterArea(objid, areaid)
   MyStoryHelper:playerEnterArea(objid, areaid)
   -- body
-  -- if (MyAreaHelper:doesEnterHideBlockArea(areaid)) then -- 进入隐藏方块区域
-  -- 目前规定所有区域均为隐藏区域
-  local player = PlayerHelper:getPlayer(objid)
-  local pos = player:getMyPosition()
-  if (pos.y - player.y > 0) then -- 在上升中
-    local dimension = PlayerHelper:getDimension(objid)
-    local height = (ActorHelper:getEyeHeight(objid) + 0.6) * dimension
-    if (AreaHelper:posInArea(MyPosition:new(pos.x, pos.y + height, pos.z), areaid)) then
-      AreaHelper:fillBlock(areaid, 104) -- 填充岩石
-      player:headHitBlock(true)
+  local isPass, index = MyAreaHelper:doesEnterPassArea(areaid)
+  if (isPass) then -- 过关
+    PlayerHelper:setGameWin(objid)
+  else -- 进入隐藏方块区域
+    local player = PlayerHelper:getPlayer(objid)
+    local pos = player:getMyPosition()
+    if (pos.y - player.y > 0) then -- 在上升中
+      local dimension = PlayerHelper:getDimension(objid)
+      local height = (ActorHelper:getEyeHeight(objid) + 0.6) * dimension
+      if (AreaHelper:posInArea(MyPosition:new(pos.x, pos.y + height, pos.z), areaid)) then
+        AreaHelper:fillBlock(areaid, 104) -- 填充岩石
+        player:headHitBlock(true)
+      end
     end
   end
-  -- end
 end
 
 -- 玩家离开区域
