@@ -4,8 +4,9 @@ MyBlockHelper = {
   unableDestroyed = {},
   luckyBlockData = { -- x, y, z, category, num
     { 0, 60, -8, 3, 1 },
-    { 0, 62, -36, 1, 6 },
-    { 0, 60, -135, 2, 1 }
+    { 0, 62, -35, 1, 6 },
+    { 0, 60, -135, 2, 1 },
+    { 0, 67, -270, 3, 1 }
   },
   luckyBlockInfos = {}
 }

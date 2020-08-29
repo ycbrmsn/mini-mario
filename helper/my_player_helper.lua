@@ -73,7 +73,7 @@ function MyPlayerHelper:playerAddItem (objid, itemid, itemnum)
   MyStoryHelper:playerAddItem(objid, itemid, itemnum)
   -- body
   local player = PlayerHelper:getPlayer(objid)
-  if (itemid == MyMap.ITEM.BOTTLE) then
+  if (itemid == MyMap.ITEM.BOTTLE) then -- 续命药瓶
     BackpackHelper:removeGridItemByItemID(objid, itemid, itemnum)
     if (player.isWatchStyle) then -- 观战模式
       BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5 - 1)
@@ -83,6 +83,12 @@ function MyPlayerHelper:playerAddItem (objid, itemid, itemnum)
       player:setMyPosition(pos.x, pos.y, pos.z) -- 重回复活点
     else
       BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5) -- 五倍
+    end
+  elseif (itemid == MyMap.ITEM.COIN) then -- 幸运币
+    local num = BackpackHelper:getItemNumAndGrid(objid, itemid)
+    if (num >= 100) then
+      BackpackHelper:removeGridItemByItemID(objid, itemid, 100)
+      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 1)
     end
   end
 end
