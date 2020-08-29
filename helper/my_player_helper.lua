@@ -16,7 +16,7 @@ function MyPlayerHelper:playerEnterGame (objid)
   ActorHelper:setFaceYaw(objid, 0)
   PlayerHelper:rotateCamera(objid, 90, 0)
   PlayerHelper:setRevivePoint(objid, self.initPosition.x, self.initPosition.y, self.initPosition.z)
-  MusicHelper:playBGM(objid, BGM[1], true)
+  MusicHelper:startBGM(objid, 1, true)
 end
 
 -- 玩家离开游戏
