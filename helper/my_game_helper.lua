@@ -38,11 +38,17 @@ function MyGameHelper:fasterTheSameDir (player, z)
 end
 
 -- 头顶到方块
-function MyGameHelper:headHitBlock (player, y)
+function MyGameHelper:headHitBlock (player, x, y, z)
   local ySpeed = y - player.y
   if (ySpeed == 0) then -- 突然变为0
     if (player.ySpeed > 0) then -- 处于上升状态
-      player:headHitBlock()
+      -- 联网还需要判断头上方是否有方块
+      local dimension = PlayerHelper:getDimension(player.objid)
+      local height = (ActorHelper:getEyeHeight(player.objid) + 0.6) * dimension
+      if (not(BlockHelper:isAirBlock(x, y + height, z))) then
+        LogHelper:debug('head')
+        player:headHitBlock()
+      end
     end
   end
   if (player.ySpeed >= 0 and ySpeed < 0) then -- 开始下落
@@ -73,12 +79,11 @@ function MyGameHelper:runGame ()
   -- body
   for i, v in ipairs(PlayerHelper:getAllPlayers()) do
     if (v:isActive()) then
-      ActorHelper:appendSpeed(objid, 0, -self.gravity, 0) -- 添加重力
       local x, y, z = ActorHelper:getPosition(v.objid)
       if (x) then
         if (not(MyGameHelper:judgeDeath(v, y))) then -- 玩家没有位置过低死亡
           MyGameHelper:fasterTheSameDir(v, z) -- 同向加速
-          MyGameHelper:headHitBlock(v, y)
+          MyGameHelper:headHitBlock(v, x, y, z)
           v.x, v.y, v.z = x, y, z
           -- LogHelper:debug(v.y)
         end
