@@ -688,3 +688,17 @@ function PlayerHelper:setRevivePoint (objid, x, y, z)
     return Player:setRevivePoint(objid, x, y, z)
   end, nil, onceFailMessage, finillyFailMessage)
 end
+
+-- 是否是本地玩家
+function PlayerHelper:isMainPlayer (objid)
+  return Player:isMainPlayer(objid) == ErrorCode.OK
+end
+
+-- 获取本地玩家的uin
+function PlayerHelper:getMainPlayerUin ()
+  local onceFailMessage = '获取本地玩家的uin失败一次'
+  local finillyFailMessage = StringHelper:concat('获取本地玩家的uin失败')
+  return CommonHelper:callOneResultMethod(function (p)
+    return Player:getMainPlayerUin()
+  end, nil, onceFailMessage, finillyFailMessage)
+end

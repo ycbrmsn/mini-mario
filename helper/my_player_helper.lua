@@ -178,6 +178,12 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   -- body
   if (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
     ActorHelper:appendSpeed(objid, 0, 0.6, 0)
+  elseif (playermotion == PLAYERMOTION.STATIC) then -- 静止
+    -- local player = PlayerHelper:getPlayer(objid)
+    -- player.isRunning = false
+    LogHelper:debug('静止')
+  elseif (playermotion == PLAYERMOTION.WALK) then -- 行走
+    LogHelper:debug('行走')
   end
 end
 

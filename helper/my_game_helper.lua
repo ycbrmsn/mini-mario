@@ -1,9 +1,9 @@
 -- 我的游戏工具类
 MyGameHelper = {
-  defaultWalkSpeed = 10, -- 初始速度
+  defaultWalkSpeed = 8, -- 初始速度
   onceAppendWalkSpeed = 1, -- 一次增加速度
   maxWalkSpeed = 40, -- 最大增加速度
-  gravity = 0.005, -- 每秒追加重力
+  index = 0, -- 帧序数
 }
 
 -- 判断是否因为位置过低需要死去
@@ -17,12 +17,13 @@ function MyGameHelper:judgeDeath (player, y)
 end
 
 -- 同向加速
-function MyGameHelper:fasterTheSameDir (player, z)
+function MyGameHelper:fasterTheSameDir (player, z, isMainPlayer)
   local dir = ActorHelper:getCurPlaceDir(player.objid)
   if (player.z) then
     player.zSpeed = math.abs(z - player.z)
   end
-  if (player.zSpeed > 0.15) then -- 在移动
+  if ((isMainPlayer and player.zSpeed > 0.15) or 
+    (not(isMainPlayer) and (player.zSpeed > 0.15 or player.isRunning))) then -- 在移动
     if (dir == player.dir) then -- 同向
       if (player.walkSpeed < self.maxWalkSpeed) then
         player.walkSpeed = player.walkSpeed + self.onceAppendWalkSpeed
@@ -38,16 +39,19 @@ function MyGameHelper:fasterTheSameDir (player, z)
 end
 
 -- 头顶到方块
-function MyGameHelper:headHitBlock (player, x, y, z)
+function MyGameHelper:headHitBlock (player, x, y, z, isMainPlayer)
   local ySpeed = y - player.y
   if (ySpeed == 0) then -- 突然变为0
     if (player.ySpeed > 0) then -- 处于上升状态
-      -- 联网还需要判断头上方是否有方块
-      local dimension = PlayerHelper:getDimension(player.objid)
-      local height = (ActorHelper:getEyeHeight(player.objid) + 0.6) * dimension
-      if (not(BlockHelper:isAirBlock(x, y + height, z))) then
-        LogHelper:debug('head')
+      if (isMainPlayer) then
         player:headHitBlock()
+      else
+        -- 联网玩家还需要判断头上方是否有方块
+        local dimension = PlayerHelper:getDimension(player.objid)
+        local height = (ActorHelper:getEyeHeight(player.objid) + 0.6) * dimension
+        if (not(BlockHelper:isAirBlock(x, y + height, z))) then
+          player:headHitBlock()
+        end
       end
     end
   end
@@ -76,17 +80,25 @@ end
 -- 游戏运行时
 function MyGameHelper:runGame ()
   GameHelper:runGame()
+  self.index = self.index + 1
   -- body
-  for i, v in ipairs(PlayerHelper:getAllPlayers()) do
-    if (v:isActive()) then
-      local x, y, z = ActorHelper:getPosition(v.objid)
-      if (x) then
-        if (not(MyGameHelper:judgeDeath(v, y))) then -- 玩家没有位置过低死亡
-          MyGameHelper:fasterTheSameDir(v, z) -- 同向加速
-          MyGameHelper:headHitBlock(v, x, y, z)
-          v.x, v.y, v.z = x, y, z
-          -- LogHelper:debug(v.y)
+  for i, v in ipairs(PlayerHelper:getActivePlayers()) do
+    local x, y, z = ActorHelper:getPosition(v.objid)
+    if (x) then
+      if (not(MyGameHelper:judgeDeath(v, y))) then -- 玩家没有位置过低死亡
+        local isMainPlayer = PlayerHelper:isMainPlayer(v.objid)
+        MyGameHelper:fasterTheSameDir(v, z, isMainPlayer) -- 同向加速
+        MyGameHelper:headHitBlock(v, x, y, z, isMainPlayer)
+        v.x, v.y, v.z = x, y, z
+        -- LogHelper:debug(v.y)
+      end
+      if (self.index % 20 == 0) then
+        if (math.abs(v.sz - z) > 2) then
+          v.isRunning = true
+        else
+          v.isRunning = false
         end
+        v.sz = z
       end
     end
   end

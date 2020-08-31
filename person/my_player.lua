@@ -15,7 +15,9 @@ function MyPlayer:new (objid)
     fallHeight = 0, -- 下落高度
     checkPoint = 1, -- 当前关卡
     revivePoint = nil, -- 重生点
-    isWatchStyle = false -- 是否是观战模式
+    isWatchStyle = false, -- 是否是观战模式
+    sz = 0, -- 每秒z轴位置，用于判断1秒内是否移动
+    isRunning = false
   }
   o.action = BasePlayerAction:new(o)
   o.attr = BasePlayerAttr:new(o)
