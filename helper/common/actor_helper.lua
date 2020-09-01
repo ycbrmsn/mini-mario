@@ -377,7 +377,6 @@ function ActorHelper:isInAir (objid, x, y, z)
     not(BlockHelper:isAirBlock(x + r, y, z)) or
     not(BlockHelper:isAirBlock(x, y, z - r)) or
     not(BlockHelper:isAirBlock(x, y, z + r))) then -- 生物位置不是空气
-    LogHelper:debug('reason1')
     return false
   else
     y = y - 1
@@ -386,7 +385,6 @@ function ActorHelper:isInAir (objid, x, y, z)
       BlockHelper:isAirBlock(x + r, y, z) and
       BlockHelper:isAirBlock(x, y, z - r) and
       BlockHelper:isAirBlock(x, y, z + r)) then -- 生物下方位置是空气
-      LogHelper:debug('reason2')
       return true
     else -- 下方位置不是空气
       -- 判断玩家位置是不是很接近与整数
