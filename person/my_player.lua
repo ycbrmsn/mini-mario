@@ -4,9 +4,9 @@ MyPlayer = BasePlayer:new()
 function MyPlayer:new (objid)
   local o = {
     objid = objid,
-    x = nil,
+    x = 0,
     y = 0,
-    z = nil,
+    z = 0,
     dir = FACE_DIRECTION.DIR_NEG_Z, -- 默认朝南
     ySpeed = 0, -- 纵向速度
     zSpeed = 0, -- 横向速度，此处是位移表示

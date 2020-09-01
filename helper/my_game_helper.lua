@@ -1,6 +1,6 @@
 -- 我的游戏工具类
 MyGameHelper = {
-  defaultWalkSpeed = 8, -- 初始速度
+  defaultWalkSpeed = 10, -- 初始速度
   onceAppendWalkSpeed = 1, -- 一次增加速度
   maxWalkSpeed = 40, -- 最大增加速度
   index = 0, -- 帧序数
@@ -86,6 +86,7 @@ function MyGameHelper:runGame ()
     local x, y, z = ActorHelper:getPosition(v.objid)
     if (x) then
       if (not(MyGameHelper:judgeDeath(v, y))) then -- 玩家没有位置过低死亡
+        -- LogHelper:debug(z)
         local isMainPlayer = PlayerHelper:isMainPlayer(v.objid)
         MyGameHelper:fasterTheSameDir(v, z, isMainPlayer) -- 同向加速
         MyGameHelper:headHitBlock(v, x, y, z, isMainPlayer)
