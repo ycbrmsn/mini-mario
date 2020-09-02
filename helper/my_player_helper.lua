@@ -11,8 +11,8 @@ function MyPlayerHelper:playerEnterGame (objid)
   MyStoryHelper:playerEnterGame(objid)
   -- body
   PlayerHelper:setActionAttrState(objid, PLAYERATTR.ENABLE_BEATTACKED, false) -- 不可被攻击
-  BackpackHelper:setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 跳跃键
-  PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP) -- 不可丢弃
+  -- BackpackHelper:setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 跳跃键
+  -- PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP) -- 不可丢弃
   BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 5) -- 五颗续命药丸
   ActorHelper:setMyPosition(objid, self.initPosition)
   ActorHelper:setFaceYaw(objid, 0)
@@ -166,12 +166,12 @@ function MyPlayerHelper:playerSelectShortcut (objid, toobjid, itemid, itemnum)
   PlayerHelper:playerSelectShortcut(objid, toobjid, itemid, itemnum)
   MyStoryHelper:playerSelectShortcut(objid, toobjid, itemid, itemnum)
   -- body
-  local player = PlayerHelper:getPlayer(objid)
-  if (itemid == MyMap.ITEM.JUMP) then -- 跳跃键
-    if (not(ActorHelper:isInAir(objid, player.x, player.y, player.z))) then
-      ActorHelper:appendSpeed(objid, 0, 1, 0)
-    end
-  end
+  -- local player = PlayerHelper:getPlayer(objid)
+  -- if (itemid == MyMap.ITEM.JUMP) then -- 跳跃键
+  --   if (not(ActorHelper:isInAir(objid, player.x, player.y, player.z))) then
+  --     ActorHelper:appendSpeed(objid, 0, 1, 0)
+  --   end
+  -- end
 end
 
 -- 玩家快捷栏变化
@@ -187,11 +187,11 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   -- body
   local player = PlayerHelper:getPlayer(objid)
   if (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
-    
-  elseif (playermotion == PLAYERMOTION.STATIC) then -- 静止
+    ActorHelper:appendSpeed(objid, 0, 0.6, 0)
+  -- elseif (playermotion == PLAYERMOTION.STATIC) then -- 静止
     -- player.isRunning = false
     -- LogHelper:debug('静止')
-  elseif (playermotion == PLAYERMOTION.WALK) then -- 行走
+  -- elseif (playermotion == PLAYERMOTION.WALK) then -- 行走
     -- LogHelper:debug('行走')
   -- elseif (playermotion == PLAYERMOTION.FALL_GROUND) then -- 落地
     
