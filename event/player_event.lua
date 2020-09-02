@@ -32,7 +32,7 @@ end
 local playerUseItem = function (event)
   local objid = event['eventobjid']
   LogHelper:call(function ()
-    MyPlayerHelper:playerUseItem(objid, toobjid, itemid, itemnum)
+    MyPlayerHelper:playerUseItem(objid, event.toobjid, event.itemid, event.itemnum)
   end)
 end
 

@@ -115,7 +115,7 @@ end
 
 -- 玩家击败目标
 function MyPlayerHelper:playerDefeatActor (objid, toobjid)
-  PlayerHelper:playerDefeatActor(objid, toobjid)
+  local realDefeat = PlayerHelper:playerDefeatActor(objid, toobjid)
   MyStoryHelper:playerDefeatActor(objid, toobjid)
   -- body
 end
@@ -166,6 +166,7 @@ function MyPlayerHelper:playerSelectShortcut (objid, toobjid, itemid, itemnum)
   PlayerHelper:playerSelectShortcut(objid, toobjid, itemid, itemnum)
   MyStoryHelper:playerSelectShortcut(objid, toobjid, itemid, itemnum)
   -- body
+  local player = PlayerHelper:getPlayer(objid)
   if (itemid == MyMap.ITEM.JUMP) then -- 跳跃键
     if (not(ActorHelper:isInAir(objid, player.x, player.y, player.z))) then
       ActorHelper:appendSpeed(objid, 0, 1, 0)
