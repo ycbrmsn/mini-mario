@@ -696,72 +696,52 @@ end
 
 -- 向目标位置移动
 function ActorHelper:tryMoveToPos (objid, x, y, z, speed)
-  local onceFailMessage = '向目标移动失败一次'
-  local finillyFailMessage = StringHelper:concat('向目标移动失败，参数：objid=', objid,
-    ', x=', x, ', y=', y, ', z=', z, ', speed=', speed)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:tryMoveToPos(objid, x, y, z, speed)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '向目标位置移动', 'objid=', objid, ',x=', x, ',y=', y, ',z=', z, ',speed=', speed)
 end
 
 -- 寻路到目标位置
 function ActorHelper:tryNavigationToPos (objid, x, y, z, cancontrol)
-  local onceFailMessage = '寻路到目标位置失败一次'
-  local finillyFailMessage = StringHelper:concat('寻路到目标位置失败，参数：objid=', objid,
-    ', x=', x, ', y=', y, ', z=', z, ', cancontrol=', cancontrol)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:tryNavigationToPos(objid, x, y, z, cancontrol)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '寻路到目标位置', 'objid=', objid, ',x=', x, ',y=', y, ',z=', z,
+    ',cancontrol=', cancontrol)
 end
 
 -- 设置生物行为状态
 function ActorHelper:setActionAttrState (objid, actionattr, switch)
-  local onceFailMessage = '设置生物行为状态失败一次'
-  local finillyFailMessage = StringHelper:concat('设置生物行为状态失败，参数：objid=',
-    objid, ', actionattr=', actionattr, ', switch=', switch)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:setActionAttrState(objid, actionattr, switch)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '设置生物行为状态', 'objid=', objid, ',actionattr=', actionattr, ',switch=', switch)
 end
 
 -- 获取生物行为状态
 function ActorHelper:getActionAttrState (objid, actionattr)
-  local onceFailMessage = '获取生物行为状态失败一次'
-  local finillyFailMessage = StringHelper:concat('获取生物行为状态失败，参数：objid=',
-    objid, ', actionattr=', actionattr)
   return CommonHelper:callOneResultMethod(function (p)
     return Actor:getActionAttrState(objid, actionattr)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '获取生物行为状态', 'objid=', objid, ',actionattr=', actionattr)
 end
 
 -- 获取生物位置
 function ActorHelper:getPosition (objid)
-  local onceFailMessage = '获取生物位置失败一次'
-  -- local finillyFailMessage = StringHelper:concat('获取生物位置失败，参数：objid=', objid)
-  local finillyFailMessage = nil
   return CommonHelper:callThreeResultMethod(function (p)
     return Actor:getPosition(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, nil, 'objid=', objid)
 end
 
 -- 设置生物位置
 function ActorHelper:setPosition (objid, x, y, z)
-  local onceFailMessage = '设置生物位置失败一次'
-  local finillyFailMessage = StringHelper:concat('设置生物位置失败，参数：objid=', objid,
-    ', x=', x, ', y=', y, ', z=', z)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:setPosition(objid, x, y, z)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '设置生物位置', 'objid=', objid, ',x=', x, ',y=', y, ',z=', z)
 end
 
 -- 清除生物ID为actorid的生物
 function ActorHelper:clearActorWithId (actorid, bkill)
-  local onceFailMessage = '清除生物失败一次'
-  local finillyFailMessage = StringHelper:concat('清除生物失败，参数：actorid=', actorid,
-    ', bkill=', bkill)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:clearActorWithId(actorid, bkill)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '清除生物ID为actorid的生物', 'actorid=', actorid, ',bkill=', bkill)
 end
 
 -- 是否是玩家
@@ -771,58 +751,45 @@ end
 
 -- 播放动作
 function ActorHelper:playAct (objid, actid)
-  local onceFailMessage = '播放动作失败一次'
-  local finillyFailMessage = StringHelper:concat('播放动作失败，参数：objid=', objid, ', actid=', actid)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:playAct(objid, actid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '播放动作', 'objid=', objid, ',actid=', actid)
 end
 
 -- 获取当前朝向
 function ActorHelper:getCurPlaceDir (objid)
-  local onceFailMessage = '获取当前朝向失败一次'
-  local finillyFailMessage = StringHelper:concat('获取当前朝向失败，参数：objid=', objid)
   return CommonHelper:callOneResultMethod(function (p)
     return Actor:getCurPlaceDir(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '获取当前朝向', 'objid=', objid)
 end
 
 -- 增加指定BUFF
 function ActorHelper:addBuff (objid, buffid, bufflv, customticks)
-  local onceFailMessage = '增加指定BUFF失败一次'
-  local finillyFailMessage = StringHelper:concat('增加指定BUFF失败，参数：objid=', objid,
-    ', buffid=', buffid, ', bufflv=', bufflv, ', customticks=', customticks)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:addBuff(objid, buffid, bufflv, customticks)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '增加指定BUFF', 'objid=', objid, ',buffid=', buffid, ',bufflv=', bufflv,
+    ',customticks=', customticks)
 end
 
 -- 移除指定BUFF
 function ActorHelper:removeBuff (objid, buffid)
-  local onceFailMessage = '移除指定BUFF失败一次'
-  local finillyFailMessage = StringHelper:concat('移除指定BUFF失败，参数：objid=', objid,
-    ', buffid=', buffid)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:removeBuff(objid, buffid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '移除指定BUFF', 'objid=', objid,',buffid=', buffid)
 end
 
 -- 清除全部BUFF
 function ActorHelper:clearAllBuff (objid)
-  local onceFailMessage = '清除全部BUFF失败一次'
-  local finillyFailMessage = StringHelper:concat('清除全部BUFF失败，参数：objid=', objid)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:clearAllBuff(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '清除全部BUFF', 'objid=', objid)
 end
 
 -- 清除全部减益BUFF
 function ActorHelper:clearAllBadBuff (objid)
-  local onceFailMessage = '清除全部减益BUFF失败一次'
-  local finillyFailMessage = StringHelper:concat('清除全部减益BUFF失败，参数：objid=', objid)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:clearAllBadBuff(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '清除全部减益BUFF', 'objid=', objid)
 end
 
 -- 是否已经有了指定BUFF
@@ -832,127 +799,95 @@ end
 
 -- 设置actor原地旋转偏移角度
 function ActorHelper:setFaceYaw (objid, yaw)
-  local onceFailMessage = '设置actor原地旋转偏移角度失败一次'
-  local finillyFailMessage = StringHelper:concat('设置actor原地旋转偏移角度失败，参数：objid=',
-    objid, ', yaw=', yaw)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:setFaceYaw(objid, yaw)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '设置actor原地旋转偏移角度', 'objid=', objid, ',yaw=', yaw)
 end
 
 -- 获取actor原地旋转偏移角度
 function ActorHelper:getFaceYaw (objid)
-  local onceFailMessage = '获取actor原地旋转偏移角度失败一次'
-  local finillyFailMessage = StringHelper:concat('获取actor原地旋转偏移角度失败，参数：objid=', objid)
   return CommonHelper:callOneResultMethod(function (p)
     return Actor:getFaceYaw(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '获取actor原地旋转偏移角度', 'objid=', objid)
 end
 
 -- 获取眼睛位置
 function ActorHelper:getEyePosition (objid)
-  local onceFailMessage = '获取眼睛位置失败一次'
-  local finillyFailMessage = StringHelper:concat('获取眼睛位置失败，参数：objid=', objid)
   return CommonHelper:callThreeResultMethod(function (p)
     return Actor:getEyePosition(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '获取眼睛位置', 'objid=', objid)
 end
 
 -- 设置actor视角仰望角度
 function ActorHelper:setFacePitch (objid, pitch)
-  local onceFailMessage = '设置actor视角仰望角度失败一次'
-  local finillyFailMessage = StringHelper:concat('设置actor视角仰望角度失败，参数：objid=',
-    objid, ', pitch=', pitch)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:setFacePitch(objid, pitch)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '设置actor视角仰望角度', 'objid=', objid, ',pitch=', pitch)
 end
 
 -- 获取actor视角仰望角度
 function ActorHelper:getFacePitch (objid)
-  local onceFailMessage = '获取actor视角仰望角度失败一次'
-  local finillyFailMessage = StringHelper:concat('获取actor视角仰望角度失败，参数：objid=', objid)
   return CommonHelper:callOneResultMethod(function (p)
     return Actor:getFacePitch(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '获取actor视角仰望角度', 'objid=', objid)
 end
 
 -- 转动actor仰望偏移角度
 function ActorHelper:turnFacePitch (objid, offset)
-  local onceFailMessage = '转动actor仰望偏移角度失败一次'
-  local finillyFailMessage = StringHelper:concat('转动actor仰望偏移角度失败，参数：objid=',
-    objid, ', pitch=', pitch)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:turnFacePitch(objid, offset)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '转动actor仰望偏移角度', 'objid=', objid, ',offset=', offset)
 end
 
 -- 获取眼睛高度
 function ActorHelper:getEyeHeight (objid)
-  local onceFailMessage = '获取眼睛高度失败一次'
-  local finillyFailMessage = StringHelper:concat('获取眼睛高度失败，参数：objid=', objid)
   return CommonHelper:callOneResultMethod(function (p)
     return Actor:getEyeHeight(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '获取眼睛高度', 'objid=', objid)
 end
 
 -- 在指定Actor身上播放特效
 function ActorHelper:playBodyEffectById (objid, particleId, scale)
-  local onceFailMessage = '在指定Actor身上播放特效失败一次'
-  local finillyFailMessage = StringHelper:concat('在指定玩家身上播放特效失败，参数：objid=',
-    objid, ',particleId=', particleId, ',scale=', scale)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:playBodyEffectById(objid, particleId, scale)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '在指定Actor身上播放特效', 'objid=', objid, ',particleId=', particleId,
+    ',scale=', scale)
 end
 
 -- 停止指定Actor身上的特效
 function ActorHelper:stopBodyEffectById (objid, particleId)
-  local onceFailMessage = '停止指定Actor身上的特效失败一次'
-  local finillyFailMessage = StringHelper:concat('停止指定玩家身上的特效失败，参数：objid=',
-    objid, ',particleId=', particleId)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:stopBodyEffectById(objid, particleId)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '停止指定Actor身上的特效', 'objid=', objid, ',particleId=', particleId)
 end
 
 -- 在指定Actor身上播放音效
 function ActorHelper:playSoundEffectById (objid, soundId, volume, pitch, isLoop)
-  local onceFailMessage = '在指定Actor身上播放音效失败一次'
-  local finillyFailMessage = StringHelper:concat('在指定Actor身上播放音效失败，参数：objid=',
-    objid, ',soundId=', soundId)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:playSoundEffectById(objid, soundId, volume, pitch, isLoop)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '在指定Actor身上播放音效', 'objid=', objid, ',soundId=', soundId, ',volume=',
+    volume, ',pitch=', pitch, ',isLoop=', isLoop)
 end
 
 -- 停止指定Actor身上的音效
 function ActorHelper:stopSoundEffectById (objid, soundId)
-  local onceFailMessage = '停止指定Actor身上的音效失败一次'
-  local finillyFailMessage = StringHelper:concat('停止指定Actor身上的音效失败，参数：objid=',
-    objid, ',soundId=', soundId)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:stopSoundEffectById(objid, soundId)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '停止指定Actor身上的音效', 'objid=', objid, ',soundId=', soundId)
 end
 
 -- 给actor附加一个速度
 function ActorHelper:appendSpeed (objid, x, y, z)
-  local onceFailMessage = '给actor附加一个速度失败一次'
-  local finillyFailMessage = StringHelper:concat('给actor附加一个速度失败，参数：objid=',
-    objid, ',x=', x, ',y=', y, ',z=', z)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:appendSpeed(objid, x, y, z)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '给actor附加一个速度', 'objid=', objid, ',x=', x, ',y=', y, ',z=', z)
 end
 
 -- 杀死自己
 function ActorHelper:killSelf (objid)
-  local onceFailMessage = '杀死自己失败一次'
-  local finillyFailMessage = StringHelper:concat('杀死自己失败，参数：objid=', objid)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:killSelf(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '杀死自己', 'objid=', objid)
 end
 
 -- 是否在空中（2020-09-02测试无效）
@@ -962,36 +897,28 @@ end
 
 -- 设置免疫伤害类型
 function ActorHelper:setImmuneType (objid, immunetype, isadd)
-  local onceFailMessage = '设置免疫伤害类型一次'
-  local finillyFailMessage = StringHelper:concat('设置免疫伤害类型失败，参数：objid=', objid)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Actor:setImmuneType(objid, immunetype, isadd)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '设置免疫伤害类型', 'objid=', objid, ',immunetype=', immunetype, ',isadd=', isadd)
 end
 
 -- 获取对象类型（玩家、生物、投掷物、掉落物等^）
 function ActorHelper:getObjType (objid)
-  local onceFailMessage = '获取对象类型失败一次'
-  local finillyFailMessage = StringHelper:concat('获取对象类型失败，参数：objid=', objid)
   return CommonHelper:callOneResultMethod(function (p)
     return Actor:getObjType(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '获取对象类型', 'objid=', objid)
 end
 
 -- 获取actor朝向
 function ActorHelper:getFaceDirection (objid)
-  local onceFailMessage = '获取actor朝向失败一次'
-  local finillyFailMessage = StringHelper:concat('获取actor朝向失败，参数：objid=', objid)
   return CommonHelper:callThreeResultMethod(function (p)
     return Actor:getFaceDirection(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '获取actor朝向', 'objid=', objid)
 end
 
 -- 获取身体尺寸 w, h
 function ActorHelper:getBodySize (objid)
-  local onceFailMessage = '获取身体尺寸失败一次'
-  local finillyFailMessage = StringHelper:concat('获取身体尺寸失败，参数：objid=', objid)
   return CommonHelper:callTwoResultMethod(function (p)
     return Actor:getBodySize(objid)
-  end, nil, onceFailMessage, finillyFailMessage)
+  end, '获取身体尺寸', 'objid=', objid)
 end
