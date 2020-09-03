@@ -39,7 +39,12 @@ end
 
 -- 获取房主信息
 function PlayerHelper:getHostPlayer ()
-  return self:getAllPlayers()[1]
+  local objid = PlayerHelper:getMainPlayerUin()
+  if (objid) then
+    return PlayerHelper:getPlayer(objid)
+  else
+    return nil
+  end
 end
 
 -- 获取所有玩家信息
@@ -658,4 +663,18 @@ function PlayerHelper:getMainPlayerUin ()
   return CommonHelper:callOneResultMethod(function (p)
     return Player:getMainPlayerUin()
   end, '获取本地玩家的uin')
+end
+
+-- 获取玩家比赛结果 0游戏中 1游戏胜利 2游戏结束
+function PlayerHelper:getGameResults (objid)
+  return CommonHelper:callOneResultMethod(function (p)
+    return Player:getGameResults(objid)
+  end, '获取玩家比赛结果', 'objid=', objid)
+end
+
+-- 设置玩家比赛结果 0游戏中 1游戏胜利 2游戏结束
+function PlayerHelper:setGameResults (objid, result)
+  return CommonHelper:callIsSuccessMethod(function (p)
+    return Player:setGameResults(objid, result)
+  end, '设置玩家比赛结果', 'objid=', objid, ',result=', result)
 end

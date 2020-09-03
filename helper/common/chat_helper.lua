@@ -55,3 +55,14 @@ function UIHelper:setShapeCircle (uiname, x, y, radius)
     return UI:setShapeCircle(uiname, x, y, radius)
   end, '设置圆形标记', 'uiname=', uiname, ',x=', x, ',y=', y, ',radius=', radius)
 end
+
+--[[ 
+  设置战斗总结UI 
+  左标题left_title、右标题right_title、左描述left_desc、左简述left_little_desc、右简述right_little_desc
+  比分导航栏面板按钮battle_btn、比赛结果result、比赛结果底板result_bkg、再来一局按钮reopen
+]]--
+function UIHelper:setGBattleUI (name, value)
+  return CommonHelper:callIsSuccessMethod(function (p)
+    return UI:setGBattleUI(name, value)
+  end, '设置战斗总结UI', 'name=', name, ',value=', value)
+end

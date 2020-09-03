@@ -5,6 +5,7 @@ MyGameHelper = {
   maxWalkSpeed = 40, -- 最大增加速度
   index = 0, -- 帧序数
   timerid = nil, -- 房主计时器
+  totalCheckPoint = 1, -- 总关卡数
 }
 
 -- 判断是否因为位置过低需要死去
@@ -67,6 +68,31 @@ function MyGameHelper:headHitBlock (player, x, y, z, isMainPlayer)
   player.ySpeed = ySpeed
 end
 
+function MyGameHelper:setGBattleUI ()
+  local player = PlayerHelper:getHostPlayer()
+  if (player) then
+    TimerHelper:pauseTimer(self.timerid)
+    local teamid = PlayerHelper:getTeam(player.objid)
+    local teamScore = TeamHelper:getTeamScore(teamid)
+    local time = TimerHelper:getTimerTime(self.timerid)
+    local result = PlayerHelper:getGameResults(player.objid)
+    local score = 100 * self.totalCheckPoint - time + teamScore
+    if (score < teamScore or result == 2) then
+      score = teamScore
+    end
+    local msg
+    if (result) then
+      msg = '成功抵达了终点，得分：'
+    else
+      msg = '在中途被淘汰，得分：'
+    end
+    UIHelper:setGBattleUI('left_desc', player:getName() .. msg .. score)
+    UIHelper:setGBattleUI('left_little_desc', '获得金币数：' .. teamScore / 5)
+    UIHelper:setGBattleUI('right_little_desc', '总耗时：' .. time)
+  end
+  UIHelper:setGBattleUI('result', false)
+end
+
 -- 事件
 
 -- 开始游戏
@@ -109,6 +135,8 @@ end
 -- 结束游戏
 function MyGameHelper:endGame ()
   GameHelper:endGame()
+  -- body
+  MyGameHelper:setGBattleUI()
 end
 
 -- 世界时间到[n]点

@@ -126,3 +126,10 @@ function TimerHelper:showTimerTips (objids, timerid, title, isShow)
   end, '显示计时器窗口', 'objids=', objids, ',timerid=', timerid, ',title=',
     title, ',isShow=', isShow)
 end
+
+-- 暂停计时器
+function TimerHelper:pauseTimer (timerid)
+  return CommonHelper:callIsSuccessMethod(function (p)
+    return MiniTimer:pauseTimer(timerid)
+  end, '停止计时器', 'timerid=', timerid)
+end
