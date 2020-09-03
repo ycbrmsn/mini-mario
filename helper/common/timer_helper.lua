@@ -17,6 +17,7 @@ end
 
 -- 获得一个计时器id
 function TimerHelper:getTimer (timername)
+  timername = timername or 'default'
   local timerid
   -- 查找一个停止的计时器
   for k, v in pairs(self.timerPool) do
@@ -48,8 +49,13 @@ function TimerHelper:stop (timerid)
   return TimerHelper:stopTimer(timerid)
 end
 
+-- 显示计时器窗口
+function TimerHelper:showTips (objids, timerid, title)
+  TimerHelper:showTimerTips(objids, timerid, title, true)
+end
+
 -- 隐藏计时器窗口
-function TimerHelper:hideTimerTips (objids, timerid)
+function TimerHelper:hideTips (objids, timerid)
   TimerHelper:showTimerTips(objids, timerid, nil, false)
 end
 

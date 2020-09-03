@@ -4,6 +4,7 @@ MyGameHelper = {
   onceAppendWalkSpeed = 1, -- 一次增加速度
   maxWalkSpeed = 40, -- 最大增加速度
   index = 0, -- 帧序数
+  timerid = nil, -- 房主计时器
 }
 
 -- 判断是否因为位置过低需要死去
@@ -123,4 +124,10 @@ end
 -- 任意计时器发生变化
 function MyGameHelper:minitimerChange (timerid, timername)
   GameHelper:minitimerChange(timerid, timername)
+  -- body
+  if (self.timerid) then
+    for i, v in ipairs(PlayerHelper:getActivePlayers()) do
+      TimerHelper:showTips({ v.objid }, self.timerid, '')
+    end
+  end
 end

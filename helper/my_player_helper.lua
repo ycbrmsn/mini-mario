@@ -1,6 +1,6 @@
 -- 我的玩家工具类
 MyPlayerHelper = {
-  initPosition = MyPosition:new(0.5, 57.5, 0.5)
+  initPosition = MyPosition:new(0.5, 57.5, 0.5),
 }
 
 -- 事件
@@ -14,10 +14,16 @@ function MyPlayerHelper:playerEnterGame (objid)
   -- BackpackHelper:setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 跳跃键
   -- PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP) -- 不可丢弃
   BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 5) -- 五颗续命药丸
-  ActorHelper:setMyPosition(objid, self.initPosition)
+  ActorHelper:setMyPosition(objid, self.initPosition) -- 初始位置
   ActorHelper:setFaceYaw(objid, 0)
   PlayerHelper:rotateCamera(objid, 90, 0)
   PlayerHelper:setRevivePoint(objid, self.initPosition.x, self.initPosition.y, self.initPosition.z)
+  if (PlayerHelper:isMainPlayer(objid)) then -- 本地玩家，则开始计时
+    -- 游戏开始计时
+    MyGameHelper.timerid = TimerHelper:getTimer(timername)
+    TimerHelper:startForwardTimer(MyGameHelper.timerid)
+  end
+  -- 播放背景音乐
   MusicHelper:startBGM(objid, 1, true)
 end
 
