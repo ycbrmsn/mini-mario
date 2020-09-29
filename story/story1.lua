@@ -59,6 +59,7 @@ function Story1:new ()
     }, -- 进入水管位置数据
     enterAreas = {}, -- 进入水管区域
     goOutPos = MyPosition:new(0.5, 58.5, -302.5), -- 出水管位置
+    backwardTimer = 180, -- 倒计时
   }
   self:checkData(data)
 

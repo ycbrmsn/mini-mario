@@ -76,7 +76,7 @@ function MyGameHelper:setGBattleUI ()
     local teamScore = TeamHelper:getTeamScore(teamid)
     local time = TimerHelper:getTimerTime(self.timerid)
     local result = PlayerHelper:getGameResults(player.objid)
-    local score = 100 * self.totalCheckPoint - time + teamScore
+    local score = time + teamScore -- 剩余时间 + 金币得分
     if (score < teamScore or result == 2) then
       score = teamScore
     end
@@ -88,7 +88,7 @@ function MyGameHelper:setGBattleUI ()
     end
     UIHelper:setGBattleUI('left_desc', player:getName() .. msg .. score)
     UIHelper:setGBattleUI('left_little_desc', '获得金币数：' .. teamScore / 5)
-    UIHelper:setGBattleUI('right_little_desc', '总耗时：' .. time)
+    UIHelper:setGBattleUI('right_little_desc', '剩余时间：' .. time)
   end
   UIHelper:setGBattleUI('result', false)
 end
@@ -157,5 +157,9 @@ function MyGameHelper:minitimerChange (timerid, timername)
     for i, v in ipairs(PlayerHelper:getActivePlayers()) do
       TimerHelper:showTips({ v.objid }, self.timerid, '')
     end
+  end
+  local time = TimerHelper:getTimerTime(self.timerid)
+  if (time == 0) then -- 时间耗尽
+    GameHelper:doGameEnd()
   end
 end
