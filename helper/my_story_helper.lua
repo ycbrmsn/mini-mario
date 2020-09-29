@@ -3,6 +3,7 @@ MyStoryHelper = {}
 
 function MyStoryHelper:init ()
   story1 = Story1:new()
+  story1:init()
   StoryHelper:setStorys({ story1 })
 end
 
@@ -16,6 +17,7 @@ end
 
 -- 玩家进入游戏
 function MyStoryHelper:playerEnterGame (objid)
+  MyStoryHelper:init()
   -- local player = PlayerHelper:getPlayer(objid)
   -- StoryHelper:recover(player) -- 恢复剧情
 end

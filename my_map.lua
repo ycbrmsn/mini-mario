@@ -4,7 +4,8 @@ MyMap = {
     DESTROY = 207, -- 落叶松木板（大形态踩碎方块）
     LUCKY = 2001, -- 幸运方块
     COIN = 2002, -- 幸运金币
-    INVALID = 2003 -- 无效方块
+    INVALID = 2003, -- 无效方块
+    ENTER_PIPE = 2004, -- 进入水管
   },
   ITEM = {
     COIN = 4099, -- 幸运币
