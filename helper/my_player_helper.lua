@@ -13,7 +13,7 @@ function MyPlayerHelper:playerEnterGame (objid)
   PlayerHelper:setActionAttrState(objid, PLAYERATTR.ENABLE_BEATTACKED, false) -- 不可被攻击
   -- BackpackHelper:setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 跳跃键
   -- PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP) -- 不可丢弃
-  BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 5) -- 五颗续命药丸
+  BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 3) -- 三颗续命药丸
   ActorHelper:setMyPosition(objid, self.initPosition) -- 初始位置
   ActorHelper:setFaceYaw(objid, 0)
   PlayerHelper:rotateCamera(objid, 90, 0)
@@ -84,13 +84,13 @@ function MyPlayerHelper:playerAddItem (objid, itemid, itemnum)
   if (itemid == MyMap.ITEM.BOTTLE) then -- 续命药瓶
     BackpackHelper:removeGridItemByItemID(objid, itemid, itemnum)
     if (player.isWatchStyle) then -- 观战模式
-      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5 - 1)
+      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 3 - 1)
       ActorHelper:addBuff(objid, MyMap.BUFF.CONTINUE, 1, 60)
       player.isWatchStyle = false
       local pos = player.revivePoint
       player:setMyPosition(pos.x, pos.y, pos.z) -- 重回复活点
     else
-      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5) -- 五倍
+      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 3) -- 三倍
     end
   elseif (itemid == MyMap.ITEM.COIN) then -- 幸运币
     -- 一个加5分
