@@ -111,6 +111,12 @@ function MyPlayerHelper:playerUseItem (objid, toobjid, itemid, itemnum)
   MyStoryHelper:playerUseItem(objid, toobjid, itemid, itemnum)
 end
 
+-- 玩家消耗道具
+function MyPlayerHelper:playerConsumeItem (objid, toobjid, itemid, itemnum)
+  PlayerHelper:playerConsumeItem(objid, toobjid, itemid, itemnum)
+  MyStoryHelper:playerConsumeItem(objid, toobjid, itemid, itemnum)
+end
+
 -- 玩家攻击命中
 function MyPlayerHelper:playerAttackHit (objid, toobjid)
   PlayerHelper:playerAttackHit(objid, toobjid)
@@ -118,7 +124,7 @@ function MyPlayerHelper:playerAttackHit (objid, toobjid)
 end
 
 -- 玩家造成伤害
-function MyPlayerHelper:playerDamageActor (objid, toobjid)
+function MyPlayerHelper:playerDamageActor (objid, toobjid, hurtlv)
   PlayerHelper:playerDamageActor(objid, toobjid)
   MyStoryHelper:playerDamageActor(objid, toobjid)
 end
@@ -131,9 +137,9 @@ function MyPlayerHelper:playerDefeatActor (objid, toobjid)
 end
 
 -- 玩家受到伤害
-function MyPlayerHelper:playerBeHurt (objid, toobjid)
-  PlayerHelper:playerBeHurt(objid, toobjid)
-  MyStoryHelper:playerBeHurt(objid, toobjid)
+function MyPlayerHelper:playerBeHurt (objid, toobjid, hurtlv)
+  PlayerHelper:playerBeHurt(objid, toobjid, hurtlv)
+  MyStoryHelper:playerBeHurt(objid, toobjid, hurtlv)
 end
 
 -- 玩家死亡
@@ -237,4 +243,28 @@ end
 function MyPlayerHelper:playerNewInputContent(objid, content)
   PlayerHelper:playerNewInputContent(objid, content)
   MyStoryHelper:playerNewInputContent(objid, content)
+end
+
+-- 按键被按下
+function MyPlayerHelper:playerInputKeyDown (objid, vkey)
+  PlayerHelper:playerInputKeyDown(objid, vkey)
+  MyStoryHelper:playerInputKeyDown(objid, vkey)
+end
+
+-- 按键处于按下状态
+function MyPlayerHelper:playerInputKeyOnPress (objid, vkey)
+  PlayerHelper:playerInputKeyOnPress(objid, vkey)
+  MyStoryHelper:playerInputKeyOnPress(objid, vkey)
+end
+
+-- 按键松开
+function MyPlayerHelper:playerInputKeyUp (objid, vkey)
+  PlayerHelper:playerInputKeyUp(objid, vkey)
+  MyStoryHelper:playerInputKeyUp(objid, vkey)
+end
+
+-- 等级发生变化
+function MyPlayerHelper:playerLevelModelUpgrade (objid, toobjid)
+  PlayerHelper:playerLevelModelUpgrade(objid, toobjid)
+  MyStoryHelper:playerLevelModelUpgrade(objid, toobjid)
 end

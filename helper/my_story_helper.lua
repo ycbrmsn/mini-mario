@@ -16,8 +16,8 @@ end
 
 -- 玩家进入游戏
 function MyStoryHelper:playerEnterGame (objid)
-  local player = PlayerHelper:getPlayer(objid)
-  StoryHelper:recover(player) -- 恢复剧情
+  -- local player = PlayerHelper:getPlayer(objid)
+  -- StoryHelper:recover(player) -- 恢复剧情
 end
 
 -- 玩家离开游戏
@@ -55,13 +55,18 @@ function MyStoryHelper:playerUseItem (objid, toobjid, itemid, itemnum)
   -- body
 end
 
+-- 玩家消耗道具
+function MyStoryHelper:playerConsumeItem (objid, toobjid, itemid, itemnum)
+  -- body
+end
+
 -- 玩家攻击命中
 function MyStoryHelper:playerAttackHit (objid, toobjid)
   -- body
 end
 
 -- 玩家造成伤害
-function MyStoryHelper:playerDamageActor (objid, toobjid)
+function MyStoryHelper:playerDamageActor (objid, toobjid, hurtlv)
   -- body
 end
 
@@ -71,7 +76,7 @@ function MyStoryHelper:playerDefeatActor (playerid, objid)
 end
 
 -- 玩家受到伤害
-function MyStoryHelper:playerBeHurt (objid, toobjid)
+function MyStoryHelper:playerBeHurt (objid, toobjid, hurtlv)
   -- body
 end
 
@@ -125,6 +130,26 @@ function MyStoryHelper:playerNewInputContent(objid, content)
   -- body
 end
 
+-- 按键被按下
+function MyStoryHelper:playerInputKeyDown (objid, vkey)
+  -- body
+end
+
+-- 按键处于按下状态
+function MyStoryHelper:playerInputKeyOnPress (objid, vkey)
+  -- body
+end
+
+-- 按键松开
+function MyStoryHelper:playerInputKeyUp (objid, vkey)
+  -- body
+end
+
+-- 等级发生变化
+function MyStoryHelper:playerLevelModelUpgrade (objid, toobjid)
+  -- body
+end
+
 -- 生物进入区域
 function MyStoryHelper:actorEnterArea (objid, areaid)
   -- body
@@ -142,6 +167,11 @@ end
 
 -- 生物攻击命中
 function MyStoryHelper:actorAttackHit (objid, toobjid)
+  -- body
+end
+
+-- 生物击败目标
+function MyStoryHelper:actorBeat (objid, toobjid)
   -- body
 end
 
