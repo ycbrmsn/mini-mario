@@ -81,7 +81,7 @@ function MyGameHelper:setGBattleUI ()
       score = teamScore
     end
     local msg
-    if (result) then
+    if (result and result == 1) then
       msg = '成功抵达了终点，得分：'
     else
       msg = '在中途被淘汰，得分：'
@@ -153,13 +153,17 @@ end
 function MyGameHelper:minitimerChange (timerid, timername)
   GameHelper:minitimerChange(timerid, timername)
   -- body
+  local color = ''
+  local time = TimerHelper:getTimerTime(self.timerid)
+  if (time > 0 and time <= 60) then
+    color = '#R'
+  elseif (time == 0) then -- 时间耗尽
+    color = '#R'
+    GameHelper:doGameEnd()
+  end
   if (self.timerid) then
     for i, v in ipairs(PlayerHelper:getActivePlayers()) do
-      TimerHelper:showTips({ v.objid }, self.timerid, '')
+      TimerHelper:showTips({ v.objid }, self.timerid, color)
     end
-  end
-  local time = TimerHelper:getTimerTime(self.timerid)
-  if (time == 0) then -- 时间耗尽
-    GameHelper:doGameEnd()
   end
 end
