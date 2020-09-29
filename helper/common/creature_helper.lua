@@ -32,10 +32,23 @@ function CreatureHelper:openAI (objid)
 end
 
 -- 停止跑
-function CreatureHelper:stopRun (objid)
+function CreatureHelper:stopRun (objid, speed)
   self:closeAI(objid)
+  -- if (motion == 1) then
+  --   local x, y, z = ActorHelper:getFaceDirection(objid)
+  --   local pos = ActorHelper:getMyPosition(objid)
+  --   if (pos and x) then
+  --     ActorHelper:tryMoveToPos(objid, pos.x + x, pos.y + y, pos.z + z, speed)
+  --   end
+  -- end
   local pos = ActorHelper:getMyPosition(objid)
-  ActorHelper:tryMoveToPos(objid, pos.x, pos.y, pos.z)
+  if (pos) then
+    local yaw = ActorHelper:getFaceYaw(objid)
+    local pitch = ActorHelper:getFacePitch(objid)
+    ActorHelper:tryMoveToPos(objid, pos.x, pos.y, pos.z, speed)
+    ActorHelper:setFaceYaw(objid, yaw)
+    ActorHelper:setFacePitch(objid, pitch)
+  end
 end
 
 -- 关门
@@ -47,6 +60,12 @@ function CreatureHelper:closeDoor (objid, areaid)
       -- do nothing
     else
       BlockHelper:closeDoor(doorPos.x, doorPos.y, doorPos.z)
+    end
+  else -- 不确定是不是门的位置
+    local isDoorArea, pos = AreaHelper:isDoorArea(areaid)
+    if (isDoorArea) then
+      AreaHelper.allDoorAreas[areaid] = pos
+      CreatureHelper:closeDoor(objid, areaid)
     end
   end
 end

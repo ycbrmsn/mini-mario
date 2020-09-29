@@ -25,7 +25,6 @@ end
 function GameHelper:atHour (hour)
   TimeHelper:updateHour(hour)
   ActorHelper:atHour(hour)
-  StoryHelper:atHour(hour)
 end
 
 -- 世界时间到[n]秒
@@ -39,4 +38,12 @@ end
 -- 任意计时器发生变化
 function GameHelper:minitimerChange(timerid, timername)
   TimerHelper:minitimerChange(timerid, timername)
+end
+
+-- 封装原始接口
+
+function GameHelper:doGameEnd ()
+  return CommonHelper:callIsSuccessMethod(function (p)
+    return Game:doGameEnd()
+  end, '结束比赛')
 end

@@ -109,6 +109,73 @@ function AreaHelper:getAllCreaturesAndPlayersInAreaId (areaid)
   return objids1, objids2
 end
 
+-- 根据位置数据生成位置对象
+function AreaHelper:initPosByPosData (data, positions)
+  for i, v in ipairs(data) do
+    local pos = MyPosition:new(v[1], v[2], v[3])
+    table.insert(positions, pos)
+  end
+end
+
+-- 根据位置数据初始化区域
+function AreaHelper:initAreaByPosData (data, areas)
+  for i, v in ipairs(data) do
+    local pos = MyPosition:new(v[1], v[2], v[3])
+    local areaid = AreaHelper:getAreaByPos(pos)
+    table.insert(areas, areaid)
+  end
+end
+
+-- 是否是门区域，规定水平两格大小的区域都是门区域
+function AreaHelper:isDoorArea (areaid)
+  local posBeg, posEnd = AreaHelper:getAreaRectRange(areaid)
+  if (posBeg) then -- 区域有效
+    if (posBeg.y == posEnd.y and MathHelper:getDistance(posBeg, posEnd) == 1) then
+      if (BlockHelper:isAirBlock(posBeg.x, posBeg.y, posBeg.z)) then
+        return true, posEnd
+      elseif (BlockHelper:isAirBlock(posEnd.x, posEnd.y, posEnd.z)) then
+        return true, posBeg
+      else
+        return false
+      end
+    else
+      return false
+    end 
+  else
+    return nil
+  end
+  return false
+end
+
+-- 获得附近的一个随机位置
+function AreaHelper:getRandomPosAround (pos, range)
+  local x = pos.x + math.random() * range * 2 - range
+  local y = pos.y + math.random() * range * 2 - range
+  local z = pos.z + math.random() * range * 2 - range
+  return MyPosition:new(x, y, z)
+end
+
+-- 获得自由移动位置
+function AreaHelper:getFreeTimePos (pos)
+  return AreaHelper:getRandomPosAround(pos, 10)
+end
+
+-- 获取特定位置附近的方块位置
+function AreaHelper:getBlockPositionsAround (pos, dim, blockid)
+  local positions = {}
+  for i = math.floor(pos.x) - dim.x, math.floor(pos.x) + dim.x do
+    for k = math.floor(pos.z) - dim.z, math.floor(pos.z) + dim.z do
+      for j = math.floor(pos.y) + dim.y, math.floor(pos.y) - dim.y, -1 do -- 从上往下
+        local id = BlockHelper:getBlockID(i, j, k)
+        if (id and id == blockid) then
+          table.insert(positions, MyPosition:new(i, j, k))
+        end
+      end
+    end
+  end
+  return positions
+end
+
 -- 封装原始接口
 
 -- 根据中心位置创建矩形区域
@@ -174,7 +241,7 @@ function AreaHelper:getAllPlayersInAreaRange (posBeg, posEnd)
   end, '获取区域范围内全部玩家', 'posBeg=', posBeg, ',posEnd=', posEnd)
 end
 
--- 获取区域范围
+-- 获取区域范围，返回区域起始点位置
 function AreaHelper:getAreaRectRange (areaid)
   return CommonHelper:callTwoResultMethod(function (p)
     return Area:getAreaRectRange(areaid)
@@ -211,4 +278,9 @@ function AreaHelper:fillBlock (areaid, blockid, face)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Area:fillBlock(areaid, blockid, face)
   end, '用方块填充区域', 'areaid=', areaid, ',blockid=', blockid, ',face=', face)
+end
+
+-- 检测区域内是否有某个方块
+function AreaHelper:blockInArea (areaid, blockid)
+  return Area:blockInArea(areaid, blockid) == ErrorCode.OK
 end

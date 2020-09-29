@@ -34,7 +34,8 @@ ActorHelper = {
   },
   FLY_SPEED = 0.0785, -- 飞行速度
   actors = {}, -- objid -> actor
-  clickActors = {} -- 玩家点击的actor：objid -> actor
+  clickActors = {}, -- 玩家点击的actor：objid -> actor
+  actormotions = {}, -- 生物及其当前对应的状态 { objid -> motion }
 }
 
 function ActorHelper:new (o)
@@ -72,6 +73,16 @@ end
 
 function ActorHelper:getAllActors ()
   return self.actors
+end
+
+-- 获得生物行为
+function ActorHelper:getActorMontion (objid)
+  return self.actormotions[objid]
+end
+
+-- 设置生物行为
+function ActorHelper:setActorMotion (objid, actormotion)
+  self.actormotions[objid] = actormotion
 end
 
 function ActorHelper:getMyPosition (objid)
@@ -156,7 +167,7 @@ function ActorHelper:handleNextWant (myActor)
   elseif (nextWant.style == 'approach') then
     BaseActorActionHelper:createApproachToPos(nextWant)
     myActor.action:execute()
-  elseif (nextWant.style == 'freeInArea') then
+  elseif (nextWant.style == 'freeInArea' or nextWant.style == 'freeAttack') then
     nextWant.toPos = BaseActorActionHelper:getFreeInAreaPos(myActor.freeInAreaIds)
     BaseActorActionHelper:createMoveToPos(nextWant)
     -- LogHelper:debug(myActor:getName() .. '开始闲逛')
@@ -204,12 +215,12 @@ function ActorHelper:resumeClickActor (objid)
   if (myActor) then
     if (myActor.wants and #myActor.wants > 0) then
       local want = myActor.wants[1]
-      if (want.style == 'lookingAt') then
+      if (want.style == 'lookingAt') then -- 已经开始看了，就停止
         want.currentRestTime = 5
         TimeHelper:delFnContinueRuns(myActor.objid .. 'lookat')
+        self.clickActors[objid] = nil
       end
     end
-    self.clickActors[objid] = nil
   end
 end
 
@@ -229,6 +240,13 @@ function ActorHelper:atHour (hour)
   hour = hour or TimeHelper:getHour()
   for k, v in pairs(self.actors) do
     v:wantAtHour(hour)
+  end
+end
+
+-- 所有特定生物重新开始干现在应该干的事情
+function ActorHelper:doItNow ()
+  for k, v in pairs(self.actors) do
+    v:doItNow()
   end
 end
 
@@ -393,13 +411,13 @@ function ActorHelper:isInAir (objid, x, y, z)
   end
 end
 
--- 前后左右中下六个位置如果有一个位置不是空气方块，那么就是靠近了方块
-function ActorHelper:isApproachBlock (objid)
+-- 前后左右中下六个位置如果有一个位置不是空气方块，那么就是靠近了方块  是否忽视脚下位置
+function ActorHelper:isApproachBlock (objid, ignoreDown)
   local pos = self:getMyPosition(objid)
   return (BlockHelper:isInvisibleBlockOffset(pos)
       and BlockHelper:isInvisibleBlockOffset(pos, -1)
       and BlockHelper:isInvisibleBlockOffset(pos, 1)
-      and BlockHelper:isInvisibleBlockOffset(pos, 0, -1)
+      and (ignoreDown or BlockHelper:isInvisibleBlockOffset(pos, 0, -1))
       and BlockHelper:isInvisibleBlockOffset(pos, 0, 0, -1)
       and BlockHelper:isInvisibleBlockOffset(pos, 0, 0, 1)) == false
 end
@@ -433,10 +451,24 @@ function ActorHelper:playAndStopSoundEffect (objid, soundId, isLoop, time)
 end
 
 -- 加上重力
-function ActorHelper:addGravity (objid)
+function ActorHelper:addGravity (obj)
+  local objid = obj.objid
   local t = objid .. 'addGravity'
   TimeHelper:callFnContinueRuns(function ()
-    if (ActorHelper:getMyPosition(objid)) then
+    local pos = ActorHelper:getMyPosition(objid)
+    if (pos) then
+      if (pos:equals(obj.pos)) then -- 没有动
+        obj.index = (obj.index or 0) + 1
+        if (obj.index > 20) then
+          TimeHelper:callFnFastRuns(function ()
+            TimeHelper:delFnContinueRuns(t)
+            WorldHelper:despawnActor(obj.objid)
+          end, 3)
+        end
+      else
+        obj.pos = pos
+        obj.index = 0
+      end
       ActorHelper:appendSpeed(objid, 0, -self.FLY_SPEED, 0)
       local speedVector3 = ItemHelper:getMissileSpeed(objid)
       if (speedVector3) then
@@ -450,8 +482,8 @@ function ActorHelper:addGravity (objid)
   end, -1, t)
 end
 
--- 对角色造成伤害
-function ActorHelper:damageActor (objid, toobjid, val)
+-- 对角色造成伤害  攻击者、被攻击者、造成伤害、使用道具（记录的特殊道具）
+function ActorHelper:damageActor (objid, toobjid, val, item)
   if (val <= 0) then -- 伤害值无效
     return
   end
@@ -462,19 +494,25 @@ function ActorHelper:damageActor (objid, toobjid, val)
       return
     end
     if (hp > val) then -- 玩家不会死亡
+      if (isPlayer) then
+        MyPlayerHelper:playerDamageActor(objid, toobjid, val)
+      end
       hp = hp - val
       PlayerHelper:setHp(toobjid, hp)
     else -- 玩家可能会死亡，则检测玩家是否可被杀死
       local ableBeKilled = PlayerHelper:getPlayerEnableBeKilled(toobjid)
       if (ableBeKilled) then -- 能被杀死
-        ActorHelper:killSelf(toobjid)
         if (isPlayer) then -- 攻击者是玩家
-          MyPlayerHelper:playerDefeatActor(objid, toobjid)
+          MyPlayerHelper:playerDamageActor(objid, toobjid, val)
+          MyPlayerHelper:playerDefeatActor(objid, toobjid, item)
         else -- 攻击者是生物，目前暂不处理
         end
+        ActorHelper:killSelf(toobjid)
       else -- 不能被杀死
-        hp = 1
-        PlayerHelper:setHp(toobjid, hp)
+        if (isPlayer) then -- 攻击者是玩家
+          MyPlayerHelper:playerDamageActor(objid, toobjid, hp - 1)
+        end
+        PlayerHelper:setHp(toobjid, 1)
       end
     end
   else -- 伤害了生物
@@ -483,24 +521,27 @@ function ActorHelper:damageActor (objid, toobjid, val)
       return
     end
     if (hp > val) then -- 生物不会死亡
+      if (isPlayer) then
+        MyPlayerHelper:playerDamageActor(objid, toobjid, val)
+      end
       hp = hp - val
       CreatureHelper:setHp(toobjid, hp)
     else -- 生物可能会死亡，则检测生物是否可被杀死
       local ableBeKilled = ActorHelper:getEnableBeKilledState(toobjid)
       if (ableBeKilled) then -- 能被杀死
-        ActorHelper:killSelf(toobjid)
         if (isPlayer) then -- 攻击者是玩家
-          MyPlayerHelper:playerDefeatActor(objid, toobjid)
+          MyPlayerHelper:playerDamageActor(objid, toobjid, val)
+          MyPlayerHelper:playerDefeatActor(objid, toobjid, item)
         else -- 攻击者是生物，目前暂不处理
         end
+        ActorHelper:killSelf(toobjid)
       else -- 不能被杀死
-        hp = 1
-        CreatureHelper:setHp(toobjid, hp)
+        if (isPlayer) then -- 攻击者是玩家
+          MyPlayerHelper:playerDamageActor(objid, toobjid, hp - 1)
+        end
+        CreatureHelper:setHp(toobjid, 1)
       end
     end
-  end
-  if (isPlayer) then
-    MyPlayerHelper:playerDamageActor(objid, toobjid)
   end
 end
 
@@ -549,11 +590,99 @@ function ActorHelper:getAliveActors (objids)
     else -- 生物
       hp = CreatureHelper:getHp(v)
     end
-    if (hp > 0) then
+    if (hp and hp > 0) then
       table.insert(aliveObjids, v)
     end
   end
   return aliveObjids
+end
+
+-- 获取有攻击目标的生物
+function ActorHelper:getHasTargetActors (objids)
+  local arr = {}
+  if (type(objids) == 'table') then
+    for i, objid in ipairs(objids) do
+      local actor = ActorHelper:getActor(objid)
+      if (actor) then -- 特定生物，则加入
+        table.insert(arr, objid)
+      else -- 非特定生物
+        local motion = ActorHelper:getActorMontion(objid)
+        if (motion and (motion == CREATUREMOTION.ATK_MELEE or 
+          motion == CREATUREMOTION.ATK_REMOTE)) then
+          table.insert(arr, objid)
+        end
+      end
+    end
+  end
+  return arr
+end
+
+-- 角色看向 执行者、目标、是否需要旋转镜头（三维视角需要旋转），toobjid可以是objid、位置、玩家、生物
+function ActorHelper:lookAt (objid, toobjid, needRotateCamera)
+  if (type(objid) == 'table') then -- 如果执行者是多个（数组）
+    for i, v in ipairs(objid) do
+      ActorHelper:lookAt(v, toobjid, needRotateCamera)
+    end
+  else -- 单个执行者
+    local x, y, z
+    if (type(toobjid) == 'table') then
+      -- 判断是不是玩家或者生物
+      if (toobjid.objid) then -- 玩家或生物
+        toobjid = toobjid.objid
+      else -- 是个位置
+        x, y, z = toobjid.x, toobjid.y, toobjid.z
+      end
+    end
+    if (not(x)) then -- 不是位置
+      x, y, z = ActorHelper:getPosition(toobjid)
+      if (not(x)) then -- 取不到目标角色数据
+        return
+      end
+      y = y + ActorHelper:getEyeHeight(toobjid)
+    end
+    local x0, y0, z0 = ActorHelper:getPosition(objid)
+    if (not(x0)) then -- 取不到执行者数据
+      return
+    end
+    y0 = y0 + ActorHelper:getEyeHeight(objid)
+    local myVector3 = MyVector3:new(x0, y0, z0, x, y, z)
+    if (ActorHelper:isPlayer(objid) and needRotateCamera) then -- 如果执行者是三维视角玩家
+      local faceYaw, facePitch
+      if (x ~= x0 or z ~= z0) then -- 不在同一竖直位置上
+        faceYaw = MathHelper:getPlayerFaceYaw(myVector3)
+        facePitch = MathHelper:getActorFacePitch(myVector3)
+      else -- 在同一竖直位置上
+        faceYaw = ActorHelper:getFaceYaw(objid)
+        if (y0 < y) then -- 向上
+          facePitch = -90
+        elseif (y0 > y) then -- 向下
+          facePitch = 90
+        else -- 水平
+          facePitch = 0
+        end
+      end
+      PlayerHelper:rotateCamera(objid, faceYaw, facePitch)
+    else -- 执行者是生物或二维视角玩家
+      local facePitch
+      if (x ~= x0 or z ~= z0) then -- 不在同一竖直位置上
+        local faceYaw = MathHelper:getActorFaceYaw(myVector3)
+        ActorHelper:setFaceYaw(objid, faceYaw)
+        facePitch = MathHelper:getActorFacePitch(myVector3)
+      else -- 在同一竖直位置上
+        if (y0 < y) then -- 向上
+          facePitch = -90
+        elseif (y0 > y) then -- 向下
+          facePitch = 90
+        else -- 水平
+          facePitch = 0
+        end
+      end
+      local result = ActorHelper:setFacePitch(objid, facePitch)
+      if (not(result)) then
+        LogHelper:debug(myVector3)
+      end
+    end
+  end
 end
 
 -- 设置生物可移动状态
@@ -592,15 +721,24 @@ end
 function ActorHelper:actorEnterArea (objid, areaid)
   local myActor = self:getActor(objid)
   local doorPos = AreaHelper.allDoorAreas[areaid]
-  if (doorPos) then -- 如果门位置存在，说明这是门区域，则打开这个门
+  if (doorPos) then -- 确定是门位置，则打开这个门
     BlockHelper:openDoor(doorPos.x, doorPos.y, doorPos.z)
+  else -- 不确定是不是门位置，则判断，规定两格大小的都是门位置
+    local isDoorArea, pos = AreaHelper:isDoorArea(areaid)
+    if (isDoorArea) then
+      AreaHelper.allDoorAreas[areaid] = pos
+      BlockHelper:openDoor(pos.x, pos.y, pos.z)
+    elseif (type(isDoorArea) == 'nil') then
+      LogHelper:debug(CreatureHelper:getActorName(objid))
+    end
   end
   if (myActor and myActor.wants) then -- 找到了一个actor，并且这个actor有想法
     local want = myActor.wants[1]
     if (want.toAreaId == areaid) then -- 如果是该actor的终点区域，则判断actor是仅仅前往还是巡逻
       if (want.style == 'move' or want.style == 'approach') then -- 如果是仅仅前往，则变更想法，并且停下来
         -- LogHelper:debug(myActor:getName() .. '进入了终点区域' .. areaid)
-        AreaHelper:destroyArea(want.toAreaId) -- 清除终点区域
+        AreaHelper:removeToArea(myActor) -- 清除终点区域
+        -- AreaHelper:destroyArea(want.toAreaId) 
         local pos = BaseActorActionHelper:getNextPos(want)
         -- LogHelper:debug(myActor:getName(), pos)
         if (pos) then -- 有下一个行动位置
@@ -615,16 +753,24 @@ function ActorHelper:actorEnterArea (objid, areaid)
           myActor:wantStayForAWhile()
         end
       elseif (want.style == 'patrol') then -- 如果是巡逻，则停下来并设定前往目的地
-        AreaHelper:destroyArea(want.toAreaId) -- 清除终点区域
+        AreaHelper:removeToArea(myActor) -- 清除终点区域
+        -- AreaHelper:destroyArea(want.toAreaId) -- 清除终点区域
         want.currentRestTime = want.restTime
         want.toPos = BaseActorActionHelper:getNextPos(want)
         -- LogHelper:debug('下一个位置' .. type(want.toPos))
         BaseActorActionHelper:createMoveToPos(want)
       elseif (want.style == 'freeInArea') then -- 区域内自由移动
-        AreaHelper:destroyArea(want.toAreaId) -- 清除终点区域
+        AreaHelper:removeToArea(myActor) -- 清除终点区域
+        -- AreaHelper:destroyArea(want.toAreaId) -- 清除终点区域
         want.currentRestTime = want.restTime
         want.toPos = BaseActorActionHelper:getFreeInAreaPos(myActor.freeInAreaIds)
         BaseActorActionHelper:createMoveToPos(want)
+      elseif (want.style == 'freeAttack') then -- 区域自由攻击
+        AreaHelper:removeToArea(myActor) -- 清除终点区域
+        want.currentRestTime = want.restTime
+        want.toPos = BaseActorActionHelper:getFreeInAreaPos(myActor.freeInAreaIds)
+        BaseActorActionHelper:createMoveToPos(want)
+        myActor.action:playAttack(2)
       else -- 其他情况，不明
         -- do nothing
       end
@@ -679,8 +825,24 @@ function ActorHelper:actorAttackHit (objid, toobjid)
   end
 end
 
+-- 生物击败目标
+function ActorHelper:actorBeat (objid, toobjid)
+  -- body
+end
+
 -- 生物行为改变（仅开启AI有效）
 function ActorHelper:actorChangeMotion (objid, actormotion)
+  local t = objid .. 'actorChangeMotion'
+  local motion = ActorHelper:getActorMontion(objid)
+  if (not(motion) or motion ~= actormotion) then
+    ActorHelper:setActorMotion(objid, actormotion)
+    TimeHelper:delFnFastRuns(t)
+  end
+  -- 保留的记录30秒后删除
+  TimeHelper:callFnFastRuns(function ()
+    ActorHelper:setActorMotion(objid, nil)
+  end, 30, t)
+
   local actor = ActorHelper:getActor(objid)
   if (actor) then
     actor:changeMotion(actormotion)

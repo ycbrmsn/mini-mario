@@ -1,18 +1,25 @@
 -- 玩家属性类
 BasePlayerAttr = {
-  level = 0, -- 当前等级，已废弃
-  totalLevel = 0, -- 总等级，已废弃
+  level = 0, -- 当前等级，用于升级时对比
   exp = 0,  -- 当前经验
   levelExp = 100, -- 每升一级需要的经验
   defeatedExp = 0, -- 被击败获得经验
   positions = nil, -- 最近几秒的位置
   hurtReason = nil, -- 受伤原因，目前没用
-  attack = 0, -- 手持武器攻击
-  defense = 0, -- 手持武器防御
+  meleeAttack = 0, -- 手持武器攻击
+  remoteAttack = 0,
+  meleeDefense = 0, -- 手持武器防御
+  remoteDefense = 0,
   strength = 100, -- 体力，用于使枪消耗
   expData = {
     exp = 50 -- 击败玩家获得的基础经验
-  }
+  },
+  -- 升级增加的属性
+  addMeleeAttack = 2, -- 近战攻击
+  addRemoteAttack = 2, -- 远程攻击
+  addMeleeDefense = 2, -- 近战防御
+  addRemoteDefense = 2, -- 远程防御
+  addMaxHp = 10, -- 最大生命值
 }
 
 function BasePlayerAttr:new (player)
@@ -69,103 +76,127 @@ end
 -- 玩家获得经验
 function BasePlayerAttr:gainExp (exp)
   if (not(exp) or exp <= 0) then
-    return
+    return false
   end
-  -- local isUpgrade
-  -- self.exp = self.exp + exp
-  -- local needExp = (self.totalLevel + 1) * self.levelExp - self.exp
-  -- if (needExp <= 0) then
-  --   repeat
-  --     self:upgrade(1)
-  --     needExp = needExp + self.levelExp
-  --   until (needExp > 0)
-  --   isUpgrade = true
-  -- else
-  --   isUpgrade = false
-  -- end
-  local prevLevel = self.myActor:getLevel()
-  PlayerHelper:addExp(self.myActor.objid, exp)
-  local curLevel = self.myActor:getLevel()
-  self:upgrade(curLevel - prevLevel)
-  return curLevel, curLevel > prevLevel 
+  -- local prevLevel = self.myActor:getLevel()
+  return PlayerHelper:addExp(self.myActor.objid, exp)
+  -- local curLevel = self.myActor:getLevel()
+  -- self:upgrade(curLevel - prevLevel)
+  -- return curLevel, curLevel > prevLevel
 end
 
 -- 玩家获得被击败经验
 function BasePlayerAttr:gainDefeatedExp ()
   local defeatedExp = self:getDefeatedExp()
-  if (defeatedExp > 0) then
-    local level, isUpgrade = self:gainExp(self.defeatedExp) -- 获得经验
-    if (level) then
-      local map = { exp = defeatedExp, level = level }
-      if (isUpgrade) then
-        local msg1 = StringHelper:getTemplateResult(MyTemplate.GAIN_DEFEATED_EXP_MSG, map)
-        local msg2 = StringHelper:getTemplateResult(MyTemplate.UPGRADE_MSG, map)
-        ChatHelper:sendMsg(self.myActor.objid, msg1, '。', msg2)
-      --   ChatHelper:sendTemplateMsg(MyTemplate.UPGRADE_MSG, map, self.myActor.objid)
-      else
-        ChatHelper:sendTemplateMsg(MyTemplate.GAIN_DEFEATED_EXP_MSG, map, self.myActor.objid)
-      --   ChatHelper:sendTemplateMsg(MyTemplate.UNUPGRADE_MSG, map, self.myActor.objid)
-      end
-    end
+  -- if (defeatedExp > 0) then
+  --   local level, isUpgrade = self:gainExp(self.defeatedExp) -- 获得经验
+  --   if (level) then
+  --     local map = { exp = defeatedExp, level = level }
+  --     if (isUpgrade) then
+  --       local msg1 = StringHelper:getTemplateResult(MyTemplate.GAIN_DEFEATED_EXP_MSG, map)
+  --       local msg2 = StringHelper:getTemplateResult(MyTemplate.UPGRADE_MSG, map)
+  --       ChatHelper:sendMsg(self.myActor.objid, msg1, '。', msg2)
+  --     else
+  --       ChatHelper:sendTemplateMsg(MyTemplate.GAIN_DEFEATED_EXP_MSG, map, self.myActor.objid)
+  --     end
+  --   end
+  -- end
+  if (self:gainExp(defeatedExp)) then
+    local map = { exp = defeatedExp }
+    ChatHelper:sendTemplateMsg(MyTemplate.GAIN_DEFEATED_EXP_MSG, map, self.myActor.objid)
   end
 end
 
 -- 玩家升级
 function BasePlayerAttr:upgrade (addLevel)
   if (addLevel > 0) then
-    self.totalLevel = self.totalLevel + addLevel
-    self:changeAttr(2 * addLevel, 2 * addLevel)
+    local level = self.myActor:getLevel()
+    if (level) then
+      self.level = level
+    else
+      self.level = self.level + addLevel
+    end
+
+    -- 升级后属性变化
+    self:changeAttr(self.addMeleeAttack * addLevel, self.addRemoteAttack * addLevel,
+      self.addMeleeDefense * addLevel, self.addRemoteDefense * addLevel)
     -- local attrtype1 = { PLAYERATTR.ATK_MELEE, PLAYERATTR.ATK_REMOTE, PLAYERATTR.DEF_MELEE, PLAYERATTR.DEF_REMOTE }
     -- for i, v in ipairs(attrtype1) do
     --   PlayerHelper:addAttr(self.objid, v, 2 * addLevel)
     -- end
     local objid = self.myActor.objid
-    local maxHp = PlayerHelper:getMaxHp(objid) + 10 * addLevel
+    local maxHp = PlayerHelper:getMaxHp(objid) + self.addMaxHp * addLevel
     PlayerHelper:setMaxHp(objid, maxHp)
     PlayerHelper:setHp(objid, maxHp)
     PlayerHelper:setFoodLevel(objid, 100)
   end
 end
 
--- 改变属性
-function BasePlayerAttr:changeAttr (attack, defense, dodge)
+-- 改变攻防属性
+function BasePlayerAttr:changeAttr (meleeAttack, remoteAttack, meleeDefense, remoteDefense, isMinus)
   local attrMap = {}
-  if (attack and attack ~= 0) then
-    attrMap[PLAYERATTR.ATK_MELEE] = attack
-    attrMap[PLAYERATTR.ATK_REMOTE] = attack
+  if (meleeAttack) then
+    if (isMinus) then
+      attrMap[PLAYERATTR.ATK_MELEE] = -meleeAttack
+    else
+      attrMap[PLAYERATTR.ATK_MELEE] = meleeAttack
+    end
   end
-  if (defense and defense ~= 0) then
-    attrMap[PLAYERATTR.DEF_MELEE] = defense
-    attrMap[PLAYERATTR.DEF_REMOTE] = defense
+  if (remoteAttack) then
+    if (isMinus) then
+      attrMap[PLAYERATTR.ATK_REMOTE] = -remoteAttack
+    else
+      attrMap[PLAYERATTR.ATK_REMOTE] = remoteAttack
+    end
   end
-  if (dodge and dodge ~= 0) then
-    attrMap[PLAYERATTR.DODGE] = dodge
+  if (meleeDefense) then
+    if (isMinus) then
+      attrMap[PLAYERATTR.DEF_MELEE] = -meleeDefense
+    else
+      attrMap[PLAYERATTR.DEF_MELEE] = meleeDefense
+    end
+  end
+  if (remoteDefense) then
+    if (isMinus) then
+      attrMap[PLAYERATTR.DEF_REMOTE] = -remoteDefense
+    else
+      attrMap[PLAYERATTR.DEF_REMOTE] = remoteDefense
+    end
   end
   for k, v in pairs(attrMap) do
     PlayerHelper:addAttr(self.myActor.objid, k, v)
   end
 end
 
--- 显示属性
-function BasePlayerAttr:showAttr (isMelee)
-  local objid, attack = self.myActor.objid
-  if (isMelee) then
-    attack = PlayerHelper:getAttr(objid, PLAYERATTR.ATK_MELEE)
-  else
-    attack = PlayerHelper:getAttr(objid, PLAYERATTR.ATK_REMOTE)
+-- 显示攻防属性变化
+function BasePlayerAttr:showAttr ()
+  local objid = self.myActor.objid
+  local meleeAttack = PlayerHelper:getAttr(objid, PLAYERATTR.ATK_MELEE)
+  local remoteAttack = PlayerHelper:getAttr(objid, PLAYERATTR.ATK_REMOTE)
+  local meleeDefense = PlayerHelper:getAttr(objid, PLAYERATTR.DEF_MELEE)
+  local remoteDefense = PlayerHelper:getAttr(objid, PLAYERATTR.DEF_REMOTE)
+  local meleeAtt, remoteAtt = meleeAttack - self.meleeAttack, remoteAttack - self.remoteAttack
+  local meleeDef, remoteDef = meleeDefense - self.meleeDefense, remoteDefense - self.remoteDefense
+  if (meleeAtt >= 0) then
+    meleeAtt = '+' .. meleeAtt
   end
-  local defense = PlayerHelper:getAttr(objid, PLAYERATTR.DEF_MELEE)
-  local att, def = attack - self.attack, defense - self.defense
-  if (att >= 0) then
-    att = '+' .. att
+  if (remoteAtt >= 0) then
+    remoteAtt = '+' .. remoteAtt
   end
-  if (def >= 0) then
-    def = '+' .. def
+  if (meleeDef >= 0) then
+    meleeDef = '+' .. meleeDef
   end
-  local content = StringHelper:concat('攻击', att, '，防御', def)
-  ChatHelper:sendSystemMsg(content, objid)
-  self.attack = attack
-  self.defense = defense
+  if (remoteDef >= 0) then
+    remoteDef = '+' .. remoteDef
+  end
+  ChatHelper:sendMsg(objid, '近战攻击', meleeAtt)
+  ChatHelper:sendMsg(objid, '远程攻击', remoteAtt)
+  ChatHelper:sendMsg(objid, '近战防御', meleeDef)
+  ChatHelper:sendMsg(objid, '远程防御', remoteDef)
+  self.meleeAttack = meleeAttack
+  self.remoteAttack = remoteAttack
+  self.meleeDefense = meleeDefense
+  self.remoteDefense = remoteDefense
 end
 
 -- 恢复生命
@@ -235,8 +266,8 @@ function BasePlayerAttr:reduceStrength (strength)
 end
 
 -- 伤害actor
-function BasePlayerAttr:damageActor (toobjid, val)
-  ActorHelper:damageActor(self.myActor.objid, toobjid, val)
+function BasePlayerAttr:damageActor (toobjid, val, item)
+  ActorHelper:damageActor(self.myActor.objid, toobjid, val, item)
 end
 
 function BasePlayerAttr:setImprisoned (active)
@@ -294,18 +325,20 @@ function BasePlayerAttr:defeatActor (objid)
       end
     end
   end
-  local level, isUpgrade = self:gainExp(exp) -- 获得经验
-  if (level) then
-    local map = { exp = exp, level = level }
-    if (isUpgrade) then
-      local msg1 = StringHelper:getTemplateResult(MyTemplate.GAIN_EXP_MSG, map)
-      local msg2 = StringHelper:getTemplateResult(MyTemplate.UPGRADE_MSG, map)
-      ChatHelper:sendMsg(self.myActor.objid, msg1, '。', msg2)
-    --   ChatHelper:sendTemplateMsg(MyTemplate.UPGRADE_MSG, map, self.myActor.objid)
-    else
-      ChatHelper:sendTemplateMsg(MyTemplate.GAIN_EXP_MSG, map, self.myActor.objid)
-    --   ChatHelper:sendTemplateMsg(MyTemplate.UNUPGRADE_MSG, map, self.myActor.objid)
-    end
+  -- local level, isUpgrade = self:gainExp(exp) -- 获得经验
+  -- if (level) then
+  --   local map = { exp = exp, level = level }
+  --   if (isUpgrade) then
+  --     local msg1 = StringHelper:getTemplateResult(MyTemplate.GAIN_EXP_MSG, map)
+  --     local msg2 = StringHelper:getTemplateResult(MyTemplate.UPGRADE_MSG, map)
+  --     ChatHelper:sendMsg(self.myActor.objid, msg1, '。', msg2)
+  --   else
+  --     ChatHelper:sendTemplateMsg(MyTemplate.GAIN_EXP_MSG, map, self.myActor.objid)
+  --   end
+  -- end
+  if (self:gainExp(exp)) then
+    local map = { exp = exp }
+    ChatHelper:sendTemplateMsg(MyTemplate.GAIN_EXP_MSG, map, self.myActor.objid)
   end
 end
 

@@ -36,6 +36,13 @@ local playerUseItem = function (event)
   end)
 end
 
+-- eventobjid, toobjid, itemid, itemnum
+local playerConsumeItem = function (event)
+  LogHelper:call(function ()
+    MyPlayerHelper:playerConsumeItem(event.eventobjid, event.toobjid, event.itemid, event.itemnum)
+  end)
+end
+
 -- eventobjid, toobjid
 local playerClickActor = function (event)
   local objid = event['eventobjid']
@@ -44,7 +51,6 @@ local playerClickActor = function (event)
   LogHelper:call(function ()
     MyPlayerHelper:playerClickActor(objid, toobjid)
   end)
-  
 end
 
 -- eventobjid, toobjid, itemid, itemnum
@@ -69,13 +75,13 @@ local playerAttackHit = function (event)
   end)
 end
 
--- eventobjid, toobjid
+-- eventobjid, toobjid, hurtlv
 local playerDamageActor = function (event)
   local objid = event['eventobjid']
   local toobjid = event['toobjid']
   LogHelper:call(function ()
     -- LogHelper:debug('造成伤害')
-    MyPlayerHelper:playerDamageActor(objid, toobjid)
+    MyPlayerHelper:playerDamageActor(objid, toobjid, event.hurtlv)
   end)
 end
 
@@ -86,10 +92,10 @@ local playerDefeatActor = function (event)
   end)
 end
 
--- eventobjid, toobjid
+-- eventobjid, toobjid, hurtlv
 local playerBeHurt = function (event)
   LogHelper:call(function ()
-    MyPlayerHelper:playerBeHurt(event.eventobjid, event.toobjid)
+    MyPlayerHelper:playerBeHurt(event.eventobjid, event.toobjid, event.hurtlv)
   end)
 end
 
@@ -168,10 +174,39 @@ local playerNewInputContent = function (event)
   end)
 end
 
+-- eventobjid, vkey
+local playerInputKeyDown = function (event)
+  LogHelper:call(function ()
+    MyPlayerHelper:playerInputKeyDown(event.eventobjid, event.vkey)
+  end)
+end
+
+-- eventobjid, vkey
+local playerInputKeyOnPress = function (event)
+  LogHelper:call(function ()
+    MyPlayerHelper:playerInputKeyOnPress(event.eventobjid, event.vkey)
+  end)
+end
+
+-- eventobjid, vkey
+local playerInputKeyUp = function (event)
+  LogHelper:call(function ()
+    MyPlayerHelper:playerInputKeyUp(event.eventobjid, event.vkey)
+  end)
+end
+
+-- eventobjid, toobjid
+local playerLevelModelUpgrade = function (event)
+  LogHelper:call(function ()
+    MyPlayerHelper:playerLevelModelUpgrade(event.eventobjid, event.toobjid)
+  end)
+end
+
 ScriptSupportEvent:registerEvent([=[Player.AreaIn]=], playerEnterArea) -- 玩家进入区域
 ScriptSupportEvent:registerEvent([=[Player.AreaOut]=], playerLeaveArea) -- 玩家离开区域
 ScriptSupportEvent:registerEvent([=[Player.ClickBlock]=], playerClickBlock) -- 点击方块
 ScriptSupportEvent:registerEvent([=[Player.UseItem]=], playerUseItem) -- 玩家使用物品
+ScriptSupportEvent:registerEvent([=[Player.ConsumeItem]=], playerConsumeItem) -- 玩家消耗道具
 ScriptSupportEvent:registerEvent([=[Player.ClickActor]=], playerClickActor) -- 玩家点击生物
 ScriptSupportEvent:registerEvent([=[Player.AddItem]=], playerAddItem) -- 玩家新增道具
 ScriptSupportEvent:registerEvent([=[Player.AttackHit]=], playerAttackHit) -- 玩家攻击命中
@@ -188,5 +223,9 @@ ScriptSupportEvent:registerEvent([=[Player.MountActor]=], playerMountActor) -- �
 ScriptSupportEvent:registerEvent([=[Player.DismountActor]=], playerDismountActor) -- 取消骑乘坐骑
 ScriptSupportEvent:registerEvent([=[Player.InputContent]=], playerInputContent) -- 聊天输出界面变化
 ScriptSupportEvent:registerEvent([=[Player.NewInputContent]=], playerNewInputContent) -- 输入字符串
+ScriptSupportEvent:registerEvent([=[Player.InputKeyDown]=], playerInputKeyDown) -- 按键被按下
+ScriptSupportEvent:registerEvent([=[Player.InputKeyOnPress]=], playerInputKeyOnPress) -- 按键处于按下状态
+ScriptSupportEvent:registerEvent([=[Player.InputKeyUp]=], playerInputKeyUp) -- 按键松开
+ScriptSupportEvent:registerEvent([=[Player.LevelModelUpgrade]=], playerLevelModelUpgrade) -- 玩家等级发生改变
 
 -- ScriptSupportEvent:registerEvent([=[Player.ChangeAttr]=], playerChangeAttr) -- 属性变化

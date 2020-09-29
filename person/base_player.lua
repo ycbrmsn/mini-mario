@@ -18,9 +18,26 @@ function BasePlayer:new (o)
   return o
 end
 
+function BasePlayer:init ()
+  self.hold = PlayerHelper:getCurToolID(self.objid)
+  self.attr.level = PlayerHelper:getLevel(self.objid) or 0
+  self:initMyPlayer()
+  -- body
+end
+
+-- 初始化方法，用于重写
+function BasePlayer:initMyPlayer ()
+  -- body
+end
+
+-- 是否是房主
+function BasePlayer:isHostPlayer ()
+  return PlayerHelper:isMainPlayer(self.objid)
+end
+
 function BasePlayer:speak (afterSeconds, ...)
   if (afterSeconds > 0) then
-    self.action:speakToAllAfterSecond(afterSeconds, ...)
+    self.action:speakAfterSeconds(afterSeconds, ...)
   else
     self.action:speakToAll(...)
   end
@@ -29,7 +46,7 @@ end
 function BasePlayer:speakTo (playerids, afterSeconds, ...)
   if (type(playerids) == 'number') then
     if (afterSeconds > 0) then
-      self.action:speakAfterSecond(playerids, afterSeconds, ...)
+      self.action:speakToAfterSeconds(playerids, afterSeconds, ...)
     else
       self.action:speak(playerids, ...)
     end
@@ -42,18 +59,18 @@ end
 
 function BasePlayer:thinks (afterSeconds, ...)
   if (afterSeconds > 0) then
-    self.action:speakInHeartToAllAfterSecond(afterSeconds, ...)
+    self.action:thinkAfterSeconds(afterSeconds, ...)
   else
-    self.action:speakInHeartToAll(...)
+    self.action:think(...)
   end
 end
 
 function BasePlayer:thinkTo (playerids, afterSeconds, ...)
   if (type(playerids) == 'number') then
     if (afterSeconds > 0) then
-      self.action:speakInHeartAfterSecond(playerids, afterSeconds, ...)
+      self.action:thinkToAfterSeconds(playerids, afterSeconds, ...)
     else
-      self.action:speakInHeart(playerids, ...)
+      self.action:thinkTo(playerids, ...)
     end
   elseif (type(playerids) == 'table') then
     for i, v in ipairs(playerids) do
@@ -81,28 +98,20 @@ function BasePlayer:setActive (isActive)
   self.active = isActive
 end
 
--- function BasePlayer:getLevel ()
---   return self.attr.totalLevel
--- end
+function BasePlayer:getPrevLevel ()
+  return self.attr.level
+end
 
--- function BasePlayer:setLevel (level)
---   self.attr.totalLevel = level
--- end
-
--- function BasePlayer:getExp ()
---   return self.attr.exp
--- end
-
--- function BasePlayer:setExp (exp)
---   self.attr.exp = exp
--- end
+function BasePlayer:setPrevLevel (level)
+  self.attr.level = level
+end
 
 function BasePlayer:getLevel ()
-  return PlayerHelper:getTotalLevel(self.objid)
+  return PlayerHelper:getLevel(self.objid)
 end
 
 function BasePlayer:setLevel (level)
-  return PlayerHelper:setTotalLevel(self.objid, level)
+  return PlayerHelper:setLevel(self.objid, level)
 end
 
 function BasePlayer:getExp ()
@@ -177,20 +186,12 @@ function BasePlayer:upgrade (addLevel)
   return self.attr:upgrade(addLevel)
 end
 
-function BasePlayer:lookAt (objid)
-  local x, y, z
-  if (type(objid) == 'table') then
-    x, y, z = objid.x, objid.y, objid.z
-  else
-    x, y, z = ActorHelper:getPosition(objid)
-    y = y + ActorHelper:getEyeHeight(objid) - 1
+-- 玩家看向，默认会旋转镜头
+function BasePlayer:lookAt (toobjid, needRotateCamera)
+  if (type(needRotateCamera) == 'nil') then
+    needRotateCamera = true
   end
-  local x0, y0, z0 = ActorHelper:getPosition(self.objid)
-  y0 = y0 + ActorHelper:getEyeHeight(self.objid) - 1 -- 生物位置y是地面上一格，所以要减1
-  local myVector3 = MyVector3:new(x0, y0, z0, x, y, z)
-  local faceYaw = MathHelper:getPlayerFaceYaw(myVector3)
-  local facePitch = MathHelper:getActorFacePitch(myVector3)
-  PlayerHelper:rotateCamera(self.objid, faceYaw, facePitch)
+  ActorHelper:lookAt(self.objid, toobjid, needRotateCamera)
 end
 
 function BasePlayer:wantLookAt (objid, seconds)
@@ -217,15 +218,17 @@ end
 
 function BasePlayer:holdItem ()
   local itemid = PlayerHelper:getCurToolID(self.objid)
-  if (not(self.hold) and not(itemid)) then  -- 变化前后都没有拿东西
-    -- do nothing
-  elseif (not(self.hold)) then -- 之前没有拿东西
-    self:changeHold(itemid)
-  elseif (not(itemid)) then -- 之后没有拿东西
-    self:changeHold(itemid)
-  elseif (self.hold ~= itemid) then -- 换了一件东西拿
-    self:changeHold(itemid)
-  end -- else是没有换东西，略去
+  if (itemid) then
+    if (not(self.hold) and itemid == 0) then  -- 变化前后都没有拿东西
+      -- do nothing
+    elseif (not(self.hold)) then -- 之前没有拿东西
+      self:changeHold(itemid)
+    elseif (itemid == 0) then -- 之后没有拿东西
+      self:changeHold(itemid)
+    elseif (self.hold ~= itemid) then -- 换了一件东西拿
+      self:changeHold(itemid)
+    end -- else是没有换东西，略去
+  end
 end
 
 function BasePlayer:changeHold (itemid)
@@ -244,12 +247,14 @@ function BasePlayer:changeHold (itemid)
   end
 end
 
-function BasePlayer:changeAttr (attack, defense, dodge)
-  self.attr:changeAttr(attack, defense, dodge)
+-- 改变攻防属性
+function BasePlayer:changeAttr (meleeAttack, remoteAttack, meleeDefense, remoteDefense, isMinus)
+  self.attr:changeAttr(meleeAttack, remoteAttack, meleeDefense, remoteDefense, isMinus)
 end
 
-function BasePlayer:showAttr (isMelee)
-  self.attr:showAttr(isMelee)
+-- 显示攻防属性变化
+function BasePlayer:showAttr ()
+  self.attr:showAttr()
 end
 
 -- 恢复血量（加/减血）
@@ -268,8 +273,8 @@ function BasePlayer:reduceStrength (strength)
 end
 
 -- 伤害生物
-function BasePlayer:damageActor (toobjid, val)
-  self.attr:damageActor(toobjid, val)
+function BasePlayer:damageActor (toobjid, val, item)
+  self.attr:damageActor(toobjid, val, item)
 end
 
 -- 设置囚禁状态

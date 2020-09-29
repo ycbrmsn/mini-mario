@@ -1,4 +1,4 @@
--- actor基类
+-- 角色基类
 BaseActor = {
   objid = nil,
   actorid = nil,
@@ -12,7 +12,8 @@ BaseActor = {
   timername = 'myActorTimer',
   wants = nil,
   isAIOpened = true,
-  sealTimes = 0 -- 封魔叠加次数
+  isInit = false, -- 是否初始化完成
+  sealTimes = 0, -- 封魔叠加次数
 }
 
 function BaseActor:new (actorid, objid)
@@ -48,6 +49,18 @@ function BaseActor:isActive ()
   if (x) then
     self:updateCantMoveTime(x, y, z)
     self.x, self.y, self.z = x, y, z
+    -- 处理恢复加载时生物的一些属性会遗失的问题
+    if (self.maxHp) then -- 最大生命值
+      local maxHp = CreatureHelper:getMaxHp(self.objid)
+      if (maxHp and maxHp ~= self.maxHp) then
+        CreatureHelper:setMaxHp(self.objid, self.maxHp)
+      end
+    end
+    if (self.unableBeKilled) then -- 不可被杀死
+      if (ActorHelper:getEnableBeKilledState(self.objid)) then
+        ActorHelper:setEnableBeKilledState(self.objid, false)
+      end
+    end
     return true
   else
     return false
@@ -75,13 +88,21 @@ function BaseActor:enableMove (switch)
 end
 
 function BaseActor:openAI ()
-  CreatureHelper:openAI(self.objid)
-  self.isAIOpened = true
+  if (CreatureHelper:openAI(self.objid)) then
+    self.isAIOpened = true
+    return true
+  else
+    return false
+  end
 end
 
 function BaseActor:closeAI ()
-  CreatureHelper:closeAI(self.objid)
-  self.isAIOpened = false
+  if (CreatureHelper:closeAI(self.objid)) then
+    self.isAIOpened = false
+    return true
+  else
+    return false
+  end
 end
 
 function BaseActor:runTo (pos, speed)
@@ -127,13 +148,19 @@ function BaseActor:setFacePitch (pitch)
 end
 
 -- 看向某人/某处
-function BaseActor:lookAt (objid)
-  self.action:lookAt(objid)
+function BaseActor:lookAt (objid, afterSeconds)
+  if (afterSeconds and afterSeconds > 0) then
+    TimeHelper:callFnAfterSecond(function ()
+      self.action:lookAt(objid)
+    end, afterSeconds)
+  else
+    self.action:lookAt(objid)
+  end
 end
 
 function BaseActor:speak (afterSeconds, ...)
   if (afterSeconds > 0) then
-    self.action:speakToAllAfterSecond(afterSeconds, ...)
+    self.action:speakAfterSeconds(afterSeconds, ...)
   else
     self.action:speakToAll(...)
   end
@@ -142,7 +169,7 @@ end
 function BaseActor:speakTo (playerids, afterSeconds, ...)
   if (type(playerids) == 'number') then
     if (afterSeconds > 0) then
-      self.action:speakAfterSecond(playerids, afterSeconds, ...)
+      self.action:speakToAfterSeconds(playerids, afterSeconds, ...)
     else
       self.action:speak(playerids, ...)
     end
@@ -155,18 +182,18 @@ end
 
 function BaseActor:thinks (afterSeconds, ...)
   if (afterSeconds > 0) then
-    self.action:speakInHeartToAllAfterSecond(afterSeconds, ...)
+    self.action:thinkAfterSeconds(afterSeconds, ...)
   else
-    self.action:speakInHeartToAll(...)
+    self.action:think(...)
   end
 end
 
 function BaseActor:thinkTo (playerids, afterSeconds, ...)
   if (type(playerids) == 'number') then
     if (afterSeconds > 0) then
-      self.action:speakInHeartAfterSecond(playerids, afterSeconds, ...)
+      self.action:thinkToAfterSeconds(playerids, afterSeconds, ...)
     else
-      self.action:speakInHeart(playerids, ...)
+      self.action:thinkTo(playerids, ...)
     end
   elseif (type(playerids) == 'table') then
     for i, v in ipairs(playerids) do
@@ -233,6 +260,10 @@ function BaseActor:wantFreeInArea (think, posPairs)
   self.want:wantFreeInArea(think, posPairs)
 end
 
+function BaseActor:wantFreeAttack (think, posPairs)
+  self.want:wantFreeAttack(think, posPairs)
+end
+
 -- 生物默认想法，可重写
 function BaseActor:defaultWant ()
   self:wantFreeTime()
@@ -275,6 +306,10 @@ end
 -- 生物接下来想在区域内自由活动
 function BaseActor:nextWantFreeInArea (think, posPairs)
   self.want:nextWantFreeInArea(think, posPairs)
+end
+
+function BaseActor:nextWantFreeAttack (think, positions)
+  self.want:nextWantFreeAttack(think, posPairs)
 end
 
 function BaseActor:nextWantDoNothing (think)
@@ -320,7 +355,15 @@ function BaseActor:defaultPlayerClickEvent (playerid)
   local actorTeam = CreatureHelper:getTeam(self.objid)
   local playerTeam = PlayerHelper:getTeam(playerid)
   if (actorTeam ~= 0 and actorTeam == playerTeam) then -- 有队伍并且同队
-    self.action:stopRun()
+    local pos = self:getMyPosition()
+    if (not(AreaHelper:isAirArea(pos))) then -- 生物不在空气中，则移动到玩家位置
+      local player = PlayerHelper:getPlayer(playerid)
+      local newPos = player:getDistancePosition(1)
+      self:setPosition(newPos)
+      ChatHelper:sendMsg(playerid, '你把', self:getName(), '拉了过来')
+    else
+      self.action:stopRun()
+    end
     self:wantLookAt(nil, playerid, 60)
     self:playerClickEvent(playerid)
   end
@@ -328,7 +371,7 @@ end
 
 function BaseActor:candleEvent (myPlayer, candle)
   local nickname = myPlayer:getName()
-  self.action:speak(myPlayer.objid, nickname, '，你搞啥呢')
+  self:speakTo(myPlayer.objid, 0, nickname, '，你搞啥呢')
 end
 
 function BaseActor:getName ()
@@ -361,8 +404,7 @@ function BaseActor:init (hour)
 end
 
 function BaseActor:initActor (initPosition)
-  local actorid = CreatureHelper:getActorID(self.objid)
-  if (actorid and actorid == self.actorid) then
+  if (self:isFind()) then
     ActorHelper:addActor(self) -- 生物加入集合中
     -- 加入蜡烛台数据
     if (self.candlePositions and #self.candlePositions > 0) then
@@ -375,16 +417,28 @@ function BaseActor:initActor (initPosition)
       CreatureHelper:setMaxHp(self.objid, self.maxHp)
       CreatureHelper:setHp(self.objid, self.maxHp)
     end
-    -- 清除木围栏
-    -- local areaid = AreaHelper:getAreaByPos(initPosition)
-    -- if (areaid) then
-    --   AreaHelper:clearAllWoodenFence(areaid)
-    -- end
+    -- 如果生物不可被杀死，则设置不可被杀死
+    if (self.unableBeKilled) then
+      ActorHelper:setEnableBeKilledState(self.objid, false)
+    end
     self:wantAtHour()
+    self.isInit = true
+    LogHelper:debug('初始化', self:getName(), '完成')
     return true
   else
     return false
   end
+end
+
+-- 是否找到该生物
+function BaseActor:isFind ()
+  local actorid = CreatureHelper:getActorID(self.objid)
+  return actorid and actorid == self.actorid
+end
+
+-- 是否完成初始化
+function BaseActor:isFinishInit ()
+  return self.isInit
 end
 
 function BaseActor:collidePlayer (playerid, isPlayerInFront)

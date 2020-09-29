@@ -2,38 +2,45 @@
 StoryHelper = {
   mainIndex = 1,
   mainProgress = 1,
-  progressNames = {},
-  storyRemainDays = 0, -- 当前剧情剩余天数
-  stories = {}
+  stories = {},
+  initKey = {}, -- 剧情重新加载时校验使用
+  alreadyLoad = false, -- 是否已经加载了
 }
 
--- 剧情前进
-function StoryHelper:forward (progressName, isBranch)
-  if (self:isProgressNameExist(progressName)) then
-    return
-  end
-  if (isBranch) then -- 支线，暂未设计
-    
-  else
-    table.insert(self.progressNames, progressName)
-    self.mainProgress = self.mainProgress + 1
-    if (self.mainProgress > #self.stories[self.mainIndex].tips) then
-      self.mainIndex = self.mainIndex + 1
-      self.mainProgress = 1
-    end
-    local hostPlayer = PlayerHelper:getHostPlayer()
-    GameDataHelper:updateGameData(hostPlayer)
-  end
+-- 检查剧情前置条件是否满足
+function StoryHelper:check (mainIndex, mainProgress)
+  mainProgress = StoryHelper:getRealProgress(mainProgress)
+  return mainIndex == self.mainIndex and mainProgress == self.mainProgress
 end
 
--- 剧情进度名是否存在
-function StoryHelper:isProgressNameExist (progressName)
-  for i, v in ipairs(self.progressNames) do
-    if (v == progressName) then
-      return true
-    end
+-- 剧情前进 两个progress都是要跳到剧情的前置
+function StoryHelper:forward (mainIndex, mainProgress, endProgress)
+  if (not(StoryHelper:check(mainIndex, mainProgress))) then
+    return false
   end
-  return false
+  StoryHelper:setLoad(true)
+  if (endProgress) then
+    endProgress = StoryHelper:getRealProgress(endProgress)
+    self.mainProgress = endProgress + 1
+  else
+    self.mainProgress = self.mainProgress + 1
+  end
+  if (self.mainProgress > #self.stories[self.mainIndex].tips) then
+    self.mainIndex = self.mainIndex + 1
+    self.mainProgress = 1
+  end
+  local hostPlayer = PlayerHelper:getHostPlayer()
+  GameDataHelper:updateGameData(hostPlayer)
+  return true
+end
+
+-- 获得实际进度序数
+function StoryHelper:getRealProgress (progress)
+  if (type(progress) == 'string') then -- 是别名
+    local story = StoryHelper:getStory(mainIndex)
+    progress = story:getProgressPrepose(progress) or -1 -- 找不到就-1
+  end
+  return progress
 end
 
 -- 获得主线剧情序号
@@ -56,27 +63,10 @@ function StoryHelper:setMainStoryProgress (mainProgress)
   self.mainProgress = mainProgress
 end
 
--- 获得剩余剧情天数（目前弃用）
-function StoryHelper:getMainStoryRemainDays ()
-  return self.storyRemainDays
-end
-
--- 获得主线剧情信息
-function StoryHelper:getMainStoryInfo ()
-  return self.stories[self:getMainStoryIndex()]
-end
-
 -- 获得剧情标题和内容
 function StoryHelper:getMainStoryTitleAndTip ()
-  local story = self:getMainStoryInfo()
+  local story = self:getStory()
   return story.title, story.tips[self:getMainStoryProgress()]
-end
-
--- 减少剩余天数（目前弃用）
-function StoryHelper:reduceRemainDay ()
-  if (self.storyRemainDays > 0) then
-    self.storyRemainDays = self.storyRemainDays - 1
-  end
 end
 
 -- 获取剧情
@@ -100,9 +90,50 @@ function StoryHelper:recover (player)
   if (#self.stories == 0) then
     MyStoryHelper:init()
   end
-  local story = self:getStory()
-  if (story) then -- 如果存在剧情
-    story:recover(player)
+  if (player and PlayerHelper:isMainPlayer(player.objid)) then
+    local story = self:getStory()
+    if (story) then -- 如果存在剧情
+      if (StoryHelper:isLoad()) then
+        return false
+      else
+        StoryHelper:setLoad(true)
+        story:recover(player)
+        ChatHelper:sendMsg(objid, '游戏进度加载完成')
+        return true
+      end
+    end
+  end
+end
+
+-- 剧情是否已经加载过
+function StoryHelper:isLoad ()
+  return self.alreadyLoad
+end
+
+-- 设置剧情加载情况
+function StoryHelper:setLoad (isLoad)
+  self.alreadyLoad = isLoad
+end
+
+-- 显示初始化剧情错误
+function StoryHelper:showInitError (key, name)
+  key = key or 'defaultInitKey'
+  name = name or '必需角色'
+  self.initKey[key] = self.initKey[key] or 1
+  if (self.initKey[key] % 30 == 5) then
+    ChatHelper:sendMsg(nil, '地图错误：', name, '未找到，找到', name, '后方可继续后续剧情')
+  end
+  self.initKey[key] = self.initKey[key] + 1
+end
+
+-- 进入未加载提示
+function StoryHelper:loadTip (objid, seconds)
+  seconds = seconds or 30
+  if (not(StoryHelper:isLoad())) then
+    ChatHelper:sendMsg(objid, '当前游戏进度未加载，请加载进度')
+    TimeHelper:callFnAfterSecond(function ()
+      StoryHelper:loadTip(objid, seconds)
+    end, seconds)
   end
 end
 
@@ -110,7 +141,5 @@ end
 
 -- 世界时间到[n]点
 function StoryHelper:atHour (hour)
-  if (hour == 0) then
-    self:reduceRemainDay()
-  end
+  -- body
 end

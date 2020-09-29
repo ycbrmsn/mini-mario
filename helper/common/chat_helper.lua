@@ -4,12 +4,23 @@ ChatHelper = {}
 -- 发送模板消息
 function ChatHelper:sendTemplateMsg (template, map, objid)
   local msg = StringHelper:getTemplateResult(template, map)
-  ChatHelper:sendSystemMsg(msg, objid)
+  return ChatHelper:sendSystemMsg(msg, objid)
 end
 
 -- 发送消息
 function ChatHelper:sendMsg (objid, ...)
-  ChatHelper:sendSystemMsg(StringHelper:concat(...), objid)
+  return ChatHelper:sendSystemMsg(StringHelper:concat(...), objid)
+end
+
+-- 说
+function ChatHelper:speak (name, toobjid, ...)
+  return ChatHelper:sendMsg(toobjid, name, '：', StringHelper.speakColor, ...)
+end
+
+-- 想
+function ChatHelper:think (name, toobjid, ...)
+  local content = StringHelper:concat(...)
+  return ChatHelper:sendMsg(toobjid, name, '：', StringHelper.speakColor, '（', content, StringHelper.speakColor, '）')
 end
 
 -- 封装原始接口
@@ -24,6 +35,31 @@ end
 
 -- UI工具类
 UIHelper = {}
+
+-- 设置左标题
+function UIHelper:setLeftTitle (...)
+  UIHelper:setGBattleUI('left_title', StringHelper:concat(...))
+end
+
+-- 设置右标题
+function UIHelper:setRightTitle (...)
+  UIHelper:setGBattleUI('right_title', StringHelper:concat(...))
+end
+
+-- 设置左描述
+function UIHelper:setLeftDesc (...)
+  UIHelper:setGBattleUI('left_desc', StringHelper:concat(...))
+end
+
+-- 设置左简述
+function UIHelper:setLeftLittleDesc (...)
+  UIHelper:setGBattleUI('left_little_desc', StringHelper:concat(...))
+end
+
+-- 设置右简述
+function UIHelper:setRightLittleDesc (...)
+  UIHelper:setGBattleUI('right_little_desc', StringHelper:concat(...))
+end
 
 -- 封装原水接口
 

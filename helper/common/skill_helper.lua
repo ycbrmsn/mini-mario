@@ -1,7 +1,9 @@
 -- 技能工具类
 SkillHelper = {
+  FLY_UP_SPEED = 0.06,
   FLY_DOWN_SPEED = -0.02,
-  flyData = {}, -- { objid -> { state = state, flySwordId = flySwordId, position = pos, speed = 0 } }
+  FLY_JUMP_SPEED = 0.5,
+  flyData = {}, -- { objid -> { state = state, flySwordId = flySwordId, position = pos, isStartFly = false } }
   huitianData = {}, -- { objid -> {} }
   airArmourData = {
     bodyEffect = BaseConstant.BODY_EFFECT.LIGHT64
@@ -87,22 +89,26 @@ function SkillHelper:cancelSealActor (objid)
   end
 end
 
--- 获取御剑状态（-1：御剑失控；0：可御剑；1：御剑静止；2：御剑前行）
-function SkillHelper:getFlyState (objid)
+-- 获取御剑数据
+function SkillHelper:getFlyData (objid)
   local flyData = self.flyData[objid]
   if (not(flyData)) then
-    self.flyData[objid] = { speed = 0, state = 0 }
+    flyData = { state = 0, isStartFly = false }
+    self.flyData[objid] = flyData
   end
-  return self.flyData[objid].state
+  return flyData
+end
+
+-- 获取御剑状态（-1：御剑失控；0：可御剑；1：御剑静止；2：御剑前行）
+function SkillHelper:getFlyState (objid)
+  local flyData = SkillHelper:getFlyData(objid)
+  return flyData.state
 end
 
 -- 设置御剑状态
 function SkillHelper:setFlyState (objid, state)
-  local flyData = self.flyData[objid]
-  if (not(flyData)) then
-    self.flyData[objid] = { speed = 0 }
-  end
-  self.flyData[objid].state = state
+  local flyData = SkillHelper:getFlyData(objid)
+  flyData.state = state
 end
 
 -- 是否在御剑
@@ -117,27 +123,36 @@ function SkillHelper:isFlyingAdvance (objid)
   return TimeHelper:isFnContinueRuns(flyAdvanceType), flyAdvanceType
 end
 
+-- 是否在刚开始御剑
+function SkillHelper:isStartFly (objid)
+  local flyData = SkillHelper:getFlyData(objid)
+  return flyData.isStartFly
+end
+
 -- 御剑静止
 function SkillHelper:flyStatic (objid)
   local pos = ActorHelper:getMyPosition(objid)
-  if (not(ActorHelper:isInAir(objid))) then -- 不在空中
-    pos.y = pos.y + 2
-    local yaw = ActorHelper:getFaceYaw(objid)
-    local facePitch = ActorHelper:getFacePitch(objid)
-    ActorHelper:setMyPosition(objid, pos)
-    ActorHelper:setFaceYaw(objid, yaw)
-    ActorHelper:setFacePitch(objid, facePitch)
-    -- if (ActorHelper:isPlayer(objid)) then -- 玩家
-      -- PlayerHelper:rotateCamera(objid, yaw + 180, facePitch)
-    -- end
+  if (not(pos)) then
+    return false
   end
-  if (not(self.flyData[objid])) then
-    self.flyData[objid] = { speed = 0 }
+  local flyData = SkillHelper:getFlyData(objid)
+  if (not(ActorHelper:isInAir(objid))) then -- 不在空中
+    -- pos.y = pos.y + 2
+    -- local yaw = ActorHelper:getFaceYaw(objid)
+    -- local facePitch = ActorHelper:getFacePitch(objid)
+    -- ActorHelper:setMyPosition(objid, pos)
+    -- ActorHelper:setFaceYaw(objid, yaw)
+    -- ActorHelper:setFacePitch(objid, facePitch)
+    ActorHelper:appendSpeed(objid, 0, self.FLY_JUMP_SPEED, 0)
+    flyData.isStartFly = true
+    TimeHelper:callFnFastRuns(function ()
+      flyData.isStartFly = false
+    end, 1, objid .. 'startFly')
   end
   local flySwordId
-  if (not(self.flyData[objid].flySwordId)) then
+  if (not(flyData.flySwordId)) then
     flySwordId = WorldHelper:spawnProjectileByDirPos(objid, MyWeaponAttr.controlSword.projectileid, pos, pos, 0)
-    self.flyData[objid].flySwordId = flySwordId
+    flyData.flySwordId = flySwordId
   end
   local isFlying, flyType = self:isFlying(objid)
   local isFlyingAdvance, flyAdvanceType = self:isFlyingAdvance(objid)
@@ -168,6 +183,7 @@ function SkillHelper:flyStatic (objid)
     TimeHelper:delFnContinueRuns(flyAdvanceType)
   end
   self:setFlyState(objid, 1)
+  return true
 end
 
 -- 御剑前行
@@ -188,6 +204,20 @@ function SkillHelper:flyAdvance (objid)
   self:setFlyState(objid, 2)
 end
 
+-- 上升
+function SkillHelper:flyUp (objid)
+  if (SkillHelper:isFlying(objid)) then
+    TimeHelper:callFnContinueRuns(function ()
+      ActorHelper:appendSpeed(objid, 0, self.FLY_UP_SPEED, 0)
+    end, -1, objid .. 'flyUp')
+  end
+end
+
+-- 停止上升
+function SkillHelper:stopFlyUp (objid)
+  TimeHelper:delFnContinueRuns(objid .. 'flyUp')
+end
+
 -- 停止御剑
 function SkillHelper:stopFly (objid, item)
   local state = self:getFlyState(objid)
@@ -204,10 +234,12 @@ function SkillHelper:stopFly (objid, item)
   elseif (state == 2) then -- 前行
     TimeHelper:delFnContinueRuns(objid .. 'flyAdvance')
   end
+  SkillHelper:stopFlyUp(objid)
   self:setFlyState(objid, 0)
-  WorldHelper:despawnActor(self.flyData[objid].flySwordId)
-  -- ActorHelper:killSelf(self.flyData[objid].flySwordId)
-  self.flyData[objid].flySwordId = nil
+  local flyData = SkillHelper:getFlyData(objid)
+  WorldHelper:despawnActor(flyData.flySwordId)
+  -- ActorHelper:killSelf(flyData.flySwordId)
+  flyData.flySwordId = nil
   -- ActorHelper:setImmuneFall(self.myActor.objid, true) -- 免疫跌落
   -- TimeHelper:callFnFastRuns(function ()
   --   ActorHelper:setImmuneFall(self.myActor.objid, false) -- 取消免疫跌落
@@ -266,6 +298,18 @@ function SkillHelper:tenThousandsSwordcraft2 (objid, item, dstPos, size)
       if (v[1]) then
         local pos = ActorHelper:getMyPosition(v[2])
         if (pos) then -- 飞剑存在，则搜索飞剑周围目标
+          if (pos:equals(v[4])) then -- 位置没变
+            v[5] = (v[5] or 0) + 1
+            if (v[5] > 20) then
+              v[1] = false
+              TimeHelper:callFnFastRuns(function ()
+                WorldHelper:despawnActor(v[2])
+              end, 3)
+            end
+          else -- 位置变化
+            v[4] = pos
+            v[5] = 0
+          end
           local objids = ActorHelper:getAllCreaturesArroundPos(pos, dim, objid)
           if (not(objids) or #objids == 0) then
             objids = ActorHelper:getAllPlayersArroundPos(pos, dim, objid)
@@ -294,7 +338,7 @@ function SkillHelper:tenThousandsSwordcraft3 (objid, item, arr, projectiles)
     local projectileid = WorldHelper:spawnProjectileByDirPos(objid, 
       item.projectileid, arr[index], speedVector3, 0)
     ActorHelper:appendSpeed(projectileid, speedVector3.x, speedVector3.y, speedVector3.z)
-    table.insert(projectiles, { true, projectileid, speedVector3 })
+    table.insert(projectiles, { true, projectileid, speedVector3, arr[index], 0 }) -- 是否存在、id、速度、位置，不动次数
     table.remove(arr, index)
     ItemHelper:recordProjectile(projectileid, objid, item, {})
     ItemHelper:recordMissileSpeed(projectileid, speedVector3)
@@ -339,7 +383,7 @@ function SkillHelper:airArmour (objid, size, time)
               local projectileid = WorldHelper:spawnProjectileByDirPos(objid, itemid, missilePos, missilePos, 0)
               local sv3 = ActorHelper:appendFixedSpeed(projectileid, 0.8, pos)
               ItemHelper:recordMissileSpeed(projectileid, sv3)
-              ActorHelper:addGravity(projectileid)
+              ActorHelper:addGravity({ objid = projectileid, pos = pos, index = 0 })
             end
           end
         end
@@ -373,7 +417,7 @@ function SkillHelper:huitian (objid, item, num, size, changeAngle, distance)
     local projectileid = WorldHelper:spawnProjectileByDirPos(objid, 
       item.projectileid, pos, pos, 0)
     ItemHelper:recordProjectile(projectileid, objid, item, {})
-    table.insert(projectiles, { flag = 0, objid = projectileid, angle = angle })
+    table.insert(projectiles, { flag = 0, objid = projectileid, angle = angle, pos = pos, index = 0 })
   end
   local t = objid .. 'huitian'
   TimeHelper:callFnContinueRuns(function ()
@@ -381,6 +425,7 @@ function SkillHelper:huitian (objid, item, num, size, changeAngle, distance)
     local objPos = ActorHelper:getMyPosition(objid)
     -- 查询生物周围是否有目标
     local objids = ActorHelper:getAllCreaturesArroundPos(objPos, dim, objid)
+    objids = ActorHelper:getHasTargetActors(objids)
     if (not(objids) or #objids == 0) then
       objids = ActorHelper:getAllPlayersArroundPos(objPos, dim, objid)
     end
@@ -408,12 +453,24 @@ function SkillHelper:huitian (objid, item, num, size, changeAngle, distance)
               SkillHelper:huitianCircle(objid, distance, v, changeAngle)
             end
           else -- 追击状态
-            local speedVector3 = ItemHelper:getMissileSpeed(v.objid)
-            if (speedVector3) then
-              ActorHelper:appendSpeed(v.objid, -speedVector3.x, -speedVector3.y, -speedVector3.z)
+            if (p:equals(v.pos)) then -- 没有动
+              v.index = (v.index or 0) + 1
+              if (v.index > 20) then
+                v.flag = 2
+                TimeHelper:callFnFastRuns(function ()
+                  WorldHelper:despawnActor(v.objid)
+                end, 3)
+              end
+            else
+              v.pos = p
+              v.index = 0
+              local speedVector3 = ItemHelper:getMissileSpeed(v.objid)
+              if (speedVector3) then
+                ActorHelper:appendSpeed(v.objid, -speedVector3.x, -speedVector3.y, -speedVector3.z)
+              end
+              local sv3 = ActorHelper:appendFixedSpeed(v.objid, 0.8, p, ActorHelper:getMyPosition(targetObjid))
+              ItemHelper:recordMissileSpeed(v.objid, sv3)
             end
-            local sv3 = ActorHelper:appendFixedSpeed(v.objid, 0.8, p, ActorHelper:getMyPosition(targetObjid))
-            ItemHelper:recordMissileSpeed(v.objid, sv3)
           end
         else -- 未发现目标，追击状态不处理
           if (v.flag == 0) then -- 环绕状态

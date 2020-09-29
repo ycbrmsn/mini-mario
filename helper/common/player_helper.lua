@@ -107,12 +107,14 @@ function PlayerHelper:showActorHp (objid, toobjid)
   local t = 'showActorHp' .. toobjid
   TimeHelper:delFnFastRuns(t)
   TimeHelper:callFnFastRuns(function ()
-    if (hp and hp <= 0) then
-      self:showToast(objid, StringHelper:concat(actorname, '已死亡'))
-    else
-      hp = math.ceil(hp)
-      self:showToast(objid, StringHelper:concat(actorname, '剩余生命：', 
-        StringHelper:number2String(hp)))
+    if (hp) then
+      if (hp <= 0) then
+        self:showToast(objid, StringHelper:concat(actorname, '已死亡'))
+      else
+        hp = math.ceil(hp)
+        self:showToast(objid, StringHelper:concat(actorname, '剩余生命：', 
+          StringHelper:number2String(hp)))
+      end
     end
   end, 0.1, t)
 end
@@ -159,21 +161,21 @@ function PlayerHelper:setEveryPlayerPosition (x, y, z, afterSeconds)
   end, afterSeconds)
 end
 
-function PlayerHelper:everyPlayerSpeakAfterSecond (second, ...)
+function PlayerHelper:everyPlayerSpeakToSelf (second, ...)
   for i, v in ipairs(self:getAllPlayers()) do
-    v.action:speakAfterSecond(v.objid, second, ...)
+    v.action:speakToAfterSeconds(v.objid, second, ...)
   end
 end
 
-function PlayerHelper:everyPlayerSpeakToAllAfterSecond (second, ...)
+function PlayerHelper:everyPlayerSpeak (second, ...)
   for i, v in ipairs(self:getAllPlayers()) do
-    v.action:speakToAllAfterSecond(second, ...)
+    v.action:speakAfterSeconds(second, ...)
   end
 end
 
-function PlayerHelper:everyPlayerSpeakInHeartAfterSecond (second, ...)
+function PlayerHelper:everyPlayerThinkToSelf (second, ...)
   for i, v in ipairs(self:getAllPlayers()) do
-    v.action:speakInHeartAfterSecond(v.objid, second, ...)
+    v.action:thinkToAfterSeconds(v.objid, second, ...)
   end
 end
 
@@ -189,15 +191,21 @@ function PlayerHelper:everyPlayerEnableMove (enable, afterSeconds)
   end, afterSeconds)
 end
 
-function PlayerHelper:everyPlayerRunTo (positions, callback, param, afterSeconds)
+function PlayerHelper:everyPlayerRunTo (positions, callback, afterSeconds)
   self:everyPlayerDoSomeThing(function (player)
-    player.action:runTo(positions, callback, param)
+    player.action:runTo(positions, callback, player)
   end, afterSeconds)
 end
 
 function PlayerHelper:everyPlayerAddBuff (buffid, bufflv, customticks, afterSeconds)
   self:everyPlayerDoSomeThing(function (player)
     ActorHelper:addBuff(player.objid, buffid, bufflv, customticks)
+  end, afterSeconds)
+end
+
+function PlayerHelper:everyPlayerLookAt (toobjid, afterSeconds)
+  self:everyPlayerDoSomeThing(function (player)
+    player:lookAt(toobjid)
   end, afterSeconds)
 end
 
@@ -263,19 +271,19 @@ function PlayerHelper:setMaxHp (objid, hp)
 end
 
 function PlayerHelper:getExp (objid)
-  return self:getAttr(objid, 26)
+  return self:getAttr(objid, PLAYERATTR.CUR_LEVELEXP)
 end
 
 function PlayerHelper:setExp (objid, exp)
-  return self:setAttr(objid, 26, exp)
+  return self:setAttr(objid, PLAYERATTR.CUR_LEVELEXP, exp)
 end
 
-function PlayerHelper:getTotalLevel (objid)
-  return self:getAttr(objid, 27)
+function PlayerHelper:getLevel (objid)
+  return self:getAttr(objid, PLAYERATTR.CUR_LEVEL)
 end
 
-function PlayerHelper:setTotalLevel (objid, totalLevel)
-  return self:setAttr(objid, 27, totalLevel)
+function PlayerHelper:setLevel (objid, level)
+  return self:setAttr(objid, PLAYERATTR.CUR_LEVEL, level)
 end
 
 function PlayerHelper:setWalkSpeed (objid, speed)
@@ -296,7 +304,7 @@ function PlayerHelper:addAttr (objid, attrtype, addVal)
 end
 
 function PlayerHelper:addExp (objid, exp)
-  return PlayerHelper:addAttr(objid, 26, exp)
+  return PlayerHelper:addAttr(objid, PLAYERATTR.CUR_LEVELEXP, exp)
 end
 
 function PlayerHelper:recoverAttr (objid, attrtype)
@@ -309,9 +317,11 @@ end
 function PlayerHelper:playerEnterGame (objid)
   local player = self:getPlayer(objid)
   if (not(player)) then
-    PlayerHelper:addPlayer(objid)
+    player = PlayerHelper:addPlayer(objid)
+    player:init()
     return false
   else
+    player:init()
     player:setActive(true)
     return true
   end
@@ -376,6 +386,11 @@ function PlayerHelper:playerUseItem (objid, toobjid, itemid, itemnum)
   ItemHelper:useItem(objid, itemid)
 end
 
+-- 玩家消耗道具
+function PlayerHelper:playerConsumeItem (objid, toobjid, itemid, itemnum)
+  -- body
+end
+
 -- 玩家攻击命中
 function PlayerHelper:playerAttackHit (objid, toobjid)
   local itemid = PlayerHelper:getCurToolID(objid)
@@ -389,9 +404,9 @@ function PlayerHelper:playerAttackHit (objid, toobjid)
 end
 
 -- 玩家造成伤害
-function PlayerHelper:playerDamageActor (objid, toobjid)
+function PlayerHelper:playerDamageActor (objid, toobjid, hurtlv)
   local key = PlayerHelper:generateDamageKey(objid, toobjid)
-  TimeHelper:setFrameInfo(key, true)
+  TimeHelper:setFrameInfo(key, hurtlv)
   PlayerHelper:showActorHp(objid, toobjid)
 end
 
@@ -408,7 +423,7 @@ function PlayerHelper:playerDefeatActor (playerid, objid)
 end
 
 -- 玩家受到伤害
-function PlayerHelper:playerBeHurt (objid, toobjid)
+function PlayerHelper:playerBeHurt (objid, toobjid, hurtlv)
   if (SkillHelper:isFlying(objid)) then -- 玩家在御剑飞行，则飞行失控
     local player = PlayerHelper:getPlayer(objid)
     SkillHelper:stopFly(objid, ItemHelper:getItem(player.hold))
@@ -456,8 +471,11 @@ end
 -- 玩家移动一格
 function PlayerHelper:playerMoveOneBlockSize (objid)
   ActorHelper:resumeClickActor(objid)
-  if (ActorHelper:isApproachBlock(objid)) then -- 靠近了方块
-    SkillHelper:stopFly(objid)
+  if (SkillHelper:isFlying(objid)) then
+    local isStartFly = SkillHelper:isStartFly(objid)
+    if (ActorHelper:isApproachBlock(objid, isStartFly)) then -- 靠近了方块
+      SkillHelper:stopFly(objid)
+    end
   end
 end
 
@@ -472,12 +490,41 @@ function PlayerHelper:playerDismountActor (objid, toobjid)
 end
 
 -- 聊天输出界面变化
-function PlayerHelper:playerInputContent(objid, content)
+function PlayerHelper:playerInputContent (objid, content)
   -- body
 end
 
 -- 输入字符串
-function PlayerHelper:playerNewInputContent(objid, content)
+function PlayerHelper:playerNewInputContent (objid, content)
+  -- body
+end
+
+-- 按键被按下
+function PlayerHelper:playerInputKeyDown (objid, vkey)
+  -- body
+end
+
+-- 按键处于按下状态
+function PlayerHelper:playerInputKeyOnPress (objid, vkey)
+  -- body
+end
+
+-- 按键松开
+function PlayerHelper:playerInputKeyUp (objid, vkey)
+  -- body
+end
+
+-- 等级发生变化
+function PlayerHelper:playerLevelModelUpgrade (objid, toobjid)
+  local player = PlayerHelper:getPlayer(objid)
+  local prevLevel = player:getPrevLevel()
+  local level = player:getLevel()
+  if (level) then
+    player:upgrade(level - prevLevel)
+    local map = { level = level }
+    local msg = StringHelper:getTemplateResult(MyTemplate.UPGRADE_MSG, map)
+    ChatHelper:sendMsg(objid, msg)
+  end
   -- body
 end
 
@@ -492,10 +539,9 @@ end
 
 -- 对玩家显示飘窗文字
 function PlayerHelper:notifyGameInfo2Self (objid, info)
-  local finillyFailMessage = StringHelper:concat('对玩家显示飘窗文字失败，参数：objid=', objid)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Player:notifyGameInfo2Self(objid, info)
-  end, '对玩家显示飘窗文字', 'objid=', objid)
+  end, '对玩家显示飘窗文字', 'objid=', objid, ',info=', info)
 end
 
 -- 设置玩家道具设置属性
@@ -596,7 +642,7 @@ function PlayerHelper:setFoodLevel (objid, foodLevel)
   end, '设置玩家饱食度', 'objid=', objid, ',foodLevel=', foodLevel)
 end
 
--- 获取玩家当前手持的物品id
+-- 获取玩家当前手持的物品id，空手是0
 function PlayerHelper:getCurToolID (objid)
   return CommonHelper:callOneResultMethod(function (p)
     return Player:getCurToolID(objid)
@@ -677,4 +723,16 @@ function PlayerHelper:setGameResults (objid, result)
   return CommonHelper:callIsSuccessMethod(function (p)
     return Player:setGameResults(objid, result)
   end, '设置玩家比赛结果', 'objid=', objid, ',result=', result)
+end
+
+function PlayerHelper:openBoxByPos (objid, x, y, z)
+  return CommonHelper:callIsSuccessMethod(function (p)
+    return Player:openBoxByPos(objid, x, y, z)
+  end, '打开可以操作的箱子', 'objid=', objid, ',x=', x, ',y=', y, ',z=', z)
+end
+
+function PlayerHelper:reviveToPos (objid, x, y, z)
+  return CommonHelper:callIsSuccessMethod(function (p)
+    return Player:reviveToPos(objid, x, y, z)
+  end, '复活玩家到指定点', 'objid=', objid, ',x=', x, ',y=', y, ',z=', z)
 end
