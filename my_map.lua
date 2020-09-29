@@ -14,6 +14,7 @@ MyMap = {
     ROAST_CHICKEN = 12558, -- 烤鸡
     JUMP = 4104, -- 跳跃
     KEY = 4105, -- 钥匙
+    TIME_SUPPLY = 4106, -- 时间补给
   },
   ACTOR = {
     STAR = 3, -- 黄星星
