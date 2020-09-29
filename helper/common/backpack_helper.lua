@@ -142,7 +142,7 @@ function BackpackHelper:removeGridItem (playerid, gridid, num)
   end, '通过道具格移除道具', 'playerid=', playerid, ',gridid=', gridid, ',num=', num)
 end
 
--- 移除背包内一定数量道具，通过道具ID移除，默认全部移除
+-- 移除背包内一定数量道具，通过道具ID移除，默认全部移除  返回成功移除数量
 function BackpackHelper:removeGridItemByItemID (playerid, itemid, num)
   return CommonHelper:callOneResultMethod(function (p)
     return Backpack:removeGridItemByItemID(playerid, itemid, num)

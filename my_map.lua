@@ -12,6 +12,7 @@ MyMap = {
     PILL = 4103, -- 续命药丸
     ROAST_CHICKEN = 12558, -- 烤鸡
     JUMP = 4104, -- 跳跃
+    KEY = 4105, -- 钥匙
   },
   ACTOR = {
     STAR = 3, -- 黄星星

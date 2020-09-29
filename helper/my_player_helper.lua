@@ -40,8 +40,17 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
   MyStoryHelper:playerEnterArea(objid, areaid)
   -- body
   local isPass, index = MyAreaHelper:doesEnterPassArea(areaid)
-  if (isPass) then -- 过关
-    PlayerHelper:setGameWin(objid)
+  if (isPass) then -- 过关区域
+    local num = BackpackHelper:getItemNumAndGrid2(objid, MyMap.ITEM.KEY)
+    if (num > 0) then
+      if (BackpackHelper:removeGridItemByItemID(objid, MyMap.ITEM.KEY, 1)) then
+        PlayerHelper:setGameWin(objid)
+      else
+        ChatHelper:sendMsg(objid, '缺少城堡钥匙，无法进入城堡')
+      end
+    else
+      ChatHelper:sendMsg(objid, '缺少城堡钥匙，无法进入城堡')
+    end
   else -- 进入隐藏方块区域
     local player = PlayerHelper:getPlayer(objid)
     local pos = player:getMyPosition()
