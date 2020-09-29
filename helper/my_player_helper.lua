@@ -51,7 +51,7 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
     else
       ChatHelper:sendMsg(objid, '缺少城堡钥匙，无法进入城堡')
     end
-  else -- 进入隐藏方块区域
+  elseif (story1:isHideBlockArea(areaid)) then -- 进入第一关隐藏方块区域
     local player = PlayerHelper:getPlayer(objid)
     local pos = player:getMyPosition()
     if (pos.y - player.y > 0) then -- 在上升中
