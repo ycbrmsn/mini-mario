@@ -219,7 +219,11 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   -- elseif (playermotion == PLAYERMOTION.WALK) then -- 行走
     -- LogHelper:debug('行走')
   -- elseif (playermotion == PLAYERMOTION.FALL_GROUND) then -- 落地
-    
+  elseif (playermotion == PLAYERMOTION.SNEAK) then -- 潜行
+    local pos = player:getMyPosition()
+    if (AreaHelper:posInArea(pos, story1.enterArea)) then
+      LogHelper:debug('进入水管')
+    end
   end
 end
 
