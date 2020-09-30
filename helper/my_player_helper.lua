@@ -224,6 +224,18 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
     local pos = player:getMyPosition()
     if (AreaHelper:posInArea(pos, story1.enterArea)) then
       LogHelper:debug('进入水管')
+    else
+      local checkPointInfo = MyAreaHelper.checkPoint[player.checkPoint]
+      local x = checkPointInfo[1]
+      if (player.isWatchStyle) then -- 在观战
+        x = x - 2
+      end
+      local yaw = ActorHelper:getFaceYaw(objid)
+      local pitch = ActorHelper:getFacePitch(objid)
+      PlayerHelper:setPosition(objid, x, pos.y, pos.z)
+      ActorHelper:setFaceYaw(objid, yaw)
+      ActorHelper:setFacePitch(objid, pitch)
+      ChatHelper:sendMsg(objid, '位置已调整')
     end
   end
 end
