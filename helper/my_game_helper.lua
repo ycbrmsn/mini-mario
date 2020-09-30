@@ -157,9 +157,22 @@ function MyGameHelper:minitimerChange (timerid, timername)
   local time = TimerHelper:getTimerTime(self.timerid)
   if (time > 0 and time <= 60) then
     color = '#R'
+    PlayerHelper:everyPlayerDoSomeThing(function (player)
+      local musicIndex = MusicHelper:getMusicIndex(player.objid)
+      if (musicIndex == 1) then
+        MusicHelper:changeBGM(player.objid, 5, true)
+      end
+    end)
   elseif (time == 0) then -- 时间耗尽
     color = '#R'
     GameHelper:doGameEnd()
+  else -- 正常
+    PlayerHelper:everyPlayerDoSomeThing(function (player)
+      local musicIndex = MusicHelper:getMusicIndex(player.objid)
+      if (musicIndex == 5) then
+        MusicHelper:changeBGM(player.objid, 1, true)
+      end
+    end)
   end
   if (self.timerid) then
     for i, v in ipairs(PlayerHelper:getActivePlayers()) do

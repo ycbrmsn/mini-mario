@@ -44,11 +44,6 @@ function TimerHelper:doAfterSeconds (f, seconds, t)
   return timerid
 end
 
--- 停止执行
-function TimerHelper:stop (timerid)
-  return TimerHelper:stopTimer(timerid)
-end
-
 -- 显示计时器窗口
 function TimerHelper:showTips (objids, timerid, title)
   TimerHelper:showTimerTips(objids, timerid, title, true)
