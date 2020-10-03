@@ -5,7 +5,7 @@ MyAreaHelper = {
   hideBlock = {},
   hideBlockAreas = {},
   checkPoint = {
-    { 0.5, 57.5 }
+    { 0.5, 57.5, 7.5 }
   },
   passPoints = { -- 过关区域点
     { 0, 57, -330 }

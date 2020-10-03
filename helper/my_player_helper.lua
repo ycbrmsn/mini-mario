@@ -167,7 +167,12 @@ function MyPlayerHelper:playerDie (objid, toobjid)
   -- 设置重生位置
   local checkPointInfo = MyAreaHelper.checkPoint[player.checkPoint]
   local pos = player:getMyPosition()
-  local x, y, z = checkPointInfo[1], checkPointInfo[2], math.ceil(pos.z / 100) * 100 + 0.5
+  local x, y, z = checkPointInfo[1]
+  if (player.isUnderground) then -- 地下
+    y, z = checkPointInfo[3], 0.5
+  else
+    y, z = checkPointInfo[2], math.ceil(pos.z / 100) * 100 + 0.5
+  end
   player.revivePoint = MyPosition:new(x, y, z)
   PlayerHelper:setRevivePoint(objid, x, y, z)
 end
