@@ -123,6 +123,10 @@ function MyPlayer:hitLuckyBlock (x, y, z)
     local objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.MUSHROOM, 1)
     CreatureHelper:closeAI(objids[1])
     ActorHelper:setFaceYaw(objids[1], 90)
+  elseif (category == 4) then -- 城堡钥匙
+    local objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.KEY, 1)
+    CreatureHelper:closeAI(objids[1])
+    ActorHelper:setFaceYaw(objids[1], 90)
   end
   WorldHelper:playSoundEffectOnPos(MyPosition:new(x, y, z), BaseConstant.SOUND_EFFECT.PROMPT19, 150, 1)
 end

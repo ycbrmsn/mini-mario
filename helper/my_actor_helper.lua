@@ -49,6 +49,10 @@ function MyActorHelper:actorCollide (objid, toobjid)
           LogHelper:debug('获得武器')
         end
       end
+    elseif (actorid == MyMap.ACTOR.KEY) then -- 城堡钥匙
+      if (WorldHelper:despawnActor(objid)) then -- 销毁成功
+        BackpackHelper:addItem(toobjid, MyMap.ITEM.KEY, 1)
+      end
     else
       local player = PlayerHelper:getPlayer(toobjid)
       if (ActorHelper:hasBuff(toobjid, MyMap.BUFF.FEARLESS)) then -- 玩家有了无畏buff
