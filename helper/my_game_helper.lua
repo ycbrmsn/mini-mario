@@ -153,6 +153,7 @@ end
 function MyGameHelper:minitimerChange (timerid, timername)
   GameHelper:minitimerChange(timerid, timername)
   -- body
+  local hostPlayer = PlayerHelper:getHostPlayer()
   local color = ''
   local time = TimerHelper:getTimerTime(self.timerid)
   if (time > 0 and time <= 60) then
@@ -169,8 +170,10 @@ function MyGameHelper:minitimerChange (timerid, timername)
   else -- 正常
     PlayerHelper:everyPlayerDoSomeThing(function (player)
       local musicIndex = MusicHelper:getMusicIndex(player.objid)
-      if (musicIndex == 5) then
+      if (musicIndex ~= 1 and not(hostPlayer.isUnderground)) then -- 在地上
         MusicHelper:changeBGM(player.objid, 1, true)
+      elseif (musicIndex ~= 2 and hostPlayer.isUnderground) then -- 在地底
+        MusicHelper:changeBGM(player.objid, 2, true)
       end
     end)
   end
