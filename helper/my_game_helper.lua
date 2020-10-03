@@ -10,7 +10,7 @@ MyGameHelper = {
 
 -- 判断是否因为位置过低需要死去
 function MyGameHelper:judgeDeath (player, y)
-  if (y > 40 and y < 52 and player.notDead) then
+  if ((y > 40 and y < 52) or (y < 0) and player.notDead) then
     ActorHelper:killSelf(player.objid)
     player.notDead = false
     return true
@@ -159,7 +159,7 @@ function MyGameHelper:minitimerChange (timerid, timername)
     color = '#R'
     PlayerHelper:everyPlayerDoSomeThing(function (player)
       local musicIndex = MusicHelper:getMusicIndex(player.objid)
-      if (musicIndex == 1) then
+      if (musicIndex ~= 5) then
         MusicHelper:changeBGM(player.objid, 5, true)
       end
     end)

@@ -40,6 +40,8 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
   PlayerHelper:playerEnterArea(objid, areaid)
   MyStoryHelper:playerEnterArea(objid, areaid)
   -- body
+  
+  local player = PlayerHelper:getPlayer(objid)
   local isPass, index = MyAreaHelper:doesEnterPassArea(areaid)
   if (isPass) then -- 过关区域
     local num = BackpackHelper:getItemNumAndGrid2(objid, MyMap.ITEM.KEY)
@@ -52,8 +54,9 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
     else
       ChatHelper:sendMsg(objid, '缺少城堡钥匙，无法进入城堡')
     end
+  elseif (areaid == story1.leaveArea) then -- 进入离开地下区域
+    player:setPosition(story1.goOutPos)
   elseif (story1:isHideBlockArea(areaid)) then -- 进入第一关隐藏方块区域
-    local player = PlayerHelper:getPlayer(objid)
     local pos = player:getMyPosition()
     if (pos.y - player.y > 0) then -- 在上升中
       local dimension = PlayerHelper:getDimension(objid)
@@ -223,7 +226,13 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   elseif (playermotion == PLAYERMOTION.SNEAK) then -- 潜行
     local pos = player:getMyPosition()
     if (AreaHelper:posInArea(pos, story1.enterArea)) then
-      LogHelper:debug('进入水管')
+      player:setPosition(story1.enterPos.x, story1.enterPos.y - 0.5, story1.enterPos.z)
+      TimeHelper:callFnFastRuns(function ()
+        player:setPosition(story1.enterPos.x, story1.enterPos.y - 0.7, story1.enterPos.z) -- 下水管
+        TimeHelper:callFnFastRuns(function ()
+          player:setPosition(story1.undergroundBeginPos)
+        end, 0.5)
+      end, 0.5)
     else
       local checkPointInfo = MyAreaHelper.checkPoint[player.checkPoint]
       local x = checkPointInfo[1]

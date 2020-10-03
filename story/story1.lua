@@ -57,9 +57,14 @@ function Story1:new ()
       { 0.5, 59.5, -245.5 },
       { 0.5, 67.5, -273.5 }
     }, -- 进入水管位置数据
+    enterPos = nil, -- 进入水管区域位置
     enterAreas = {}, -- 进入水管区域
+    enterArea = -1, -- 进入地下区域
+    leaveArea = -1, -- 离开地下区域
     goOutPos = MyPosition:new(0.5, 58.5, -302.5), -- 出水管位置
-    backwardTimer = 100, -- 倒计时
+    backwardTimer = 300, -- 倒计时
+    undergroundBeginPos = MyPosition:new(0.5, 18, 2.5), -- 刚进入地下水管的位置
+    undergroundEndPos = MyPosition:new(0.5, 7.5, -118.5), -- 准备出地下水管的位置
   }
   self:checkData(data)
 
@@ -70,6 +75,7 @@ end
 
 function Story1:init ()
   self:initEnterPipe()
+  self:initLeavePipe()
   self:initHideBlockAreas()
 end
 
@@ -79,9 +85,19 @@ function Story1:initEnterPipe ()
   math.random()
   math.random()
   local index = math.random(1, #self.enterAreas)
+  self.enterPos = MyPosition:new(self.enterPosData[index][1], self.enterPosData[index][2], self.enterPosData[index][3])
   self.enterArea = self.enterAreas[index]
   self:replacePipe(self.enterPosData[index])
   LogHelper:debug('替换第', index, '个')
+end
+
+function Story1:initLeavePipe ()
+  self.leaveArea = AreaHelper:getAreaByPos(self.undergroundEndPos)
+  if (not(self.leaveArea)) then
+    TimeHelper:callFnAfterSecond(function ()
+      self:initLeavePipe()
+    end, 1)
+  end
 end
 
 -- 初始化8个隐藏区域
