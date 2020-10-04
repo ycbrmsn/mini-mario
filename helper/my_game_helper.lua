@@ -76,7 +76,7 @@ function MyGameHelper:setGBattleUI ()
     local teamScore = TeamHelper:getTeamScore(teamid)
     local time = TimerHelper:getTimerTime(self.timerid)
     local result = PlayerHelper:getGameResults(player.objid)
-    local score = time + teamScore -- 剩余时间 + 金币得分
+    local score = math.floor(time / 3) + teamScore -- 剩余时间 + 金币得分
     if (score < teamScore or result == 2) then
       score = teamScore
     end
