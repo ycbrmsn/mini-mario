@@ -87,7 +87,7 @@ function Story1:initEnterPipe ()
   local index = math.random(1, #self.enterAreas)
   self.enterPos = MyPosition:new(self.enterPosData[index][1], self.enterPosData[index][2], self.enterPosData[index][3])
   self.enterArea = self.enterAreas[index]
-  self:replacePipe(self.enterPosData[index])
+  self:replacePipe(self.enterPos.x, self.enterPos.y - 1, self.enterPos.z)
   LogHelper:debug('替换第', index, '个')
 end
 
@@ -132,14 +132,14 @@ function Story1:isHideBlockArea (areaid)
   return false
 end
 
-function Story1:replacePipe (data)
-  local x, y, z = data[1], data[2] - 1, data[3]
+-- 替换水管头
+function Story1:replacePipe (x, y, z)
   local blockid = BlockHelper:getBlockID(x, y, z)
   if (not(blockid) or blockid ~= MyMap.BLOCK.ENTER_PIPE) then
     BlockHelper:replaceBlock(MyMap.BLOCK.ENTER_PIPE, x, y, z)
     TimeHelper:callFnAfterSecond(function ()
-      self:replacePipe(data)
-    end, 1)
+      self:replacePipe(x, y, z)
+    end, 2)
   end
 end
 
