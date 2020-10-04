@@ -55,7 +55,7 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
       ChatHelper:sendMsg(objid, '缺少城堡钥匙，无法进入城堡')
     end
   elseif (areaid == story1.leaveArea) then -- 进入离开地下区域
-    player:setPosition(story1.goOutPos)
+    player:setPosition(story1.enterPos)
     player.isUnderground = false
   elseif (story1:isHideBlockArea(areaid)) then -- 进入第一关隐藏方块区域
     local pos = player:getMyPosition()
