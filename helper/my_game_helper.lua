@@ -102,6 +102,10 @@ function MyGameHelper:startGame ()
   MyActorHelper:init()
   MyMonsterHelper:init()
   MyAreaHelper:init()
+  -- body
+  -- 游戏开始计时
+  MyGameHelper.timerid = TimerHelper:getTimer(timername)
+  TimerHelper:startBackwardTimer(MyGameHelper.timerid, story1.backwardTimer)
 end
 
 -- 游戏运行时

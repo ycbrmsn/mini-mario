@@ -22,7 +22,6 @@ function MyPlayerHelper:playerEnterGame (objid)
     -- 游戏开始计时
     MyGameHelper.timerid = TimerHelper:getTimer(timername)
     TimerHelper:startBackwardTimer(MyGameHelper.timerid, story1.backwardTimer)
-    -- TimerHelper:startForwardTimer(MyGameHelper.timerid)
   end
   -- 播放背景音乐
   MusicHelper:startBGM(objid, 1, true)
