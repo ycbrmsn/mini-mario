@@ -9,6 +9,7 @@ function Story1:new ()
     tips = {
       '无事。',
     },
+    initPos = MyPosition:new(0.5, 57.5, 0.5),
     hideBlockPosData = {
       { 0.5, 60.5, -38.5 },
       { 0.5, 60.5, -39.5 },
@@ -62,88 +63,15 @@ function Story1:new ()
     enterAreas = {}, -- 进入水管区域
     enterArea = -1, -- 进入地下区域
     leaveArea = -1, -- 离开地下区域
-    -- goOutPos = MyPosition:new(0.5, 58.5, -302.5), -- 出水管位置
     backwardTimer = 300, -- 倒计时
     undergroundBeginPos = MyPosition:new(0.5, 18, 2.5), -- 刚进入地下水管的位置
     undergroundEndPos = MyPosition:new(0.5, 7.5, -118.5), -- 准备出地下水管的位置
+    passPos = MyPosition:new(0, 57, -330), -- 过关区域位置
+    passArea = -1 -- 过关区域
   }
   self:checkData(data)
 
   setmetatable(data, self)
   self.__index = self
   return data
-end
-
-function Story1:init ()
-  self:initEnterPipe()
-  self:initLeavePipe()
-  self:initHideBlockAreas()
-end
-
-function Story1:initEnterPipe ()
-  AreaHelper:initAreaByPosData(self.enterPosData, self.enterAreas)
-  -- 设置进入水管区域
-  math.random()
-  math.random()
-  local index = math.random(1, #self.enterAreas)
-  self.enterPos = MyPosition:new(self.enterPosData[index][1], self.enterPosData[index][2], self.enterPosData[index][3])
-  self.enterArea = self.enterAreas[index]
-  self:replacePipe(self.enterPos.x, self.enterPos.y - 1, self.enterPos.z)
-  LogHelper:debug('替换第', index, '个')
-end
-
-function Story1:initLeavePipe ()
-  self.leaveArea = AreaHelper:getAreaByPos(self.undergroundEndPos)
-  if (not(self.leaveArea)) then
-    TimeHelper:callFnAfterSecond(function ()
-      self:initLeavePipe()
-    end, 1)
-  end
-end
-
--- 初始化8个隐藏区域
-function Story1:initHideBlockAreas ()
-  for i = 1, 8 do
-    local index = math.random(1, #self.hideBlockPosData) -- 随机取一个
-    local pos = MyPosition:new(self.hideBlockPosData[index][1],
-      self.hideBlockPosData[index][2], self.hideBlockPosData[index][3])
-    local areaid = AreaHelper:createAreaRectByRange(pos, pos)
-    table.insert(self.hideBlockAreas, areaid)
-    table.remove(self.hideBlockPosData, index)
-  end
-end
-
--- 是否是进入水管区域
-function Story1:isEnterArea (areaid)
-  for i, v in ipairs(self.enterAreas) do
-    if (v == areaid) then
-      return true
-    end
-  end
-  return false
-end
-
--- 是否是隐藏方块区域
-function Story1:isHideBlockArea (areaid)
-  for i, v in ipairs(self.hideBlockAreas) do
-    if (v == areaid) then
-      return true
-    end
-  end
-  return false
-end
-
--- 替换水管头
-function Story1:replacePipe (x, y, z)
-  local blockid = BlockHelper:getBlockID(x, y, z)
-  if (not(blockid) or blockid ~= MyMap.BLOCK.ENTER_PIPE) then
-    BlockHelper:replaceBlock(MyMap.BLOCK.ENTER_PIPE, x, y, z)
-    TimeHelper:callFnAfterSecond(function ()
-      self:replacePipe(x, y, z)
-    end, 2)
-  end
-end
-
-function Story1:recover (player)
-  -- body
 end

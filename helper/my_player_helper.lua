@@ -1,6 +1,6 @@
 -- 我的玩家工具类
 MyPlayerHelper = {
-  initPosition = MyPosition:new(0.5, 57.5, 0.5),
+  
 }
 
 -- 事件
@@ -10,19 +10,12 @@ function MyPlayerHelper:playerEnterGame (objid)
   PlayerHelper:playerEnterGame(objid)
   MyStoryHelper:playerEnterGame(objid)
   -- body
+  local story = MyStoryHelper:getStory()
   PlayerHelper:setActionAttrState(objid, PLAYERATTR.ENABLE_BEATTACKED, false) -- 不可被攻击
   -- BackpackHelper:setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 跳跃键
   -- PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP) -- 不可丢弃
   BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 5) -- 五颗续命药丸
-  ActorHelper:setMyPosition(objid, self.initPosition) -- 初始位置
-  ActorHelper:setFaceYaw(objid, 0)
-  PlayerHelper:rotateCamera(objid, 90, 0)
-  PlayerHelper:setRevivePoint(objid, self.initPosition.x, self.initPosition.y, self.initPosition.z)
-  if (PlayerHelper:isMainPlayer(objid)) then -- 本地玩家，则开始计时
-    -- 游戏开始计时
-    MyGameHelper.timerid = TimerHelper:getTimer(timername)
-    TimerHelper:startBackwardTimer(MyGameHelper.timerid, story1.backwardTimer)
-  end
+  story:enter(objid)
   -- 播放背景音乐
   MusicHelper:startBGM(objid, 1, true)
 end
@@ -39,24 +32,30 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
   PlayerHelper:playerEnterArea(objid, areaid)
   MyStoryHelper:playerEnterArea(objid, areaid)
   -- body
-  
   local player = PlayerHelper:getPlayer(objid)
-  local isPass, index = MyAreaHelper:doesEnterPassArea(areaid)
-  if (isPass) then -- 过关区域
+  local story = MyStoryHelper:getStory()
+  if (story:isPassArea(areaid)) then -- 过关区域
     local num = BackpackHelper:getItemNumAndGrid2(objid, MyMap.ITEM.KEY)
     if (num > 0) then
       if (BackpackHelper:removeGridItemByItemID(objid, MyMap.ITEM.KEY, 1)) then
-        PlayerHelper:setGameWin(objid)
+        local nextStory = MyStoryHelper:next()
+        if (nextStory) then
+          PlayerHelper:everyPlayerDoSomeThing(function (player)
+            nextStory:enter(player.objid)
+          end)
+        else
+          PlayerHelper:setGameWin(objid)
+        end
       else
         ChatHelper:sendMsg(objid, '缺少城堡钥匙，无法进入城堡')
       end
     else
       ChatHelper:sendMsg(objid, '缺少城堡钥匙，无法进入城堡')
     end
-  elseif (areaid == story1.leaveArea) then -- 进入离开地下区域
-    player:setPosition(story1.enterPos)
+  elseif (areaid == story.leaveArea) then -- 进入离开地下区域
+    player:setPosition(story.enterPos)
     player.isUnderground = false
-  elseif (story1:isHideBlockArea(areaid)) then -- 进入第一关隐藏方块区域
+  elseif (story:isHideBlockArea(areaid)) then -- 进入第一关隐藏方块区域
     local pos = player:getMyPosition()
     if (pos.y - player.y > 0) then -- 在上升中
       local dimension = PlayerHelper:getDimension(objid)
@@ -164,13 +163,13 @@ function MyPlayerHelper:playerDie (objid, toobjid)
   player.notDead = false
   PlayerHelper:setDimension(objid, 1) -- 尺寸恢复1
   -- 设置重生位置
-  local checkPointInfo = MyAreaHelper.checkPoint[player.checkPoint]
+  local story = MyStoryHelper:getStory()
   local pos = player:getMyPosition()
-  local x, y, z = checkPointInfo[1]
+  local x, y, z = story.initPos.x
   if (player.isUnderground) then -- 地下
-    y, z = checkPointInfo[3], 0.5
+    y, z = 7.5, 0.5
   else
-    y, z = checkPointInfo[2], math.ceil(pos.z / 100) * 100 + 0.5
+    y, z = story.initPos.y, math.ceil(pos.z / 100) * 100 + 0.5
   end
   player.revivePoint = MyPosition:new(x, y, z)
   PlayerHelper:setRevivePoint(objid, x, y, z)
@@ -220,6 +219,7 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   MyStoryHelper:playerMotionStateChange(objid, playermotion)
   -- body
   local player = PlayerHelper:getPlayer(objid)
+  local story = MyStoryHelper:getStory()
   if (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
     ActorHelper:appendSpeed(objid, 0, 0.6, 0)
   -- elseif (playermotion == PLAYERMOTION.STATIC) then -- 静止
@@ -230,18 +230,17 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   -- elseif (playermotion == PLAYERMOTION.FALL_GROUND) then -- 落地
   elseif (playermotion == PLAYERMOTION.SNEAK) then -- 潜行
     local pos = player:getMyPosition()
-    if (AreaHelper:posInArea(pos, story1.enterArea)) then
-      player:setPosition(story1.enterPos.x, story1.enterPos.y - 0.5, story1.enterPos.z)
+    if (AreaHelper:posInArea(pos, story.enterArea)) then
+      player:setPosition(story.enterPos.x, story.enterPos.y - 0.5, story.enterPos.z)
       TimeHelper:callFnFastRuns(function ()
-        player:setPosition(story1.enterPos.x, story1.enterPos.y - 0.7, story1.enterPos.z) -- 下水管
+        player:setPosition(story.enterPos.x, story.enterPos.y - 0.7, story.enterPos.z) -- 下水管
         TimeHelper:callFnFastRuns(function ()
-          player:setPosition(story1.undergroundBeginPos)
+          player:setPosition(story.undergroundBeginPos)
           player.isUnderground = true
         end, 0.5)
       end, 0.5)
     else
-      local checkPointInfo = MyAreaHelper.checkPoint[player.checkPoint]
-      local x = checkPointInfo[1]
+      local x = story.initPos.x
       if (player.isWatchStyle) then -- 在观战
         x = x - 2
       end

@@ -1,10 +1,25 @@
 -- 我的剧情工具类
-MyStoryHelper = {}
+MyStoryHelper = {
+  index = 1
+}
 
 function MyStoryHelper:init ()
   story1 = Story1:new()
+  story2 = Story2:new()
   story1:init()
-  StoryHelper:setStorys({ story1 })
+  story2:init()
+  StoryHelper:setStorys({ story1, story2 })
+end
+
+-- 下一关
+function MyStoryHelper:next ()
+  self.index = self.index + 1
+  return MyStoryHelper:getStory()
+end
+
+-- 当前关卡
+function MyStoryHelper:getStory ()
+  return StoryHelper:getStory(self.index)
 end
 
 -- 事件
