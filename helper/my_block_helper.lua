@@ -2,15 +2,6 @@
 MyBlockHelper = {
   unableBeoperated = {},
   unableDestroyed = {},
-  luckyBlockData = { -- x, y, z, category, num
-    -- 第一关
-    { 0, 60, -8, 3, 1 }, -- 蘑菇
-    { 0, 62, -35, 1, 6 }, -- 金币
-    { 0, 60, -135, 2, 1 }, -- 星星
-    { 0, 67, -270, 3, 1 },
-    { 0, 18, -49, 4, 1 }, -- 城堡钥匙
-    -- 第二关
-  },
   luckyBlockInfos = {}
 }
 
@@ -18,7 +9,6 @@ MyBlockHelper = {
 function MyBlockHelper:init ()
   -- body
   MyBlockHelper:initBlocks()
-  MyBlockHelper:initLuckyBlocks()
 end
 
 function MyBlockHelper:initBlocks ()
@@ -30,21 +20,13 @@ function MyBlockHelper:initBlocks ()
   end
 end
 
--- 初始化幸运方块
-function MyBlockHelper:initLuckyBlocks ()
-  for i, v in ipairs(self.luckyBlockData) do
-    local pos = MyPosition:new(v[1], v[2], v[3])
-    self.luckyBlockInfos[pos:toSimpleString()] = { pos = pos, category = v[4], num = v[5] }
-  end
-end
-
 -- 获取幸运方块信息
 function MyBlockHelper:getLuckyBlockInfo (x, y, z)
   x, y, z = math.floor(x), math.floor(y), math.floor(z)
   local pos = MyPosition:new(x, y, z)
   local luckyBlockInfo = self.luckyBlockInfos[pos:toSimpleString()]
   if (not(luckyBlockInfo)) then
-    luckyBlockInfo = { pos = pos, category = 1, num = 1 }
+    luckyBlockInfo = { pos = pos, category = 1, num = math.random(1, 5) } -- 1~5枚金币
     self.luckyBlockInfos[pos:toSimpleString()] = luckyBlockInfo
   end
   return luckyBlockInfo

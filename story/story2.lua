@@ -10,6 +10,15 @@ function Story2:new ()
       '无事。',
     },
     initPos = MyPosition:new(81.5, 57.5, 0.5),
+    luckyBlockData = { -- x, y, z, category, num
+      { 81, 60, -8, 3, 1 }, -- 蘑菇
+      { 81, 64, -85, 2, 1 }, -- 星星
+    },
+    maybeKeyBlockData = {
+      { 81, 13, -38 },
+      { 81, 13, -52 },
+      { 81, 13, -65 },
+    }, -- 城堡钥匙可能出现的方块位置数据
     hideBlockPosData = {
       { 81.5, 60.5, -24.5 },
       { 81.5, 60.5, -25.5 },
