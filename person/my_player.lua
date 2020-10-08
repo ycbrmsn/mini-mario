@@ -29,6 +29,10 @@ function MyPlayer:new (objid)
   return o
 end
 
+function MyPlayer:initMyPlayer ()
+  PlayerHelper:setJumpPower(self.objid, 95)
+end
+
 -- 打倒生物
 function MyPlayer:knockCreature (objid)
   CreatureHelper:setHp(objid, 0)

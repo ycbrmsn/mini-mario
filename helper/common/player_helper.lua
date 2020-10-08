@@ -290,6 +290,10 @@ function PlayerHelper:setWalkSpeed (objid, speed)
   return self:setAttr(objid, PLAYERATTR.WALK_SPEED, speed)
 end
 
+function PlayerHelper:setJumpPower (objid, jumpPower)
+  return self:setAttr(objid, PLAYERATTR.JUMP_POWER, jumpPower)
+end
+
 function PlayerHelper:getDimension (objid)
   return self:getAttr(objid, PLAYERATTR.DIMENSION)
 end

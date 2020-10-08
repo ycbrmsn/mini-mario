@@ -221,7 +221,7 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   local player = PlayerHelper:getPlayer(objid)
   local story = MyStoryHelper:getStory()
   if (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
-    ActorHelper:appendSpeed(objid, 0, 0.6, 0)
+    -- ActorHelper:appendSpeed(objid, 0, 0.6, 0)
   -- elseif (playermotion == PLAYERMOTION.STATIC) then -- 静止
     -- player.isRunning = false
     -- LogHelper:debug('静止')
