@@ -22,6 +22,8 @@ BaseConstant = {
 
     PARTICLE18 = 1237, -- 泡泡包裹效果
     PARTICLE24 = 1341, -- 两格大小的一个黄色小光源
+
+    PROMPT17 = 1267, -- 一格大小的向下红箭头
   },
   SOUND_EFFECT = {
     ACTION4 = 10007, -- 放置/破坏方块的声音

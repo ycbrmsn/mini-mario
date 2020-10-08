@@ -209,4 +209,5 @@ function MyGameHelper:minitimerChange (timerid, timername)
       TimerHelper:showTips({ v.objid }, self.timerid, color)
     end
   end
+  MyItemHelper:findPipe()
 end
