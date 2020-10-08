@@ -57,9 +57,12 @@ function MyActorHelper:actorCollide (objid, toobjid)
           eyeHeight = ActorHelper:getEyeHeight(objid)
         end
         local x, y, z = ActorHelper:getPosition(objid)
-        LogHelper:debug(y + eyeHeight)
-        LogHelper:debug(player.y)
-        if (y + eyeHeight < player.y) then -- 在玩家下方
+        -- LogHelper:debug(y + eyeHeight)
+        -- LogHelper:debug(player.y)
+        -- if (y + eyeHeight < player.y) then -- 在玩家下方
+        LogHelper:debug(eyeHeight)
+        LogHelper:debug(player.fallHeight - player.y)
+        if (eyeHeight < player.fallHeight - player.y) then
           -- 生物假死30秒
           -- ActorHelper:killSelf(objid)
           player:knockCreature(objid)

@@ -83,6 +83,8 @@ function MyGameHelper:headHitBlock (player, x, y, z, isMainPlayer)
     if (player.fallHeight >= 3) then -- 3格高度则踩碎方块
       player:trampleBlock()
     end
+    -- 清除高度
+    player.fallHeight = 0
   end
   player.ySpeed = ySpeed
 end
