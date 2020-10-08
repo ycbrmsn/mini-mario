@@ -144,3 +144,27 @@ function MyPlayer:hitLuckyBlock (x, y, z)
   end
   WorldHelper:playSoundEffectOnPos(MyPosition:new(x, y, z), BaseConstant.SOUND_EFFECT.PROMPT19, 150, 1)
 end
+
+-- 下水管
+function MyPlayer:enterPipe ()
+  local story = MyStoryHelper:getStory()
+  local pos = story.undergroundBeginPos
+  self.isUnderground = true
+  if (PlayerHelper:isMainPlayer(self.objid)) then
+    self:setPosition(pos)
+  else
+    self:setPosition(pos.x - 2, pos.y, pos.z)
+  end
+end
+
+-- 出水管
+function MyPlayer:goOutPipe ()
+  local story = MyStoryHelper:getStory()
+  local pos = story.enterPos
+  self.isUnderground = false
+  if (PlayerHelper:isMainPlayer(self.objid)) then
+    self:setPosition(pos)
+  else
+    self:setPosition(pos.x - 2, pos.y, pos.z)
+  end
+end

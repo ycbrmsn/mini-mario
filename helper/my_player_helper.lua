@@ -53,8 +53,9 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
       ChatHelper:sendMsg(objid, '缺少城堡钥匙，无法进入城堡')
     end
   elseif (areaid == story.leaveArea) then -- 进入离开地下区域
-    player:setPosition(story.enterPos)
-    player.isUnderground = false
+    PlayerHelper:everyPlayerDoSomeThing(function (p)
+      p:goOutPipe()
+    end)
   elseif (story:isHideBlockArea(areaid)) then -- 进入第一关隐藏方块区域
     local pos = player:getMyPosition()
     if (pos.y - player.y > 0) then -- 在上升中
@@ -236,8 +237,9 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
       TimeHelper:callFnFastRuns(function ()
         player:setPosition(story.enterPos.x, story.enterPos.y - 0.7, story.enterPos.z) -- 下水管
         TimeHelper:callFnFastRuns(function ()
-          player:setPosition(story.undergroundBeginPos)
-          player.isUnderground = true
+          PlayerHelper:everyPlayerDoSomeThing(function (p)
+            p:enterPipe()
+          end)
         end, 0.5)
       end, 0.5)
     else
