@@ -6,9 +6,11 @@ MyStoryHelper = {
 function MyStoryHelper:init ()
   story1 = Story1:new()
   story2 = Story2:new()
+  story3 = Story3:new()
   story1:init()
   story2:init()
-  StoryHelper:setStorys({ story1, story2 })
+  story3:init()
+  StoryHelper:setStorys({ story1, story2, story3 })
 end
 
 -- 下一关
