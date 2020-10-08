@@ -82,9 +82,7 @@ function MyActorHelper:actorCollide (objid, toobjid)
               ActorHelper:addBuff(toobjid, MyMap.BUFF.PROTECT, nil, 60)
               PlayerHelper:setDimension(toobjid, 1)
             else
-              if (ActorHelper:killSelf(toobjid)) then
-                WorldHelper:playSoundOnPos(player:getMyPosition(), BaseConstant.SOUND_EFFECT.PROMPT7) -- 死亡声音
-              end
+              player:killSelf()
             end
           end
         end

@@ -286,18 +286,27 @@ function PlayerHelper:setLevel (objid, level)
   return self:setAttr(objid, PLAYERATTR.CUR_LEVEL, level)
 end
 
+-- 氧气
+function PlayerHelper:getOxygen (objid)
+  return self:getAttr(objid, PLAYERATTR.CUR_OXYGEN)
+end
+
+-- 移动速度
 function PlayerHelper:setWalkSpeed (objid, speed)
   return self:setAttr(objid, PLAYERATTR.WALK_SPEED, speed)
 end
 
+-- 游泳速度
 function PlayerHelper:setSwimSpeed (objid, speed)
   return self:setAttr(objid, PLAYERATTR.SWIN_SPEED, speed)
 end
 
+-- 跳跃力
 function PlayerHelper:setJumpPower (objid, jumpPower)
   return self:setAttr(objid, PLAYERATTR.JUMP_POWER, jumpPower)
 end
 
+-- 大小
 function PlayerHelper:getDimension (objid)
   return self:getAttr(objid, PLAYERATTR.DIMENSION)
 end
@@ -533,6 +542,11 @@ function PlayerHelper:playerLevelModelUpgrade (objid, toobjid)
     local msg = StringHelper:getTemplateResult(MyTemplate.UPGRADE_MSG, map)
     ChatHelper:sendMsg(objid, msg)
   end
+  -- body
+end
+
+-- 属性变化
+function PlayerHelper:playerChangeAttr (objid, playerattr)
   -- body
 end
 

@@ -309,3 +309,17 @@ function MyPlayerHelper:playerLevelModelUpgrade (objid, toobjid)
   PlayerHelper:playerLevelModelUpgrade(objid, toobjid)
   MyStoryHelper:playerLevelModelUpgrade(objid, toobjid)
 end
+
+-- 属性变化
+function MyPlayerHelper:playerChangeAttr (objid, playerattr)
+  PlayerHelper:playerChangeAttr(objid, playerattr)
+  MyStoryHelper:playerChangeAttr(objid, playerattr)
+  -- body
+  local player = PlayerHelper:getPlayer(objid)
+  if (playerattr == CREATUREATTR.CUR_OXYGEN) then -- 氧气值
+    local oxygen = PlayerHelper:getOxygen(objid)
+    if (oxygen == 0) then
+      player:killSelf()
+    end
+  end
+end

@@ -170,6 +170,11 @@ function MyStoryHelper:playerLevelModelUpgrade (objid, toobjid)
   -- body
 end
 
+-- 属性变化
+function MyStoryHelper:playerChangeAttr (objid, playerattr)
+  -- body
+end
+
 -- 生物进入区域
 function MyStoryHelper:actorEnterArea (objid, areaid)
   -- body

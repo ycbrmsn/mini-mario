@@ -23,7 +23,6 @@ function MyPlayer:new (objid)
   }
   o.action = BasePlayerAction:new(o)
   o.attr = BasePlayerAttr:new(o)
-  -- o.attr.expData = { exp = 50 }
   o.attr.defeatedExp = 0
   setmetatable(o, self)
   self.__index = self
@@ -32,6 +31,15 @@ end
 
 function MyPlayer:initMyPlayer ()
   PlayerHelper:setJumpPower(self.objid, 95)
+end
+
+function MyPlayer:killSelf ()
+  if (ActorHelper:killSelf(self.objid)) then
+    WorldHelper:playSoundOnPos(self:getMyPosition(), BaseConstant.SOUND_EFFECT.PROMPT7) -- 死亡声音
+    return true
+  else
+    return false
+  end
 end
 
 -- 打倒生物
