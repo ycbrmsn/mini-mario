@@ -62,7 +62,7 @@ function MyActorHelper:actorCollide (objid, toobjid)
         if (actorid == 3400) then -- 鸡
           eyeHeight = 0.2
         elseif (actorid == 3407) then -- 狼
-          eyeHeight = 0.3
+          eyeHeight = 0.2
         else
           eyeHeight = ActorHelper:getEyeHeight(objid)
         end
