@@ -1,8 +1,10 @@
 -- 我的游戏工具类
 MyGameHelper = {
-  defaultWalkSpeed = 10, -- 初始速度
-  onceAppendWalkSpeed = 1, -- 一次增加速度
+  defaultWalkSpeed = 10, -- 初始移动速度
+  defaultSwimSpeed = 10, -- 初始游泳速度
+  onceAppendSpeed = 1, -- 一次增加速度
   maxWalkSpeed = 40, -- 最大增加速度
+  maxSwimSpeed = 20, -- 最大游泳速度
   index = 0, -- 帧序数
   timerid = nil, -- 房主计时器
   totalCheckPoint = 1, -- 总关卡数
@@ -23,12 +25,14 @@ function MyGameHelper:fasterTheSameDir (player, z, isMainPlayer)
   local dir = ActorHelper:getCurPlaceDir(player.objid)
   if (player.z) then
     player.zSpeed = math.abs(z - player.z)
+    -- LogHelper:debug(player.zSpeed)
   end
+  -- 移动速度
   if ((isMainPlayer and player.zSpeed > 0.15) or 
     (not(isMainPlayer) and (player.zSpeed > 0.15 or player.isRunning))) then -- 在移动
     if (dir == player.dir) then -- 同向
       if (player.walkSpeed < self.maxWalkSpeed) then
-        player.walkSpeed = player.walkSpeed + self.onceAppendWalkSpeed
+        player.walkSpeed = player.walkSpeed + self.onceAppendSpeed
       end
     else -- 反向
       player.walkSpeed = self.defaultWalkSpeed
@@ -36,7 +40,20 @@ function MyGameHelper:fasterTheSameDir (player, z, isMainPlayer)
   else
     player.walkSpeed = self.defaultWalkSpeed
   end
+  -- 游泳速度
+  if (isMainPlayer and player.zSpeed > 0.02) then
+    if (dir == player.dir) then -- 同向
+      if (player.swimSpeed < self.maxSwimSpeed) then
+        player.swimSpeed = player.swimSpeed + self.onceAppendSpeed
+      end
+    else -- 反向
+      player.swimSpeed = self.defaultSwimSpeed
+    end
+  else
+    player.swimSpeed = self.defaultSwimSpeed
+  end
   PlayerHelper:setWalkSpeed(player.objid, player.walkSpeed)
+  PlayerHelper:setSwimSpeed(player.objid, player.swimSpeed)
   player.dir = dir
 end
 
