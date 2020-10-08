@@ -61,7 +61,7 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
       local dimension = PlayerHelper:getDimension(objid)
       local height = (ActorHelper:getEyeHeight(objid) + 0.6) * dimension
       if (AreaHelper:posInArea(MyPosition:new(pos.x, pos.y + height, pos.z), areaid)) then
-        AreaHelper:fillBlock(areaid, 104) -- 填充岩石
+        AreaHelper:fillBlock(areaid, MyMap.BLOCK.LUCKY) -- 填充幸运方块
         player:headHitBlock(true)
       end
     end
