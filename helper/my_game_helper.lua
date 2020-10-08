@@ -44,7 +44,7 @@ end
 function MyGameHelper:headHitBlock (player, x, y, z, isMainPlayer)
   local ySpeed = y - player.y
   if (ySpeed == 0) then -- 突然变为0
-    if (player.ySpeed > 0) then -- 处于上升状态
+    if (player.ySpeed > 0 and ActorHelper:isInAir(player.objid)) then -- 处于上升状态且在空气中
       if (isMainPlayer) then
         player:headHitBlock()
       else
