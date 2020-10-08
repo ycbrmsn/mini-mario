@@ -46,6 +46,13 @@ function ItemHelper:useItem2 (objid)
   end
 end
 
+function ItemHelper:selectItem (objid, itemid)
+  local item = self:getItem(itemid)
+  if (item) then -- 选择自定义特殊道具
+    item:selectItem(objid)
+  end
+end
+
 -- 记录投掷物伤害 投掷物id、人物id、道具、伤害
 function ItemHelper:recordProjectile (projectileid, objid, item, o)
   o = o or {}

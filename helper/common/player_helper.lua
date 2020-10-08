@@ -470,6 +470,7 @@ end
 function PlayerHelper:playerSelectShortcut (objid, toobjid, itemid, itemnum)
   local player = self:getPlayer(objid)
   player:holdItem()
+  ItemHelper:selectItem(objid, itemid)
 end
 
 -- 玩家快捷栏变化

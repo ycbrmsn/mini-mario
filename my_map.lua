@@ -15,6 +15,8 @@ MyMap = {
     JUMP = 4104, -- 跳跃
     KEY = 4105, -- 钥匙
     TIME_SUPPLY = 4106, -- 时间补给
+    DETECTOR = 4108, -- 探测器
+    PERMIT = 4109, -- 通行证
   },
   ACTOR = {
     STAR = 3, -- 黄星星
