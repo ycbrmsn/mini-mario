@@ -20,6 +20,7 @@ function MyPlayer:new (objid)
     sz = 0, -- 每秒z轴位置，用于判断1秒内是否移动
     isRunning = false,
     isUnderground = false, -- 是否在地底
+    prevOxygen = 10, -- 前一次氧气值
   }
   o.action = BasePlayerAction:new(o)
   o.attr = BasePlayerAttr:new(o)

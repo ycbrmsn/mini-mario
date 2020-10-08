@@ -320,6 +320,9 @@ function MyPlayerHelper:playerChangeAttr (objid, playerattr)
     local oxygen = PlayerHelper:getOxygen(objid)
     if (oxygen == 0) then
       player:killSelf()
+    elseif (oxygen == 3 and player.prevOxygen > 3) then
+      ChatHelper:sendMsg(objid, '你感觉需要换口气了')
     end
+    player.prevOxygen = oxygen
   end
 end
