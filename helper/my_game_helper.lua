@@ -74,11 +74,13 @@ function MyGameHelper:headHitBlock (player, x, y, z, isMainPlayer)
       end
     end
   end
+  -- 踩方块
   if (player.ySpeed >= 0 and ySpeed < 0) then -- 开始下落
     player.fallHeight = player.y
   elseif (ySpeed >= 0 and player.ySpeed < 0) then -- 停止下落
     player.fallHeight = player.fallHeight - y
-    if (player.fallHeight >= 4) then -- 四格高度则踩碎方块
+    -- LogHelper:debug(player.fallHeight)
+    if (player.fallHeight >= 3) then -- 3格高度则踩碎方块
       player:trampleBlock()
     end
   end

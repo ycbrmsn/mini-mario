@@ -58,10 +58,6 @@ end
 
 -- 头顶方块
 function MyPlayer:headHitBlock (isHide)
-  -- local forceSpeed = -self.ySpeed
-  -- if (isHide) then
-  --   forceSpeed = forceSpeed * 2
-  -- end
   local forceSpeed = -1
   ActorHelper:appendSpeed(self.objid, 0, forceSpeed, 0)
   self.walkSpeed = MyGameHelper.defaultWalkSpeed
@@ -78,10 +74,10 @@ function MyPlayer:headHitBlock (isHide)
   -- end
 end
 
--- 踩方块
-function MyPlayer:trampleBlock ()
-  local brokeBlockid = 999
-  local pos = self:getMyPosition()
+-- 踩方块 位置、搜索次数
+function MyPlayer:trampleBlock (pos, times)
+  pos = pos or self:getMyPosition()
+  times = times or 1
   local x, y, z = math.floor(pos.x), math.floor(pos.y - 0.5), math.floor(pos.z)
   local blockid = BlockHelper:getBlockID(x, y, z)
   if (blockid == BLOCKID.AIR) then
@@ -92,10 +88,13 @@ function MyPlayer:trampleBlock ()
       blockid = BlockHelper:getBlockID(x, y, z) -- 前半格方块
     end
   end
+  -- LogHelper:debug(blockid)
   if (blockid == MyMap.BLOCK.DESTROY) then
     self:destroyBlock(x, y, z)
   elseif (blockid == MyMap.BLOCK.LUCKY) then
     self:hitLuckyBlock(x, y, z)
+  elseif (blockid == BLOCKID.AIR and times > 0) then -- 还是空气，则往下一格
+    self:trampleBlock(MyPosition:new(pos.x, pos.y - 1, pos.z), times - 1)
   end
 end
 
