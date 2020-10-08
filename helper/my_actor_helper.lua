@@ -3,16 +3,6 @@ MyActorHelper = {}
 
 -- 初始化actors
 function MyActorHelper:init ()
-  -- linqianshu = Linqianshu:new()
-  -- linwanshu = Linwanshu:new()
-  -- yexiaolong = Yexiaolong:new()
-  -- yedalong = Yedalong:new()
-  -- local myActors = { linqianshu, linwanshu, yexiaolong, yedalong }
-  -- for i, v in ipairs(myActors) do
-  --   TimeHelper:initActor(v)
-  --   -- LogHelper:debug('创建', v:getName(), '完成')
-  -- end
-  -- LogHelper:debug('创建人物完成')
 end
 
 -- 事件
@@ -119,6 +109,21 @@ end
 function MyActorHelper:actorChangeMotion (objid, actormotion)
   ActorHelper:actorChangeMotion(objid, actormotion)
   MyStoryHelper:actorChangeMotion(objid, actormotion)
+  -- body
+  -- if (actormotion == CREATUREMOTION.IDLE) then -- 空闲
+  --   local pos = ActorHelper:getMyPosition(objid)
+  --   if (pos) then
+  --     local x
+  --     if (pos.x < 10) then
+  --       x = 0.5
+  --     elseif (pos.x < 90) then
+  --       x = 81.5
+  --     elseif (pos.x < 170) then
+  --       x = 162.5
+  --     end
+  --   end
+  --   ActorHelper:setPosition(objid, x, pos.y, pos.z)
+  -- end
 end
 
 -- 生物死亡

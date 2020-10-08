@@ -4,13 +4,14 @@ MyStoryHelper = {
 }
 
 function MyStoryHelper:init ()
-  story1 = Story1:new()
-  story2 = Story2:new()
-  story3 = Story3:new()
-  story1:init()
-  story2:init()
-  story3:init()
-  StoryHelper:setStorys({ story1, story2, story3 })
+  if (#StoryHelper:getStorys() == 0) then
+    local ss = { Story1, Story2, Story3 }
+    for i, v in ipairs(ss) do
+      local s = v:new()
+      s:init()
+      StoryHelper:addStory(s)
+    end
+  end
 end
 
 -- 下一关
@@ -34,7 +35,7 @@ end
 
 -- 玩家进入游戏
 function MyStoryHelper:playerEnterGame (objid)
-  MyStoryHelper:init()
+    MyStoryHelper:init()
   -- local player = PlayerHelper:getPlayer(objid)
   -- StoryHelper:recover(player) -- 恢复剧情
 end

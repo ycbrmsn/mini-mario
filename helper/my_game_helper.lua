@@ -97,15 +97,17 @@ end
 
 -- 开始游戏
 function MyGameHelper:startGame ()
+  LogHelper:debug('开始游戏')
   GameHelper:startGame()
   MyBlockHelper:init()
   MyActorHelper:init()
   MyMonsterHelper:init()
   MyAreaHelper:init()
+  MyStoryHelper:init()
   -- body
   -- 游戏开始计时
   MyGameHelper.timerid = TimerHelper:getTimer(timername)
-  TimerHelper:startBackwardTimer(MyGameHelper.timerid, story1.backwardTimer)
+  TimerHelper:startBackwardTimer(MyGameHelper.timerid, MyStoryHelper:getStory().backwardTimer)
 end
 
 -- 游戏运行时

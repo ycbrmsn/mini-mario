@@ -80,6 +80,11 @@ function StoryHelper:addStory (story)
   table.insert(self.stories, story)
 end
 
+-- 获取所有剧情
+function StoryHelper:getStorys ()
+  return self.stories
+end
+
 -- 设置剧情
 function StoryHelper:setStorys (stories)
   self.stories = stories

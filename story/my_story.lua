@@ -101,12 +101,7 @@ end
 
 -- 是否是进入水管区域
 function MyStory:isEnterArea (areaid)
-  for i, v in ipairs(self.enterAreas) do
-    if (v == areaid) then
-      return true
-    end
-  end
-  return false
+  return areaid == self.enterArea
 end
 
 -- 是否是隐藏方块区域
