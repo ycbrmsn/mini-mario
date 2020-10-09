@@ -1,7 +1,38 @@
 -- 我的玩家工具类
 MyPlayerHelper = {
-  
+  presents = {
+    [807364131] = {
+      items = {
+        { MyMap.ITEM.PILL, 5 }, -- 续命药丸
+        { MyMap.ITEM.TIME_SUPPLY, 1 }, -- 时间补给
+        { MyMap.ITEM.DETECTOR, 1 }, -- 探测器
+        { MyMap.ITEM.PERMIT, 1 }, -- 通行证
+      },
+      msgMap = { present = '一些道具' }
+    }, -- 作者
+    [865147101] = {
+      items = {
+        { MyMap.ITEM.PILL, 5 }
+      },
+      msgMap = { present = '5颗续命药丸' }
+    }, -- 懒懒
+  }
 }
+
+function MyPlayerHelper:diffPersonDiffPresents (objid)
+  local player = PlayerHelper:getPlayer(objid)
+  for k, v in pairs(self.presents) do
+    if (objid == k) then
+      for i, itemInfo in ipairs(v.items) do
+        BackpackHelper:addItem(objid, itemInfo[1], itemInfo[2])
+      end
+      local msgMap = v.msgMap
+      msgMap.name = player:getName()
+      ChatHelper:sendTemplateMsg(MyTemplate.PRESENT_MSG, msgMap, objid)
+      break
+    end
+  end
+end
 
 -- 事件
 
@@ -15,6 +46,7 @@ function MyPlayerHelper:playerEnterGame (objid)
   -- BackpackHelper:setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 跳跃键
   -- PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP) -- 不可丢弃
   BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 5) -- 五颗续命药丸
+  MyPlayerHelper:diffPersonDiffPresents(objid)
   story:enter(objid)
   -- 播放背景音乐
   MusicHelper:startBGM(objid, 1, true)
