@@ -106,9 +106,9 @@ function MyPlayerHelper:playerAddItem (objid, itemid, itemnum)
       BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5) -- 五倍
     end
   elseif (itemid == MyMap.ITEM.COIN) then -- 幸运币
-    -- 一个加5分
+    -- 一个加2分
     local teamid = PlayerHelper:getTeam(objid)
-    TeamHelper:addTeamScore(teamid, itemnum * 5)
+    TeamHelper:addTeamScore(teamid, itemnum * 2)
     -- 100枚换一颗续命丹
     local num = BackpackHelper:getItemNumAndGrid(objid, itemid)
     if (num >= 100) then
