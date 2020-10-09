@@ -59,6 +59,11 @@ function BaseItem:useItem2 (objid)
   -- body
 end
 
+-- 选择道具
+function BaseItem:selectItem (objid)
+  -- body
+end
+
 -- 投掷物命中
 function BaseItem:projectileHit(projectileInfo, toobjid, blockid, pos)
   -- body
