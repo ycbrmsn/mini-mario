@@ -1,15 +1,18 @@
 -- 我的道具类
 
 -- 时间补给
-TimeSupply = BaseItem:new({ id = MyMap.ITEM.TIME_SUPPLY })
+TimeSupply = BaseItem:new({ 
+  id = MyMap.ITEM.TIME_SUPPLY,
+  addTime = 180, -- 增加时间
+})
 
 function TimeSupply:useItem (objid)
   if (BackpackHelper:removeGridItemByItemID(objid, self.id, 1)) then
     local time = TimerHelper:getTimerTime(MyGameHelper.timerid)
-    TimerHelper:changeTimerTime(MyGameHelper.timerid, time + 100)
+    TimerHelper:changeTimerTime(MyGameHelper.timerid, time + self.addTime)
     local player = PlayerHelper:getPlayer(objid)
     ChatHelper:sendMsg(nil, '#G', player:getName(), '#n使用了',
-      ItemHelper:getItemName(self.id), '，时间额外增加了100秒')
+      ItemHelper:getItemName(self.id), '，时间额外增加了', self.addTime, '秒')
   end
 end
 
