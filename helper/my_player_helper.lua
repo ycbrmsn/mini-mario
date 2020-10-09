@@ -7,6 +7,7 @@ MyPlayerHelper = {
         { MyMap.ITEM.TIME_SUPPLY, 1 }, -- 时间补给
         { MyMap.ITEM.DETECTOR, 1 }, -- 探测器
         { MyMap.ITEM.PERMIT, 1 }, -- 通行证
+        { MyMap.ITEM.COIN, 60 }, -- 幸运币
       },
       msgMap = { present = '一些道具' }
     }, -- 作者
@@ -142,11 +143,12 @@ function MyPlayerHelper:playerAddItem (objid, itemid, itemnum)
     local teamid = PlayerHelper:getTeam(objid)
     TeamHelper:addTeamScore(teamid, itemnum * 2)
     player.coinNum = player.coinNum + 1
-    -- 100枚换一颗续命丹
+    -- 64枚金币换一颗续命药丸
     local num = BackpackHelper:getItemNumAndGrid(objid, itemid)
-    if (num >= 100) then
-      BackpackHelper:removeGridItemByItemID(objid, itemid, 100)
-      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 1)
+    if (num >= 64) then
+      if (BackpackHelper:removeGridItemByItemID(objid, itemid, 64)) then
+        BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 1)
+      end
     end
   end
 end
