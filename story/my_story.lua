@@ -46,19 +46,27 @@ function MyStory:initHideBlockAreas ()
     table.insert(self.hideBlockAreas, areaid)
     table.remove(self.hideBlockPosData, index)
   end
+  -- 固定隐藏区域
+  for i, v in ipairs(self.sureHideBlockData) do
+    local pos = MyPosition:new(v[1], v[2], v[3])
+    local areaid = AreaHelper:createAreaRectByRange(pos, pos)
+    table.insert(self.hideBlockAreas, areaid)
+    MyBlockHelper:addLuckyBlockData(pos, v[4], v[5])
+  end
 end
 
 -- 初始化幸运方块
 function MyStory:initLuckyBlocks ()
   for i, v in ipairs(self.luckyBlockData) do
     local pos = MyPosition:new(v[1], v[2], v[3])
-    MyBlockHelper.luckyBlockInfos[pos:toSimpleString()] = { pos = pos, category = v[4], num = v[5] }
+    MyBlockHelper:addLuckyBlockData(pos, v[4], v[5])
   end
   -- 城堡钥匙
   local index = math.random(1, #self.maybeKeyBlockData) -- 随机取一个
   local data = self.maybeKeyBlockData[index]
   local pos = MyPosition:new(data[1], data[2], data[3])
-  MyBlockHelper.luckyBlockInfos[pos:toSimpleString()] = { pos = pos, category = 4, num = 1 }
+  MyBlockHelper:addLuckyBlockData(pos, 4, 1)
+  -- MyBlockHelper.luckyBlockInfos[pos:toSimpleString()] = { pos = pos, category = 4, num = 1 }
 end
 
 -- 初始化进入管道及区域

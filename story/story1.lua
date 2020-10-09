@@ -9,8 +9,8 @@ function Story1:new ()
     tips = {
       '无事。',
     },
-    initPos = MyPosition:new(162.5, 72.5, -223),
-    -- initPos = MyPosition:new(0.5, 57.5, 0.5),
+    -- initPos = MyPosition:new(162.5, 72.5, -223),
+    initPos = MyPosition:new(0.5, 57.5, 0.5),
     luckyBlockData = { -- x, y, z, category, num
       { 0, 60, -8, 3, 1 }, -- 蘑菇
       { 0, 62, -35, 1, 6 }, -- 金币
@@ -22,6 +22,9 @@ function Story1:new ()
       { 0, 18, -49 },
       { 0, 14, -56 },
     }, -- 城堡钥匙可能出现的方块位置数据
+    sureHideBlockData = {
+      { 0, 60, -325, 5, 1 }, -- 续命药丸
+    }, -- 确定的隐藏方块
     hideBlockPosData = {
       { 0.5, 60.5, -38.5 },
       { 0.5, 60.5, -39.5 },

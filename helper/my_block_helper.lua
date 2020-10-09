@@ -20,6 +20,11 @@ function MyBlockHelper:initBlocks ()
   end
 end
 
+-- 添加隐藏方块数据
+function MyBlockHelper:addLuckyBlockData (pos, category, num)
+  self.luckyBlockInfos[pos:toSimpleString()] = { pos = pos, category = category, num = num }
+end
+
 -- 获取幸运方块信息
 function MyBlockHelper:getLuckyBlockInfo (x, y, z)
   x, y, z = math.floor(x), math.floor(y), math.floor(z)

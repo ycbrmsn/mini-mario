@@ -22,6 +22,7 @@ MyMap = {
     STAR = 3, -- 黄星星
     MUSHROOM = 4, -- 红蘑菇
     KEY = 5, -- 城堡钥匙
+    PILL = 6, -- 续命药丸
   },
   BUFF = {
     CONTINUE = 999, -- 继续探险
