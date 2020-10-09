@@ -7,7 +7,7 @@ MyPlayerHelper = {
         { MyMap.ITEM.TIME_SUPPLY, 1 }, -- 时间补给
         { MyMap.ITEM.DETECTOR, 1 }, -- 探测器
         { MyMap.ITEM.PERMIT, 1 }, -- 通行证
-        { MyMap.ITEM.COIN, 60 }, -- 幸运币
+        -- { MyMap.ITEM.COIN, 60 }, -- 幸运币
       },
       msgMap = { present = '一些道具' }
     }, -- 作者
