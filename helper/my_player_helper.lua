@@ -109,6 +109,7 @@ function MyPlayerHelper:playerAddItem (objid, itemid, itemnum)
     -- 一个加2分
     local teamid = PlayerHelper:getTeam(objid)
     TeamHelper:addTeamScore(teamid, itemnum * 2)
+    player.coinNum = player.coinNum + 1
     -- 100枚换一颗续命丹
     local num = BackpackHelper:getItemNumAndGrid(objid, itemid)
     if (num >= 100) then

@@ -21,6 +21,7 @@ function MyPlayer:new (objid)
     isRunning = false,
     isUnderground = false, -- 是否在地底
     prevOxygen = 10, -- 前一次氧气值
+    coinNum = 0, -- 获得金币数
   }
   o.action = BasePlayerAction:new(o)
   o.attr = BasePlayerAttr:new(o)

@@ -108,7 +108,7 @@ function MyGameHelper:setGBattleUI ()
       msg = '在中途被淘汰，得分：'
     end
     UIHelper:setGBattleUI('left_desc', player:getName() .. msg .. score)
-    UIHelper:setGBattleUI('left_little_desc', '获得金币数：' .. teamScore / 5)
+    UIHelper:setGBattleUI('left_little_desc', '获得金币数：' .. player.coinNum)
     UIHelper:setGBattleUI('right_little_desc', '剩余时间：' .. time)
   end
   UIHelper:setGBattleUI('result', false)
