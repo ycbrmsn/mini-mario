@@ -63,7 +63,6 @@ function MyPlayerHelper:playerEnterArea (objid, areaid)
       local height = (ActorHelper:getEyeHeight(objid) + 0.6) * dimension
       if (AreaHelper:posInArea(MyPosition:new(pos.x, pos.y + height, pos.z), areaid)) then
         AreaHelper:fillBlock(areaid, MyMap.BLOCK.LUCKY) -- 填充幸运方块
-        WorldHelper:playSoundOnPos(pos, BaseConstant.SOUND_EFFECT.MUSIC58) -- 敲鼓的声音
         player:headHitBlock(true)
       end
     end

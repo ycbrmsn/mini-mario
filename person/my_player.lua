@@ -58,6 +58,7 @@ end
 
 -- 头顶方块
 function MyPlayer:headHitBlock (isHide)
+  WorldHelper:playSoundOnPos(self:getMyPosition(), BaseConstant.SOUND_EFFECT.MUSIC58) -- 敲鼓的声音
   local forceSpeed = -1
   ActorHelper:appendSpeed(self.objid, 0, forceSpeed, 0)
   self.walkSpeed = MyGameHelper.defaultWalkSpeed
