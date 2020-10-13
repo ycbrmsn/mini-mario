@@ -46,7 +46,6 @@ function MyPlayerHelper:playerEnterGame (objid)
   PlayerHelper:setActionAttrState(objid, PLAYERATTR.ENABLE_BEATTACKED, false) -- 不可被攻击
   -- BackpackHelper:setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 跳跃键
   -- PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP) -- 不可丢弃
-  BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 5) -- 五颗续命药丸
   MyPlayerHelper:diffPersonDiffPresents(objid)
   story:enter(objid)
   -- 播放背景音乐

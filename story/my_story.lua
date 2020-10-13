@@ -137,7 +137,11 @@ function MyStory:enter (objid)
   if (PlayerHelper:isMainPlayer(objid)) then -- 本地玩家，则开始计时
     ActorHelper:setMyPosition(objid, self.initPos) -- 初始位置
     PlayerHelper:setRevivePoint(objid, self.initPos.x, self.initPos.y, self.initPos.z)
-    if (MyStoryHelper.index ~= 1) then
+    if (MyStoryHelper.index == 1) then -- 第一关
+      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 5) -- 五颗续命药丸
+      BackpackHelper:setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 连续跳跃
+      PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP)
+    else
       local time = TimerHelper:getTimerTime(MyGameHelper.timerid)
       TimerHelper:changeTimerTime(MyGameHelper.timerid, time + self.backwardTimer)
     end

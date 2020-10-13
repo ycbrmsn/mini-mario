@@ -52,6 +52,9 @@ function MyGameHelper:fasterTheSameDir (player, z, isMainPlayer)
   else
     player.swimSpeed = self.defaultSwimSpeed
   end
+  if (player.zSpeed > 0) then -- 取消持续跳跃
+    player.isKeepJumping = false
+  end
   PlayerHelper:setWalkSpeed(player.objid, player.walkSpeed)
   PlayerHelper:setSwimSpeed(player.objid, player.swimSpeed)
   player.dir = dir
@@ -85,6 +88,9 @@ function MyGameHelper:headHitBlock (player, x, y, z, isMainPlayer)
     end
     -- 清除高度
     player.fallHeight = 0
+  end
+  if (ySpeed == 0 and player.isKeepJumping) then -- 持续跳跃
+    ActorHelper:appendSpeed(player.objid, 0, 0.9, 0)
   end
   player.ySpeed = ySpeed
 end

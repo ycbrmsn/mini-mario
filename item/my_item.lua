@@ -74,3 +74,11 @@ function Permit:selectItem (objid)
     ChatHelper:sendMsg(objid, '该道具仅房主使用有效')
   end
 end
+
+-- 连续跳跃
+KeepJump = BaseItem:new( { id = MyMap.ITEM.JUMP })
+
+function KeepJump:selectItem (objid)
+  local player = PlayerHelper:getPlayer(objid)
+  player.isKeepJumping = true
+end
