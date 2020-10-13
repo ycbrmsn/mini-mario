@@ -74,7 +74,7 @@ function BasePlayer:thinkTo (playerids, afterSeconds, ...)
     end
   elseif (type(playerids) == 'table') then
     for i, v in ipairs(playerids) do
-      self:thinkTo(v)
+      self:thinkTo(v, afterSeconds, ...)
     end
   end
 end
@@ -315,4 +315,8 @@ end
 -- 获取点击的生物
 function BasePlayer:getClickActor ()
   return self.clickActor
+end
+
+function BasePlayer:runTo (positions, callback, param)
+  self.action:runTo(positions, callback, param)
 end

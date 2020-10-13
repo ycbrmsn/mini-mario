@@ -209,3 +209,8 @@ end
 function MyStoryHelper:actorDie (objid, toobjid)
   -- body
 end
+
+-- 容器内有道具取出
+function MyStoryHelper:backpackItemTakeOut (blockid, x, y, z, itemid, itemnum)
+  -- body
+end
