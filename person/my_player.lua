@@ -28,6 +28,7 @@ function MyPlayer:new (objid)
     prevOxygen = 10, -- 前一次氧气值
     coinNum = 0, -- 获得金币数
     isKeepJumping = false, -- 是否在连续跳跃
+    ableMove = true, -- 能够移动
   }
   o.action = BasePlayerAction:new(o)
   o.attr = BasePlayerAttr:new(o)
@@ -190,7 +191,11 @@ function MyPlayer:goOutPipe ()
   local pos = story.enterPos
   self.isUnderground = false
   if (PlayerHelper:isMainPlayer(self.objid)) then
-    self:setPosition(pos)
+    self.ableMove = false
+    TimeHelper:callFnFastRuns(function ()
+      self:setPosition(pos)
+      self.ableMove = true
+    end, 1)
   else
     self:setPosition(pos.x - 2, pos.y, pos.z)
   end

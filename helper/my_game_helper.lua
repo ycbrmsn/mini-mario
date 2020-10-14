@@ -24,29 +24,34 @@ function MyGameHelper:fasterTheSameDir (player, z, isMainPlayer)
     player.zSpeed = math.abs(z - player.z)
     -- LogHelper:debug(player.zSpeed)
   end
-  -- 移动速度
-  if (isMainPlayer and player.zSpeed > 0.15) then -- 在移动
-    if (dir == player.dir) then -- 同向
-      if (player.walkSpeed < player.maxWalkSpeed) then
-        player.walkSpeed = player.walkSpeed + player.onceAppendSpeed
+  if (player.ableMove) then -- 可移动
+    -- 移动速度
+    if (isMainPlayer and player.zSpeed > 0.15) then -- 在移动
+      if (dir == player.dir) then -- 同向
+        if (player.walkSpeed < player.maxWalkSpeed) then
+          player.walkSpeed = player.walkSpeed + player.onceAppendSpeed
+        end
+      else -- 反向
+        player.walkSpeed = player.defaultWalkSpeed
       end
-    else -- 反向
+    else
       player.walkSpeed = player.defaultWalkSpeed
     end
-  else
-    player.walkSpeed = player.defaultWalkSpeed
-  end
-  -- 游泳速度
-  if (isMainPlayer and player.zSpeed > 0.02) then
-    if (dir == player.dir) then -- 同向
-      if (player.swimSpeed < player.maxSwimSpeed) then
-        player.swimSpeed = player.swimSpeed + player.onceAppendSpeed
+    -- 游泳速度
+    if (isMainPlayer and player.zSpeed > 0.02) then
+      if (dir == player.dir) then -- 同向
+        if (player.swimSpeed < player.maxSwimSpeed) then
+          player.swimSpeed = player.swimSpeed + player.onceAppendSpeed
+        end
+      else -- 反向
+        player.swimSpeed = player.defaultSwimSpeed
       end
-    else -- 反向
+    else
       player.swimSpeed = player.defaultSwimSpeed
     end
-  else
-    player.swimSpeed = player.defaultSwimSpeed
+  else -- 不可移动
+    player.walkSpeed = 0
+    player.swimSpeed = 0
   end
   if (player.zSpeed > 0) then -- 取消持续跳跃
     player.isKeepJumping = false
