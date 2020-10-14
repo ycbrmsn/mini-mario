@@ -91,7 +91,8 @@ function MyGameHelper:headHitBlock (player, x, y, z, isMainPlayer)
     -- 清除高度
     player.fallHeight = 0
   end
-  if (ySpeed == 0 and player.isKeepJumping) then -- 持续跳跃
+  -- 持续跳跃
+  if (ySpeed == 0 and player.ySpeed <= 0 and player.isKeepJumping) then -- 不是上升状态后竖直静止
     ActorHelper:appendSpeed(player.objid, 0, 0.9, 0)
   end
   player.ySpeed = ySpeed
