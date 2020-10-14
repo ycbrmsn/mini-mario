@@ -46,16 +46,20 @@ function MyPlayer:killSelf ()
 end
 
 -- 打倒生物
-function MyPlayer:knockCreature (objid)
+function MyPlayer:knockCreature (objid, index, seconds)
+  index = index or MyStoryHelper.index
+  seconds = seconds or 30
   CreatureHelper:setHp(objid, 0)
   TimeHelper:callFnAfterSecond(function ()
-    local maxHp = CreatureHelper:getMaxHp(objid)
-    if (maxHp) then
-      CreatureHelper:setHp(objid, maxHp)
-    else
-      self:knockCreature(objid)
+    if (index == MyStoryHelper.index) then
+      local maxHp = CreatureHelper:getMaxHp(objid)
+      if (maxHp) then
+        CreatureHelper:setHp(objid, maxHp)
+      else
+        self:knockCreature(objid, index, 5)
+      end
     end
-  end, 30)
+  end, seconds)
 end
 
 -- 头顶方块
