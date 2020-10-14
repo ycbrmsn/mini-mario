@@ -10,8 +10,13 @@ function MyPlayer:new (objid)
     dir = FACE_DIRECTION.DIR_NEG_Z, -- 默认朝南
     ySpeed = 0, -- 纵向速度
     zSpeed = 0, -- 横向速度，此处是位移表示
+    defaultWalkSpeed = 10, -- 默认移动速度
+    maxWalkSpeed = 40, -- 最大移动速度
     walkSpeed = 0,
+    defaultSwimSpeed = 10, -- 默认游泳速度
+    maxSwimSpeed = 20, -- 最大游泳速度
     swimSpeed = 0,
+    onceAppendSpeed = 1, -- 一次增加速度
     notDead = true, -- 未死亡
     fallHeight = 0, -- 下落高度
     checkPoint = 1, -- 当前关卡
@@ -34,6 +39,9 @@ end
 
 function MyPlayer:initMyPlayer ()
   PlayerHelper:setJumpPower(self.objid, 95)
+  if (not(self:isHostPlayer())) then
+    self.defaultWalkSpeed = 20
+  end
 end
 
 function MyPlayer:killSelf ()
@@ -67,7 +75,7 @@ function MyPlayer:headHitBlock (isHide)
   WorldHelper:playSoundOnPos(self:getMyPosition(), BaseConstant.SOUND_EFFECT.MUSIC58) -- 敲鼓的声音
   local forceSpeed = -1
   ActorHelper:appendSpeed(self.objid, 0, forceSpeed, 0)
-  self.walkSpeed = MyGameHelper.defaultWalkSpeed
+  self.walkSpeed = self.defaultWalkSpeed
   -- 破坏方块
   -- local pos = self:getMyPosition()
   -- local height = pos.y + ActorHelper:getEyeHeight(self.objid) + 0.5
