@@ -41,6 +41,19 @@ end
 -- 投掷物命中
 function MyItemHelper:projectileHit (projectileid, toobjid, blockid, x, y, z)
   ItemHelper:projectileHit(projectileid, toobjid, blockid, x, y, z)
+  -- body
+  if (not(ActorHelper:isPlayer(toobjid))) then -- 不是玩家
+    local actorid = CreatureHelper:getActorID(toobjid)
+    if (actorid) then
+      if (actorid == 3400 or actorid == 3407) then -- 鸡、狼
+        local itemid = ItemHelper:getMissileItemid(projectileid)
+        if (itemid and itemid == MyMap.ITEM.FLY_FLOOR) then
+          local player = PlayerHelper:getHostPlayer()
+          player:knockCreature(toobjid)
+        end
+      end
+    end
+  end
 end
 
 -- 投掷物被创建

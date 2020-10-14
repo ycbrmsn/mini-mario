@@ -17,12 +17,15 @@ MyMap = {
     TIME_SUPPLY = 4106, -- 时间补给
     DETECTOR = 4108, -- 探测器
     PERMIT = 4109, -- 通行证
+    FLY_FLOOR = 4112, -- 飞花
+    FLOOR = 4113, -- 花
   },
   ACTOR = {
     STAR = 3, -- 黄星星
     MUSHROOM = 4, -- 红蘑菇
     KEY = 5, -- 城堡钥匙
     PILL = 6, -- 续命药丸
+    FLOOR = 7, -- 花
   },
   BUFF = {
     CONTINUE = 999, -- 继续探险
