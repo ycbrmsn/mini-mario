@@ -40,7 +40,8 @@ end
 function MyPlayer:initMyPlayer ()
   PlayerHelper:setJumpPower(self.objid, 95)
   if (not(self:isHostPlayer())) then
-    self.defaultWalkSpeed = 20
+    self.isWatchStyle = true
+    PlayerHelper:setWalkSpeed(self.objid, 20)
   end
 end
 

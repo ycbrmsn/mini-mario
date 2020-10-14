@@ -220,16 +220,22 @@ function MyPlayerHelper:playerRevive (objid, toobjid)
   -- body
   local player = PlayerHelper:getPlayer(objid)
   player.notDead = true
-  ActorHelper:setFaceYaw(objid, 0)
-  local pillNum = BackpackHelper:getItemNumAndGrid2(objid, MyMap.ITEM.PILL)
-  if (pillNum > 0) then -- 还有续命药丸
-    BackpackHelper:removeGridItemByItemID(objid, MyMap.ITEM.PILL, 1)
-  else -- 没有续命药丸了
+  if (player:isHostPlayer()) then -- 房主
+    local pillNum = BackpackHelper:getItemNumAndGrid2(objid, MyMap.ITEM.PILL)
+    if (pillNum > 0) then -- 还有续命药丸
+      BackpackHelper:removeGridItemByItemID(objid, MyMap.ITEM.PILL, 1)
+    else -- 没有续命药丸了
+      player.isWatchStyle = true
+      local pos = player.revivePoint
+      player:setMyPosition(pos.x - 2, pos.y, pos.z)
+      ChatHelper:sendMsg(objid, '生命耗尽，可在商店购买续命药瓶')
+    end
+  else
     player.isWatchStyle = true
     local pos = player.revivePoint
     player:setMyPosition(pos.x - 2, pos.y, pos.z)
-    ChatHelper:sendMsg(objid, '生命耗尽，可在商店购买续命药瓶')
   end
+  ActorHelper:setFaceYaw(objid, 0)
 end
 
 -- 玩家选择快捷栏

@@ -139,25 +139,27 @@ function MyGameHelper:runGame ()
   GameHelper:runGame()
   self.index = self.index + 1
   -- body
-  for i, v in ipairs(PlayerHelper:getActivePlayers()) do
-    local x, y, z = ActorHelper:getPosition(v.objid)
+  for i, player in ipairs(PlayerHelper:getActivePlayers()) do
+    local x, y, z = ActorHelper:getPosition(player.objid)
     if (x) then
-      if (not(MyGameHelper:judgeDeath(v, y))) then -- 玩家没有位置过低死亡
+      if (not(MyGameHelper:judgeDeath(player, y))) then -- 玩家没有位置过低死亡
         -- LogHelper:debug(z)
-        local isMainPlayer = PlayerHelper:isMainPlayer(v.objid)
-        MyGameHelper:fasterTheSameDir(v, z, isMainPlayer) -- 同向加速
-        MyGameHelper:headHitBlock(v, x, y, z, isMainPlayer)
-        v.x, v.y, v.z = x, y, z
-        -- LogHelper:debug(v.y)
-      end
-      if (self.index % 20 == 0) then
-        if (math.abs(v.sz - z) > 2) then
-          v.isRunning = true
-        else
-          v.isRunning = false
+        -- local isMainPlayer = PlayerHelper:isMainPlayer(player.objid)
+        if (player:isHostPlayer()) then
+          MyGameHelper:fasterTheSameDir(player, z, true) -- 同向加速
+          MyGameHelper:headHitBlock(player, x, y, z, true)
+          player.x, player.y, player.z = x, y, z
         end
-        v.sz = z
+        -- LogHelper:debug(player.y)
       end
+      -- if (self.index % 20 == 0) then
+      --   if (math.abs(v.sz - z) > 2) then
+      --     v.isRunning = true
+      --   else
+      --     v.isRunning = false
+      --   end
+      --   v.sz = z
+      -- end
     end
   end
 end
