@@ -137,7 +137,14 @@ function MyPlayer:hitLuckyBlock (x, y, z)
     CreatureHelper:closeAI(objids[1])
     ActorHelper:setFaceYaw(objids[1], 90)
   elseif (category == 3) then -- 长大蘑菇
-    local objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.MUSHROOM, 1)
+    -- 判断玩家是否是大形态
+    local dimension = PlayerHelper:getDimension(self.objid)
+    local objids
+    if (dimension > 1) then -- 大形态
+      objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.FLOOR, 1)
+    else
+      objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.MUSHROOM, 1)
+    end
     CreatureHelper:closeAI(objids[1])
     ActorHelper:setFaceYaw(objids[1], 90)
   elseif (category == 4) then -- 城堡钥匙

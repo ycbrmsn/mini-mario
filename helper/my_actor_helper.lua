@@ -47,6 +47,10 @@ function MyActorHelper:actorCollide (objid, toobjid)
       if (WorldHelper:despawnActor(objid)) then -- 销毁成功
         BackpackHelper:addItem(toobjid, MyMap.ITEM.PILL, 1)
       end
+    elseif (actorid == MyMap.ACTOR.FLOOR) then -- 花
+      if (WorldHelper:despawnActor(objid)) then -- 销毁成功
+        BackpackHelper:addItem(toobjid, MyMap.ITEM.FLOOR, 3)
+      end
     else
       local player = PlayerHelper:getPlayer(toobjid)
       if (ActorHelper:hasBuff(toobjid, MyMap.BUFF.FEARLESS)) then -- 玩家有了无畏buff
