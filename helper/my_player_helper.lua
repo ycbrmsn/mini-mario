@@ -255,13 +255,21 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   -- body
   local player = PlayerHelper:getPlayer(objid)
   local story = MyStoryHelper:getStory()
-  if (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
+  if (playermotion == PLAYERMOTION.STATIC) then -- 静止
+    local pos = player:getMyPosition()
+    local x = story.initPos.x
+    if (player.isWatchStyle) then -- 在观战
+      x = x - 2
+    end
+    local yaw = ActorHelper:getFaceYaw(objid)
+    local pitch = ActorHelper:getFacePitch(objid)
+    PlayerHelper:setPosition(objid, x, pos.y, pos.z)
+    ActorHelper:setFaceYaw(objid, yaw)
+    ActorHelper:setFacePitch(objid, pitch)
+  elseif (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
     -- ActorHelper:appendSpeed(objid, 0, 0.6, 0)
-  -- elseif (playermotion == PLAYERMOTION.STATIC) then -- 静止
-    -- player.isRunning = false
-    -- LogHelper:debug('静止')
   -- elseif (playermotion == PLAYERMOTION.WALK) then -- 行走
-    -- LogHelper:debug('行走')
+    -- player.isRunning = false
   -- elseif (playermotion == PLAYERMOTION.FALL_GROUND) then -- 落地
   elseif (playermotion == PLAYERMOTION.SNEAK) then -- 潜行
     local pos = player:getMyPosition()
@@ -275,17 +283,6 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
           end)
         end, 0.5)
       end, 0.5)
-    else
-      local x = story.initPos.x
-      if (player.isWatchStyle) then -- 在观战
-        x = x - 2
-      end
-      local yaw = ActorHelper:getFaceYaw(objid)
-      local pitch = ActorHelper:getFacePitch(objid)
-      PlayerHelper:setPosition(objid, x, pos.y, pos.z)
-      ActorHelper:setFaceYaw(objid, yaw)
-      ActorHelper:setFacePitch(objid, pitch)
-      ChatHelper:sendMsg(objid, '位置已调整')
     end
   end
 end
@@ -355,7 +352,7 @@ function MyPlayerHelper:playerChangeAttr (objid, playerattr)
     local oxygen = PlayerHelper:getOxygen(objid)
     if (oxygen == 0) then
       player:killSelf()
-    elseif (oxygen == 3 and player.prevOxygen > 3) then
+    elseif (oxygen == 4 and player.prevOxygen > 4) then
       ChatHelper:sendMsg(objid, '你感觉需要换口气了')
     end
     player.prevOxygen = oxygen
