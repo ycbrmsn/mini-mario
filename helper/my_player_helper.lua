@@ -8,6 +8,7 @@ MyPlayerHelper = {
         { MyMap.ITEM.DETECTOR, 1 }, -- 探测器
         { MyMap.ITEM.PERMIT, 1 }, -- 通行证
         -- { MyMap.ITEM.COIN, 60 }, -- 幸运币
+        { MyMap.ITEM.FLOOR, 5 }, -- 花
       },
       msgMap = { present = '一些道具' }
     }, -- 作者
@@ -208,6 +209,8 @@ function MyPlayerHelper:playerDie (objid, toobjid)
   end
   player.revivePoint = MyPosition:new(x, y, z)
   PlayerHelper:setRevivePoint(objid, x, y, z)
+  -- 移除一朵花
+  BackpackHelper:removeGridItemByItemID(objid, MyMap.ITEM.FLOOR, 1)
 end
 
 -- 玩家复活
@@ -256,16 +259,18 @@ function MyPlayerHelper:playerMotionStateChange (objid, playermotion)
   local player = PlayerHelper:getPlayer(objid)
   local story = MyStoryHelper:getStory()
   if (playermotion == PLAYERMOTION.STATIC) then -- 静止
-    local pos = player:getMyPosition()
-    local x = story.initPos.x
-    if (player.isWatchStyle) then -- 在观战
-      x = x - 2
+    if (story) then
+      local pos = player:getMyPosition()
+      local x = story.initPos.x
+      if (player.isWatchStyle) then -- 在观战
+        x = x - 2
+      end
+      local yaw = ActorHelper:getFaceYaw(objid)
+      local pitch = ActorHelper:getFacePitch(objid)
+      PlayerHelper:setPosition(objid, x, pos.y, pos.z)
+      ActorHelper:setFaceYaw(objid, yaw)
+      ActorHelper:setFacePitch(objid, pitch)
     end
-    local yaw = ActorHelper:getFaceYaw(objid)
-    local pitch = ActorHelper:getFacePitch(objid)
-    PlayerHelper:setPosition(objid, x, pos.y, pos.z)
-    ActorHelper:setFaceYaw(objid, yaw)
-    ActorHelper:setFacePitch(objid, pitch)
   elseif (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
     -- ActorHelper:appendSpeed(objid, 0, 0.6, 0)
   -- elseif (playermotion == PLAYERMOTION.WALK) then -- 行走

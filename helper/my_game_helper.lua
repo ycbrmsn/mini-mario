@@ -12,10 +12,12 @@ MyGameHelper = {
 
 -- 判断是否因为位置过低需要死去
 function MyGameHelper:judgeDeath (player, y)
-  if ((y > 40 and y < 52) or (y < 0) and player.notDead) then
-    ActorHelper:killSelf(player.objid)
-    player.notDead = false
-    return true
+  if (player.notDead) then
+    if ((y > 40 and y < 52) or (y < 0)) then
+      player.notDead = false
+      ActorHelper:killSelf(player.objid)
+      return true
+    end
   end
   return false
 end
