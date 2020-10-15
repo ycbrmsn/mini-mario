@@ -143,6 +143,9 @@ function MyStory:enter (objid)
       PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP)
     else
       local time = TimerHelper:getTimerTime(MyGameHelper.timerid)
+      local teamid = PlayerHelper:getTeam(objid)
+      TeamHelper:addTeamScore(teamid, 50) -- 过一关加50分
+      -- TeamHelper:addTeamScore(teamid, math.floor(time / 3)) -- 三分之一的时间兑换为分数
       TimerHelper:changeTimerTime(MyGameHelper.timerid, time + self.backwardTimer)
     end
   else

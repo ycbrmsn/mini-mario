@@ -76,7 +76,7 @@ function Story2:new ()
     enterAreas = {}, -- 进入水管区域
     enterArea = -1, -- 进入地下区域
     leaveArea = -1, -- 离开地下区域
-    backwardTimer = 200, -- 倒计时
+    backwardTimer = 300, -- 倒计时
     undergroundBeginPos = MyPosition:new(81.5, 18, 2.5), -- 刚进入地下水管的位置
     undergroundEndPos = MyPosition:new(81.5, 7.5, -118.5), -- 准备出地下水管的位置
     passPos = MyPosition:new(81, 57, -330), -- 过关区域位置
