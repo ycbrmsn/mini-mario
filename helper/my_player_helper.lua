@@ -128,15 +128,17 @@ function MyPlayerHelper:playerAddItem (objid, itemid, itemnum)
   -- body
   local player = PlayerHelper:getPlayer(objid)
   if (itemid == MyMap.ITEM.BOTTLE) then -- 续命药瓶
-    BackpackHelper:removeGridItemByItemID(objid, itemid, itemnum)
-    if (player.isWatchStyle) then -- 观战模式
-      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5 - 1)
-      ActorHelper:addBuff(objid, MyMap.BUFF.CONTINUE, 1, 60)
-      player.isWatchStyle = false
-      local pos = player.revivePoint
-      player:setMyPosition(pos.x, pos.y, pos.z) -- 重回复活点
-    else
-      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5) -- 五倍
+    if (player:isHostPlayer()) then
+      BackpackHelper:removeGridItemByItemID(objid, itemid, itemnum)
+      if (player.isWatchStyle) then -- 观战模式
+        BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5 - 1)
+        ActorHelper:addBuff(objid, MyMap.BUFF.CONTINUE, 1, 60)
+        player.isWatchStyle = false
+        local pos = player.revivePoint
+        player:setMyPosition(pos.x, pos.y, pos.z) -- 重回复活点
+      else
+        BackpackHelper:addItem(objid, MyMap.ITEM.PILL, itemnum * 5) -- 五倍
+      end
     end
   elseif (itemid == MyMap.ITEM.COIN) then -- 幸运币
     -- 一个加2分
