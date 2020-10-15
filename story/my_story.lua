@@ -35,9 +35,9 @@ function MyStory:init ()
   self:initLuckyBlocks()
 end
 
--- 初始化几个隐藏区域，四分之一概率
+-- 初始化几个隐藏区域，十五分之一概率
 function MyStory:initHideBlockAreas ()
-  local num = math.floor(#self.hideBlockPosData / 4)
+  local num = math.ceil(#self.hideBlockPosData / 15)
   for i = 1, num do
     local index = math.random(1, #self.hideBlockPosData) -- 随机取一个
     local pos = MyPosition:new(self.hideBlockPosData[index][1],
