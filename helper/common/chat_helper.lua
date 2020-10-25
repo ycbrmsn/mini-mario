@@ -39,6 +39,36 @@ function ChatHelper:waitThink (name, toobjid, seconds, ...)
   end, seconds)
 end
 
+-- 显示选项
+function ChatHelper:showChooseItems (objid, arr, key)
+  ChatHelper:showSelectSeparate(objid)
+  for i, v in ipairs(arr) do
+    if (key) then
+      ChatHelper:sendMsg(objid, i .. '.' .. v[key])
+    else
+      ChatHelper:sendMsg(objid, i .. '.' .. v)
+    end
+  end
+end
+
+-- 显示分隔
+function ChatHelper:showSeparate (objid, char)
+  char = char or ''
+  ChatHelper:sendMsg(objid, '-------', char, '-------')
+end
+
+function ChatHelper:showSelectSeparate (objid)
+  ChatHelper:showSeparate(objid, '选项')
+end
+
+function ChatHelper:showEndSeparate (objid)
+  ChatHelper:showSeparate(objid, '结束')
+end
+
+function ChatHelper:showBreakSeparate (objid)
+  ChatHelper:showSeparate(objid, '中止')
+end
+
 -- 封装原始接口
 
 -- 发送系统消息，默认发送给所有玩家

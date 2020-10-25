@@ -7,7 +7,7 @@ PlayerHelper = {
     CUR_HUNGER = 6
   },
   players = {}, -- { objid -> MyPlayer }
-  defeatActors = {} -- 击败的生物
+  defeatActors = {}, -- 击败的生物
 }
 
 -- 如果玩家信息不存在则添加玩家信息
@@ -386,6 +386,8 @@ function PlayerHelper:playerClickBlock (objid, blockid, x, y, z)
   if (BlockHelper:checkCandle(objid, blockid, pos)) then
   end
   ItemHelper:clickBlock(objid, blockid, x, y, z)
+  local player = PlayerHelper:getPlayer(objid)
+  player:breakTalk()
 end
 
 -- 玩家点击生物
@@ -393,9 +395,6 @@ function PlayerHelper:playerClickActor (objid, toobjid)
   local myActor = ActorHelper:getActor(toobjid)
   if (myActor) then
     ActorHelper:recordClickActor(objid, myActor)
-    if (myActor.wants and myActor.wants[1].style == 'sleeping') then
-      myActor.wants[1].style = 'wake'
-    end
     myActor:defaultPlayerClickEvent(objid)
   end
 end
@@ -478,6 +477,7 @@ function PlayerHelper:playerSelectShortcut (objid, toobjid, itemid, itemnum)
   local player = self:getPlayer(objid)
   player:holdItem()
   ItemHelper:selectItem(objid, itemid)
+  player:choose()
 end
 
 -- 玩家快捷栏变化
@@ -651,7 +651,7 @@ function PlayerHelper:changeViewMode (objid, viewmode, islock)
   end, '改变玩家视角模式', 'objid=', objid, ',viewmode=', viewmode, ',islock=', islock)
 end
 
--- 获取当前所用快捷栏键
+-- 获取当前所用快捷栏键 0~7
 function PlayerHelper:getCurShotcut (objid)
   return CommonHelper:callOneResultMethod(function (p)
     return Player:getCurShotcut(objid)
