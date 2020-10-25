@@ -124,12 +124,21 @@ end
 
 -- 替换水管头
 function MyStory:replacePipe (x, y, z)
-  local blockid = BlockHelper:getBlockID(x, y, z)
-  if (not(blockid) or blockid ~= MyMap.BLOCK.ENTER_PIPE) then
-    BlockHelper:replaceBlock(MyMap.BLOCK.ENTER_PIPE, x, y, z)
+  local story = MyStoryHelper:getStory()
+  if (not(story) or story.index ~= self.index) then -- 不是当前关卡
+    -- LogHelper:debug('no', self.index)
     TimeHelper:callFnAfterSecond(function ()
       self:replacePipe(x, y, z)
     end, 2)
+  else -- 当前关卡
+    -- LogHelper:debug('yes')
+    local blockid = BlockHelper:getBlockID(x, y, z)
+    if (not(blockid) or blockid ~= MyMap.BLOCK.ENTER_PIPE) then
+      BlockHelper:replaceBlock(MyMap.BLOCK.ENTER_PIPE, x, y, z)
+      TimeHelper:callFnAfterSecond(function ()
+        self:replacePipe(x, y, z)
+      end, 2)
+    end
   end
 end
 

@@ -44,7 +44,7 @@ function MyPlayerHelper:playerEnterGame (objid)
   MyStoryHelper:playerEnterGame(objid)
   -- body
   local story = MyStoryHelper:getStory()
-  PlayerHelper:setActionAttrState(objid, PLAYERATTR.ENABLE_BEATTACKED, false) -- 不可被攻击
+  -- PlayerHelper:setActionAttrState(objid, PLAYERATTR.ENABLE_BEATTACKED, false) -- 不可被攻击
   -- BackpackHelper:setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 跳跃键
   -- PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP) -- 不可丢弃
   MyPlayerHelper:diffPersonDiffPresents(objid)

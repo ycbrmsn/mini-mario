@@ -9,6 +9,7 @@ function Story1:new ()
     tips = {
       '无事。',
     },
+    index = 1,
     -- initPos = MyPosition:new(162.5, 72.5, -223),
     initPos = MyPosition:new(0.5, 57.5, 0.5),
     luckyBlockData = { -- x, y, z, category, num
