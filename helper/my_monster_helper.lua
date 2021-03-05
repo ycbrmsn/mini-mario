@@ -8,5 +8,5 @@ function MyMonsterHelper.init ()
   -- wolf = Wolf:new()
   -- ox = Ox:new()
   -- local monsterModels = { chick, dog, wolf, ox }
-  -- MonsterHelper:init(monsterModels)
+  -- MonsterHelper.init(monsterModels)
 end

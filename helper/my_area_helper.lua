@@ -16,9 +16,9 @@ function MyAreaHelper.initShowToastAreas ()
   -- local arr = { wolf, ox }
   -- for i, v in ipairs(arr) do
   --   if (v.generate) then -- 如果需要生成怪物
-  --     AreaHelper:addToastArea(v.areaids[2], { v.areaids[1], v.areaName, v.generate })
+  --     AreaHelper.addToastArea(v.areaids[2], { v.areaids[1], v.areaName, v.generate })
   --   else
-  --     AreaHelper:addToastArea(v.areaids[2], { v.areaids[1], v.areaName })
+  --     AreaHelper.addToastArea(v.areaids[2], { v.areaids[1], v.areaName })
   --   end
   -- end
 end
@@ -27,7 +27,7 @@ end
 function MyAreaHelper.initDoorAreas ()
   for i, v in ipairs(MyAreaHelper.doorPositionData) do
     local pos = MyPosition:new(v[1], v[2], v[3])
-    local areaid = AreaHelper:getAreaByPos(pos)
+    local areaid = AreaHelper.getAreaByPos(pos)
     table.insert(AreaHelper.allDoorAreas, areaid, pos)
   end
 end

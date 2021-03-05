@@ -39,16 +39,16 @@ function MyPlayer:new (objid)
 end
 
 function MyPlayer:initMyPlayer ()
-  PlayerHelper:setJumpPower(self.objid, 95)
+  PlayerHelper.setJumpPower(self.objid, 95)
   if (not(self:isHostPlayer())) then
     self.isWatchStyle = true
-    PlayerHelper:setWalkSpeed(self.objid, 20)
+    PlayerHelper.setWalkSpeed(self.objid, 20)
   end
 end
 
 function MyPlayer:killSelf ()
-  if (ActorHelper:killSelf(self.objid)) then
-    WorldHelper:playSoundOnPos(self:getMyPosition(), BaseConstant.SOUND_EFFECT.PROMPT7) -- 死亡声音
+  if (ActorHelper.killSelf(self.objid)) then
+    WorldHelper.playSoundOnPos(self:getMyPosition(), BaseConstant.SOUND_EFFECT.PROMPT7) -- 死亡声音
     return true
   else
     return false
@@ -59,12 +59,12 @@ end
 function MyPlayer:knockCreature (objid, index, seconds)
   index = index or MyStoryHelper.index
   seconds = seconds or 30
-  CreatureHelper:setHp(objid, 0)
-  TimeHelper:callFnAfterSecond(function ()
+  CreatureHelper.setHp(objid, 0)
+  TimeHelper.callFnAfterSecond(function ()
     if (index == MyStoryHelper.index) then
-      local maxHp = CreatureHelper:getMaxHp(objid)
+      local maxHp = CreatureHelper.getMaxHp(objid)
       if (maxHp) then
-        CreatureHelper:setHp(objid, maxHp)
+        CreatureHelper.setHp(objid, maxHp)
       else
         self:knockCreature(objid, index, 5)
       end
@@ -74,20 +74,20 @@ end
 
 -- 头顶方块
 function MyPlayer:headHitBlock (isHide)
-  WorldHelper:playSoundOnPos(self:getMyPosition(), BaseConstant.SOUND_EFFECT.MUSIC58) -- 敲鼓的声音
+  WorldHelper.playSoundOnPos(self:getMyPosition(), BaseConstant.SOUND_EFFECT.MUSIC58) -- 敲鼓的声音
   local forceSpeed = -1
-  ActorHelper:appendSpeed(self.objid, 0, forceSpeed, 0)
+  ActorHelper.appendSpeed(self.objid, 0, forceSpeed, 0)
   self.walkSpeed = self.defaultWalkSpeed
   -- 破坏方块
   -- local pos = self:getMyPosition()
-  -- local height = pos.y + ActorHelper:getEyeHeight(self.objid) + 0.5
-  -- local blockid = BlockHelper:getBlockID(pos.x, height, pos.z)
+  -- local height = pos.y + ActorHelper.getEyeHeight(self.objid) + 0.5
+  -- local blockid = BlockHelper.getBlockID(pos.x, height, pos.z)
 
-  -- local height = self.y + ActorHelper:getEyeHeight(self.objid) + 0.5
-  -- local blockid = BlockHelper:getBlockID(self.x, height, self.z)
+  -- local height = self.y + ActorHelper.getEyeHeight(self.objid) + 0.5
+  -- local blockid = BlockHelper.getBlockID(self.x, height, self.z)
   -- if (blockid == 100) then -- 草块
-  --   BlockHelper:destroyBlock(self.x, height, self.z)
-  --   WorldHelper:playPlaceBlockSoundOnPos(MyPosition:new(self.x, height, self.z))
+  --   BlockHelper.destroyBlock(self.x, height, self.z)
+  --   WorldHelper.playPlaceBlockSoundOnPos(MyPosition:new(self.x, height, self.z))
   -- end
 end
 
@@ -96,13 +96,13 @@ function MyPlayer:trampleBlock (pos, times)
   pos = pos or self:getMyPosition()
   times = times or 1
   local x, y, z = math.floor(pos.x), math.floor(pos.y - 0.5), math.floor(pos.z)
-  local blockid = BlockHelper:getBlockID(x, y, z)
+  local blockid = BlockHelper.getBlockID(x, y, z)
   if (blockid == BLOCKID.AIR) then
     z = math.floor(pos.z + 0.5)
-    blockid = BlockHelper:getBlockID(x, y, z) -- 后半格方块
+    blockid = BlockHelper.getBlockID(x, y, z) -- 后半格方块
     if (blockid == BLOCKID.AIR) then
       z = math.floor(pos.z - 0.5)
-      blockid = BlockHelper:getBlockID(x, y, z) -- 前半格方块
+      blockid = BlockHelper.getBlockID(x, y, z) -- 前半格方块
     end
   end
   -- LogHelper.debug(blockid)
@@ -117,9 +117,9 @@ end
 
 -- 踩碎方块
 function MyPlayer:destroyBlock (x, y, z)
-  local dimension = PlayerHelper:getDimension(self.objid)
+  local dimension = PlayerHelper.getDimension(self.objid)
   if (dimension > 1) then
-    BlockHelper:destroyBlock(x, y, z)
+    BlockHelper.destroyBlock(x, y, z)
   end
 end
 
@@ -131,7 +131,7 @@ function MyPlayer:hitLuckyBlock (x, y, z)
   end
   luckyBlockInfo.num = luckyBlockInfo.num - 1 -- 数量减1
   if (luckyBlockInfo.num == 0) then -- 当前耗尽
-    BlockHelper:placeBlock(MyMap.BLOCK.INVALID, x, y, z)
+    BlockHelper.placeBlock(MyMap.BLOCK.INVALID, x, y, z)
   elseif (luckyBlockInfo.num < 0) then
     return
   end
@@ -139,38 +139,38 @@ function MyPlayer:hitLuckyBlock (x, y, z)
   local category = luckyBlockInfo.category
   if (category == 1) then -- 幸运金币
     local cx, cy, cz = x + 2, y + 1, z
-    BlockHelper:placeBlock(MyMap.BLOCK.COIN, cx, cy, cz, FACE_DIRECTION.DIR_POS_X)
+    BlockHelper.placeBlock(MyMap.BLOCK.COIN, cx, cy, cz, FACE_DIRECTION.DIR_POS_X)
     local t = 'place' .. x .. ',' .. y .. ',' .. z
-    TimeHelper:delFnFastRuns(t)
-    TimeHelper:callFnFastRuns(function ()
-      BlockHelper:destroyBlock(cx, cy, cz)
+    TimeHelper.delFnFastRuns(t)
+    TimeHelper.callFnFastRuns(function ()
+      BlockHelper.destroyBlock(cx, cy, cz)
     end, 0.2, t)
-    BackpackHelper:addItem(self.objid, MyMap.ITEM.COIN, 1)
+    BackpackHelper.addItem(self.objid, MyMap.ITEM.COIN, 1)
   elseif (category == 2) then -- 无畏星星
-    local objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.STAR, 1)
-    CreatureHelper:closeAI(objids[1])
-    ActorHelper:setFaceYaw(objids[1], 90)
+    local objids = WorldHelper.spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.STAR, 1)
+    CreatureHelper.closeAI(objids[1])
+    ActorHelper.setFaceYaw(objids[1], 90)
   elseif (category == 3) then -- 长大蘑菇
     -- 判断玩家是否是大形态
-    local dimension = PlayerHelper:getDimension(self.objid)
+    local dimension = PlayerHelper.getDimension(self.objid)
     local objids
     if (dimension > 1) then -- 大形态
-      objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.FLOOR, 1)
+      objids = WorldHelper.spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.FLOOR, 1)
     else
-      objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.MUSHROOM, 1)
+      objids = WorldHelper.spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.MUSHROOM, 1)
     end
-    CreatureHelper:closeAI(objids[1])
-    ActorHelper:setFaceYaw(objids[1], 90)
+    CreatureHelper.closeAI(objids[1])
+    ActorHelper.setFaceYaw(objids[1], 90)
   elseif (category == 4) then -- 城堡钥匙
-    local objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.KEY, 1)
-    CreatureHelper:closeAI(objids[1])
-    ActorHelper:setFaceYaw(objids[1], 90)
+    local objids = WorldHelper.spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.KEY, 1)
+    CreatureHelper.closeAI(objids[1])
+    ActorHelper.setFaceYaw(objids[1], 90)
   elseif (category == 5) then -- 续命药丸
-    local objids = WorldHelper:spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.PILL, 1)
-    CreatureHelper:closeAI(objids[1])
-    ActorHelper:setFaceYaw(objids[1], 90)
+    local objids = WorldHelper.spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.PILL, 1)
+    CreatureHelper.closeAI(objids[1])
+    ActorHelper.setFaceYaw(objids[1], 90)
   end
-  WorldHelper:playSoundEffectOnPos(MyPosition:new(x, y, z), BaseConstant.SOUND_EFFECT.PROMPT19, 150, 1)
+  WorldHelper.playSoundEffectOnPos(MyPosition:new(x, y, z), BaseConstant.SOUND_EFFECT.PROMPT19, 150, 1)
 end
 
 -- 下水管
@@ -178,7 +178,7 @@ function MyPlayer:enterPipe ()
   local story = MyStoryHelper.getStory()
   local pos = story.undergroundBeginPos
   self.isUnderground = true
-  if (PlayerHelper:isMainPlayer(self.objid)) then
+  if (PlayerHelper.isMainPlayer(self.objid)) then
     self:setPosition(pos)
   else
     self:setPosition(pos.x - 2, pos.y, pos.z)
@@ -190,9 +190,9 @@ function MyPlayer:goOutPipe ()
   local story = MyStoryHelper.getStory()
   local pos = story.enterPos
   self.isUnderground = false
-  if (PlayerHelper:isMainPlayer(self.objid)) then
+  if (PlayerHelper.isMainPlayer(self.objid)) then
     self.ableMove = false
-    TimeHelper:callFnFastRuns(function ()
+    TimeHelper.callFnFastRuns(function ()
       self:setPosition(pos)
       self.ableMove = true
     end, 1)

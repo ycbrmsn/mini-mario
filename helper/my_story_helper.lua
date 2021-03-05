@@ -4,12 +4,12 @@ MyStoryHelper = {
 }
 
 function MyStoryHelper.init ()
-  if (#StoryHelper:getStorys() == 0) then
+  if (#StoryHelper.getStorys() == 0) then
     local ss = { Story1, Story2, Story3, Story4, Story5 }
     for i, v in ipairs(ss) do
       local s = v:new()
       s:init()
-      StoryHelper:addStory(s)
+      StoryHelper.addStory(s)
     end
   end
 end
@@ -22,22 +22,22 @@ end
 
 -- 当前关卡
 function MyStoryHelper.getStory ()
-  return StoryHelper:getStory(MyStoryHelper.index)
+  return StoryHelper.getStory(MyStoryHelper.index)
 end
 
 -- 事件
 
 -- 世界时间到[n]点
 function MyStoryHelper.atHour (hour)
-  StoryHelper:atHour(hour)
+  StoryHelper.atHour(hour)
   -- body
 end
 
 -- 玩家进入游戏
 function MyStoryHelper.playerEnterGame (objid)
     MyStoryHelper.init()
-  -- local player = PlayerHelper:getPlayer(objid)
-  -- StoryHelper:recover(player) -- 恢复剧情
+  -- local player = PlayerHelper.getPlayer(objid)
+  -- StoryHelper.recover(player) -- 恢复剧情
 end
 
 -- 玩家离开游戏

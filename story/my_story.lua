@@ -42,14 +42,14 @@ function MyStory:initHideBlockAreas ()
     local index = math.random(1, #self.hideBlockPosData) -- 随机取一个
     local pos = MyPosition:new(self.hideBlockPosData[index][1],
       self.hideBlockPosData[index][2], self.hideBlockPosData[index][3])
-    local areaid = AreaHelper:createAreaRectByRange(pos, pos)
+    local areaid = AreaHelper.createAreaRectByRange(pos, pos)
     table.insert(self.hideBlockAreas, areaid)
     table.remove(self.hideBlockPosData, index)
   end
   -- 固定隐藏区域
   for i, v in ipairs(self.sureHideBlockData) do
     local pos = MyPosition:new(v[1], v[2], v[3])
-    local areaid = AreaHelper:createAreaRectByRange(pos, pos)
+    local areaid = AreaHelper.createAreaRectByRange(pos, pos)
     table.insert(self.hideBlockAreas, areaid)
     MyBlockHelper.addLuckyBlockData(pos, v[4], v[5])
   end
@@ -71,7 +71,7 @@ end
 
 -- 初始化进入管道及区域
 function MyStory:initEnterPipe ()
-  AreaHelper:initAreaByPosData(self.enterPosData, self.enterAreas)
+  AreaHelper.initAreaByPosData(self.enterPosData, self.enterAreas)
   -- 设置进入水管区域
   math.random()
   math.random()
@@ -84,9 +84,9 @@ end
 
 -- 初始化离开管道区域
 function MyStory:initLeavePipeArea ()
-  self.leaveArea = AreaHelper:getAreaByPos(self.undergroundEndPos)
+  self.leaveArea = AreaHelper.getAreaByPos(self.undergroundEndPos)
   if (not(self.leaveArea)) then
-    TimeHelper:callFnAfterSecond(function ()
+    TimeHelper.callFnAfterSecond(function ()
       self:initLeavePipeArea()
     end, 1)
   end
@@ -94,9 +94,9 @@ end
 
 -- 初始化过关区域
 function MyStory:initPassArea ()
-  self.passArea = AreaHelper:getAreaByPos(self.passPos)
+  self.passArea = AreaHelper.getAreaByPos(self.passPos)
   if (not(self.passArea)) then
-    TimeHelper:callFnAfterSecond(function ()
+    TimeHelper.callFnAfterSecond(function ()
       self:initPassArea()
     end, 1)
   end
@@ -127,15 +127,15 @@ function MyStory:replacePipe (x, y, z)
   local story = MyStoryHelper.getStory()
   if (not(story) or story.index ~= self.index) then -- 不是当前关卡
     -- LogHelper.debug('no', self.index)
-    TimeHelper:callFnAfterSecond(function ()
+    TimeHelper.callFnAfterSecond(function ()
       self:replacePipe(x, y, z)
     end, 2)
   else -- 当前关卡
     -- LogHelper.debug('yes')
-    local blockid = BlockHelper:getBlockID(x, y, z)
+    local blockid = BlockHelper.getBlockID(x, y, z)
     if (not(blockid) or blockid ~= MyMap.BLOCK.ENTER_PIPE) then
-      BlockHelper:replaceBlock(MyMap.BLOCK.ENTER_PIPE, x, y, z)
-      TimeHelper:callFnAfterSecond(function ()
+      BlockHelper.replaceBlock(MyMap.BLOCK.ENTER_PIPE, x, y, z)
+      TimeHelper.callFnAfterSecond(function ()
         self:replacePipe(x, y, z)
       end, 2)
     end
@@ -143,27 +143,27 @@ function MyStory:replacePipe (x, y, z)
 end
 
 function MyStory:enter (objid)
-  if (PlayerHelper:isMainPlayer(objid)) then -- 本地玩家，则开始计时
-    ActorHelper:setMyPosition(objid, self.initPos) -- 初始位置
-    PlayerHelper:setRevivePoint(objid, self.initPos.x, self.initPos.y, self.initPos.z)
+  if (PlayerHelper.isMainPlayer(objid)) then -- 本地玩家，则开始计时
+    ActorHelper.setMyPosition(objid, self.initPos) -- 初始位置
+    PlayerHelper.setRevivePoint(objid, self.initPos.x, self.initPos.y, self.initPos.z)
     if (MyStoryHelper.index == 1) then -- 第一关
-      BackpackHelper:addItem(objid, MyMap.ITEM.PILL, 5) -- 五颗续命药丸
-      BackpackHelper:setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 连续跳跃
-      PlayerHelper:setItemDisableThrow(objid, MyMap.ITEM.JUMP)
+      BackpackHelper.addItem(objid, MyMap.ITEM.PILL, 5) -- 五颗续命药丸
+      BackpackHelper.setGridItem(objid, 1007, MyMap.ITEM.JUMP, 1) -- 连续跳跃
+      PlayerHelper.setItemDisableThrow(objid, MyMap.ITEM.JUMP)
     else
-      local time = TimerHelper:getTimerTime(MyGameHelper.timerid)
-      local teamid = PlayerHelper:getTeam(objid)
-      TeamHelper:addTeamScore(teamid, 50) -- 过一关加50分
-      -- TeamHelper:addTeamScore(teamid, math.floor(time / 3)) -- 三分之一的时间兑换为分数
-      TimerHelper:changeTimerTime(MyGameHelper.timerid, time + self.backwardTimer)
+      local time = TimerHelper.getTimerTime(MyGameHelper.timerid)
+      local teamid = PlayerHelper.getTeam(objid)
+      TeamHelper.addTeamScore(teamid, 50) -- 过一关加50分
+      -- TeamHelper.addTeamScore(teamid, math.floor(time / 3)) -- 三分之一的时间兑换为分数
+      TimerHelper.changeTimerTime(MyGameHelper.timerid, time + self.backwardTimer)
     end
   else
-    ActorHelper:setMyPosition(objid, self.initPos.x - 2, self.initPos.y, self.initPos.z)
-    PlayerHelper:setRevivePoint(objid, self.initPos.x - 2, self.initPos.y, self.initPos.z)
+    ActorHelper.setMyPosition(objid, self.initPos.x - 2, self.initPos.y, self.initPos.z)
+    PlayerHelper.setRevivePoint(objid, self.initPos.x - 2, self.initPos.y, self.initPos.z)
   end
-  ActorHelper:setFaceYaw(objid, 0)
-  PlayerHelper:rotateCamera(objid, 90, 0)
-  local player = PlayerHelper:getPlayer(objid)
+  ActorHelper.setFaceYaw(objid, 0)
+  PlayerHelper.rotateCamera(objid, 90, 0)
+  local player = PlayerHelper.getPlayer(objid)
   player.isUnderground = false
 end
 
