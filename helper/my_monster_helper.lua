@@ -2,7 +2,7 @@
 MyMonsterHelper = {}
 
 -- 初始化
-function MyMonsterHelper:init ()
+function MyMonsterHelper.init ()
   -- chick = Chick:new()
   -- dog = Dog:new()
   -- wolf = Wolf:new()

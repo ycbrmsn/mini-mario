@@ -6,7 +6,7 @@ MyGameHelper = {
 }
 
 -- 判断是否因为位置过低需要死去
-function MyGameHelper:judgeDeath (player, y)
+function MyGameHelper.judgeDeath (player, y)
   if (player.notDead) then
     if ((y > 40 and y < 52) or (y < 0)) then
       player.notDead = false
@@ -18,11 +18,11 @@ function MyGameHelper:judgeDeath (player, y)
 end
 
 -- 同向加速
-function MyGameHelper:fasterTheSameDir (player, z, isMainPlayer)
+function MyGameHelper.fasterTheSameDir (player, z, isMainPlayer)
   local dir = ActorHelper:getCurPlaceDir(player.objid)
   if (player.z) then
     player.zSpeed = math.abs(z - player.z)
-    -- LogHelper:debug(player.zSpeed)
+    -- LogHelper.debug(player.zSpeed)
   end
   if (player.ableMove) then -- 可移动
     -- 移动速度
@@ -62,7 +62,7 @@ function MyGameHelper:fasterTheSameDir (player, z, isMainPlayer)
 end
 
 -- 头顶到方块
-function MyGameHelper:headHitBlock (player, x, y, z, isMainPlayer)
+function MyGameHelper.headHitBlock (player, x, y, z, isMainPlayer)
   local ySpeed = y - player.y
   if (ySpeed == 0) then -- 突然变为0
     if (player.ySpeed > 0 and ActorHelper:isInAir(player.objid)) then -- 处于上升状态且在空气中
@@ -83,7 +83,7 @@ function MyGameHelper:headHitBlock (player, x, y, z, isMainPlayer)
     player.fallHeight = player.y
   elseif (ySpeed >= 0 and player.ySpeed < 0) then -- 停止下落
     player.fallHeight = player.fallHeight - y
-    -- LogHelper:debug(player.fallHeight)
+    -- LogHelper.debug(player.fallHeight)
     if (player.fallHeight >= 3) then -- 3格高度则踩碎方块
       player:trampleBlock()
     end
@@ -97,13 +97,13 @@ function MyGameHelper:headHitBlock (player, x, y, z, isMainPlayer)
   player.ySpeed = ySpeed
 end
 
-function MyGameHelper:setGBattleUI ()
+function MyGameHelper.setGBattleUI ()
   local player = PlayerHelper:getHostPlayer()
   if (player) then
-    TimerHelper:pauseTimer(self.timerid)
+    TimerHelper:pauseTimer(MyGameHelper.timerid)
     local teamid = PlayerHelper:getTeam(player.objid)
     local teamScore = TeamHelper:getTeamScore(teamid)
-    local time = TimerHelper:getTimerTime(self.timerid)
+    local time = TimerHelper:getTimerTime(MyGameHelper.timerid)
     local result = PlayerHelper:getGameResults(player.objid)
     local score = math.floor(time / 3) + teamScore -- 剩余时间 + 金币得分
     if (score < teamScore or result == 2) then
@@ -125,39 +125,39 @@ end
 -- 事件
 
 -- 开始游戏
-function MyGameHelper:startGame ()
-  LogHelper:debug('开始游戏')
+function MyGameHelper.startGame ()
+  LogHelper.debug('开始游戏')
   GameHelper:startGame()
-  MyBlockHelper:init()
-  MyActorHelper:init()
-  MyMonsterHelper:init()
-  MyAreaHelper:init()
-  MyStoryHelper:init()
+  MyBlockHelper.init()
+  MyActorHelper.init()
+  MyMonsterHelper.init()
+  MyAreaHelper.init()
+  MyStoryHelper.init()
   -- body
   -- 游戏开始计时
   MyGameHelper.timerid = TimerHelper:getTimer(timername)
-  TimerHelper:startBackwardTimer(MyGameHelper.timerid, MyStoryHelper:getStory().backwardTimer)
+  TimerHelper:startBackwardTimer(MyGameHelper.timerid, MyStoryHelper.getStory().backwardTimer)
 end
 
 -- 游戏运行时
-function MyGameHelper:runGame ()
+function MyGameHelper.runGame ()
   GameHelper:runGame()
-  self.index = self.index + 1
+  MyGameHelper.index = MyGameHelper.index + 1
   -- body
   for i, player in ipairs(PlayerHelper:getActivePlayers()) do
     local x, y, z = ActorHelper:getPosition(player.objid)
     if (x) then
-      if (not(MyGameHelper:judgeDeath(player, y))) then -- 玩家没有位置过低死亡
-        -- LogHelper:debug(z)
+      if (not(MyGameHelper.judgeDeath(player, y))) then -- 玩家没有位置过低死亡
+        -- LogHelper.debug(z)
         -- local isMainPlayer = PlayerHelper:isMainPlayer(player.objid)
         if (player:isHostPlayer()) then
-          MyGameHelper:fasterTheSameDir(player, z, true) -- 同向加速
-          MyGameHelper:headHitBlock(player, x, y, z, true)
+          MyGameHelper.fasterTheSameDir(player, z, true) -- 同向加速
+          MyGameHelper.headHitBlock(player, x, y, z, true)
           player.x, player.y, player.z = x, y, z
         end
-        -- LogHelper:debug(player.y)
+        -- LogHelper.debug(player.y)
       end
-      -- if (self.index % 20 == 0) then
+      -- if (MyGameHelper.index % 20 == 0) then
       --   if (math.abs(v.sz - z) > 2) then
       --     v.isRunning = true
       --   else
@@ -170,29 +170,29 @@ function MyGameHelper:runGame ()
 end
 
 -- 结束游戏
-function MyGameHelper:endGame ()
+function MyGameHelper.endGame ()
   GameHelper:endGame()
   -- body
-  MyGameHelper:setGBattleUI()
+  MyGameHelper.setGBattleUI()
 end
 
 -- 世界时间到[n]点
-function MyGameHelper:atHour (hour)
+function MyGameHelper.atHour (hour)
   GameHelper:atHour(hour)
 end
 
 -- 世界时间到[n]秒
-function MyGameHelper:atSecond (second)
+function MyGameHelper.atSecond (second)
   GameHelper:atSecond(second)
 end
 
 -- 任意计时器发生变化
-function MyGameHelper:minitimerChange (timerid, timername)
+function MyGameHelper.minitimerChange (timerid, timername)
   GameHelper:minitimerChange(timerid, timername)
   -- body
   local hostPlayer = PlayerHelper:getHostPlayer()
   local color = ''
-  local time = TimerHelper:getTimerTime(self.timerid)
+  local time = TimerHelper:getTimerTime(MyGameHelper.timerid)
   if (time > 0 and time <= 60) then
     color = '#R'
     PlayerHelper:everyPlayerDoSomeThing(function (player)
@@ -214,10 +214,10 @@ function MyGameHelper:minitimerChange (timerid, timername)
       end
     end)
   end
-  if (self.timerid) then
+  if (MyGameHelper.timerid) then
     for i, v in ipairs(PlayerHelper:getActivePlayers()) do
-      TimerHelper:showTips({ v.objid }, self.timerid, color)
+      TimerHelper:showTips({ v.objid }, MyGameHelper.timerid, color)
     end
   end
-  MyItemHelper:findPipe()
+  MyItemHelper.findPipe()
 end

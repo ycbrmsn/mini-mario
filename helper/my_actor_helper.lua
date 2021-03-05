@@ -2,27 +2,33 @@
 MyActorHelper = {}
 
 -- 初始化actors
-function MyActorHelper:init ()
+function MyActorHelper.init ()
 end
 
 -- 事件
 
+-- 生物被创建
+function MyActorHelper.actorCreate (objid, toobjid)
+  ActorHelper:actorCreate(objid, toobjid)
+  MyStoryHelper.actorCreate(objid, toobjid)
+end
+
 -- actor进入区域
-function MyActorHelper:actorEnterArea (objid, areaid)
+function MyActorHelper.actorEnterArea (objid, areaid)
   ActorHelper:actorEnterArea(objid, areaid)
-  MyStoryHelper:actorEnterArea(objid, areaid)
+  MyStoryHelper.actorEnterArea(objid, areaid)
 end
 
 -- actor离开区域
-function MyActorHelper:actorLeaveArea (objid, areaid)
+function MyActorHelper.actorLeaveArea (objid, areaid)
   ActorHelper:actorLeaveArea(objid, areaid)
-  MyStoryHelper:actorLeaveArea(objid, areaid)
+  MyStoryHelper.actorLeaveArea(objid, areaid)
 end
 
 -- 生物碰撞
-function MyActorHelper:actorCollide (objid, toobjid)
+function MyActorHelper.actorCollide (objid, toobjid)
   ActorHelper:actorCollide(objid, toobjid)
-  MyStoryHelper:actorCollide(objid, toobjid)
+  MyStoryHelper.actorCollide(objid, toobjid)
   -- body
   if (ActorHelper:isPlayer(toobjid)) then -- 与玩家碰撞
     local actorid = CreatureHelper:getActorID(objid)
@@ -36,7 +42,7 @@ function MyActorHelper:actorCollide (objid, toobjid)
         if (dimension == 1) then
           PlayerHelper:setDimension(toobjid, 1.5) -- 尺寸1.5
         else
-          LogHelper:debug('获得武器')
+          LogHelper.debug('获得武器')
         end
       end
     elseif (actorid == MyMap.ACTOR.KEY) then -- 城堡钥匙
@@ -65,11 +71,11 @@ function MyActorHelper:actorCollide (objid, toobjid)
           eyeHeight = ActorHelper:getEyeHeight(objid)
         end
         local x, y, z = ActorHelper:getPosition(objid)
-        -- LogHelper:debug(y + eyeHeight)
-        -- LogHelper:debug(player.y)
+        -- LogHelper.debug(y + eyeHeight)
+        -- LogHelper.debug(player.y)
         -- if (y + eyeHeight < player.y) then -- 在玩家下方
-        LogHelper:debug(eyeHeight)
-        LogHelper:debug(player.fallHeight - player.y)
+        LogHelper.debug(eyeHeight)
+        LogHelper.debug(player.fallHeight - player.y)
         if (eyeHeight < player.fallHeight - player.y) then
           -- 生物假死30秒
           -- ActorHelper:killSelf(objid)
@@ -103,21 +109,21 @@ function MyActorHelper:actorCollide (objid, toobjid)
 end
 
 -- 生物攻击命中
-function MyActorHelper:actorAttackHit (objid, toobjid)
+function MyActorHelper.actorAttackHit (objid, toobjid)
   ActorHelper:actorAttackHit(objid, toobjid)
-  MyStoryHelper:actorAttackHit(objid, toobjid)
+  MyStoryHelper.actorAttackHit(objid, toobjid)
 end
 
 -- 生物击败目标
-function MyActorHelper:actorBeat (objid, toobjid)
+function MyActorHelper.actorBeat (objid, toobjid)
   ActorHelper:actorBeat(objid, toobjid)
-  MyStoryHelper:actorBeat(objid, toobjid)
+  MyStoryHelper.actorBeat(objid, toobjid)
 end
 
 -- 生物行为改变
-function MyActorHelper:actorChangeMotion (objid, actormotion)
+function MyActorHelper.actorChangeMotion (objid, actormotion)
   ActorHelper:actorChangeMotion(objid, actormotion)
-  MyStoryHelper:actorChangeMotion(objid, actormotion)
+  MyStoryHelper.actorChangeMotion(objid, actormotion)
   -- body
   -- if (actormotion == CREATUREMOTION.IDLE) then -- 空闲
   --   local pos = ActorHelper:getMyPosition(objid)
@@ -135,8 +141,36 @@ function MyActorHelper:actorChangeMotion (objid, actormotion)
   -- end
 end
 
+-- 生物受到伤害
+function MyActorHelper.actorBeHurt (objid, toobjid, hurtlv)
+  ActorHelper.actorBeHurt(objid, toobjid, hurtlv)
+  MyStoryHelper.actorBeHurt(objid, toobjid, hurtlv)
+  -- body
+end
+
 -- 生物死亡
-function MyActorHelper:actorDie (objid, toobjid)
+function MyActorHelper.actorDie (objid, toobjid)
   ActorHelper:actorDie(objid, toobjid)
-  MyStoryHelper:actorDie(objid, toobjid)
+  MyStoryHelper.actorDie(objid, toobjid)
+end
+
+-- 生物获得状态效果
+function MyActorHelper.actorAddBuff (objid, buffid, bufflvl)
+  ActorHelper.actorAddBuff(objid, buffid, bufflvl)
+  MyStoryHelper.actorAddBuff(objid, buffid, bufflvl)
+  -- body
+end
+
+-- 生物失去状态效果
+function MyActorHelper.actorRemoveBuff (objid, buffid, bufflvl)
+  ActorHelper.actorRemoveBuff(objid, buffid, bufflvl)
+  MyStoryHelper.actorRemoveBuff(objid, buffid, bufflvl)
+  -- body
+end
+
+-- 生物属性变化
+function MyActorHelper.actorChangeAttr (objid, actorattr)
+  ActorHelper.actorChangeAttr(objid, actorattr)
+  MyStoryHelper.actorChangeAttr(objid, actorattr)
+  -- body
 end

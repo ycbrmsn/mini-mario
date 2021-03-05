@@ -15,15 +15,15 @@ end
 
 function MyStory:checkData (data)
   if (not(data)) then
-    LogHelper:debug('剧情数据为空')
+    LogHelper.debug('剧情数据为空')
   elseif (not(data.title)) then
-    LogHelper:debug('剧情标题为空')
+    LogHelper.debug('剧情标题为空')
   elseif (not(data.name)) then
-    LogHelper:debug(data.title, '剧情名称为空')
+    LogHelper.debug(data.title, '剧情名称为空')
   elseif (not(data.desc)) then
-    LogHelper:debug(data.title, '剧情描述为空')
+    LogHelper.debug(data.title, '剧情描述为空')
   elseif (not(data.tips)) then
-    LogHelper:debug(data.title, '剧情提示为空')
+    LogHelper.debug(data.title, '剧情提示为空')
   end
 end
 
@@ -51,7 +51,7 @@ function MyStory:initHideBlockAreas ()
     local pos = MyPosition:new(v[1], v[2], v[3])
     local areaid = AreaHelper:createAreaRectByRange(pos, pos)
     table.insert(self.hideBlockAreas, areaid)
-    MyBlockHelper:addLuckyBlockData(pos, v[4], v[5])
+    MyBlockHelper.addLuckyBlockData(pos, v[4], v[5])
   end
 end
 
@@ -59,13 +59,13 @@ end
 function MyStory:initLuckyBlocks ()
   for i, v in ipairs(self.luckyBlockData) do
     local pos = MyPosition:new(v[1], v[2], v[3])
-    MyBlockHelper:addLuckyBlockData(pos, v[4], v[5])
+    MyBlockHelper.addLuckyBlockData(pos, v[4], v[5])
   end
   -- 城堡钥匙
   local index = math.random(1, #self.maybeKeyBlockData) -- 随机取一个
   local data = self.maybeKeyBlockData[index]
   local pos = MyPosition:new(data[1], data[2], data[3])
-  MyBlockHelper:addLuckyBlockData(pos, 4, 1)
+  MyBlockHelper.addLuckyBlockData(pos, 4, 1)
   -- MyBlockHelper.luckyBlockInfos[pos:toSimpleString()] = { pos = pos, category = 4, num = 1 }
 end
 
@@ -79,7 +79,7 @@ function MyStory:initEnterPipe ()
   self.enterPos = MyPosition:new(self.enterPosData[index][1], self.enterPosData[index][2], self.enterPosData[index][3])
   self.enterArea = self.enterAreas[index]
   self:replacePipe(self.enterPos.x, self.enterPos.y - 1, self.enterPos.z)
-  LogHelper:debug('替换第', index, '个')
+  LogHelper.debug('替换第', index, '个')
 end
 
 -- 初始化离开管道区域
@@ -124,14 +124,14 @@ end
 
 -- 替换水管头
 function MyStory:replacePipe (x, y, z)
-  local story = MyStoryHelper:getStory()
+  local story = MyStoryHelper.getStory()
   if (not(story) or story.index ~= self.index) then -- 不是当前关卡
-    -- LogHelper:debug('no', self.index)
+    -- LogHelper.debug('no', self.index)
     TimeHelper:callFnAfterSecond(function ()
       self:replacePipe(x, y, z)
     end, 2)
   else -- 当前关卡
-    -- LogHelper:debug('yes')
+    -- LogHelper.debug('yes')
     local blockid = BlockHelper:getBlockID(x, y, z)
     if (not(blockid) or blockid ~= MyMap.BLOCK.ENTER_PIPE) then
       BlockHelper:replaceBlock(MyMap.BLOCK.ENTER_PIPE, x, y, z)

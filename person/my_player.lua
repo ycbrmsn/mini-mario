@@ -105,7 +105,7 @@ function MyPlayer:trampleBlock (pos, times)
       blockid = BlockHelper:getBlockID(x, y, z) -- 前半格方块
     end
   end
-  -- LogHelper:debug(blockid)
+  -- LogHelper.debug(blockid)
   if (blockid == MyMap.BLOCK.DESTROY) then
     self:destroyBlock(x, y, z)
   elseif (blockid == MyMap.BLOCK.LUCKY) then
@@ -125,7 +125,7 @@ end
 
 -- 踩幸运方块
 function MyPlayer:hitLuckyBlock (x, y, z)
-  local luckyBlockInfo = MyBlockHelper:getLuckyBlockInfo(x, y, z)
+  local luckyBlockInfo = MyBlockHelper.getLuckyBlockInfo(x, y, z)
   if (luckyBlockInfo.num <= 0) then -- 如果已经耗尽
     return
   end
@@ -175,7 +175,7 @@ end
 
 -- 下水管
 function MyPlayer:enterPipe ()
-  local story = MyStoryHelper:getStory()
+  local story = MyStoryHelper.getStory()
   local pos = story.undergroundBeginPos
   self.isUnderground = true
   if (PlayerHelper:isMainPlayer(self.objid)) then
@@ -187,7 +187,7 @@ end
 
 -- 出水管
 function MyPlayer:goOutPipe ()
-  local story = MyStoryHelper:getStory()
+  local story = MyStoryHelper.getStory()
   local pos = story.enterPos
   self.isUnderground = false
   if (PlayerHelper:isMainPlayer(self.objid)) then

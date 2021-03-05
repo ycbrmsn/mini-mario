@@ -5,14 +5,14 @@ MyAreaHelper = {
 }
 
 -- 初始化
-function MyAreaHelper:init ()
-  self:initDoorAreas()
-  self:initShowToastAreas()
+function MyAreaHelper.init ()
+  MyAreaHelper.initDoorAreas()
+  MyAreaHelper.initShowToastAreas()
   -- body
 end
 
 -- 初始化显示飘窗区域
-function MyAreaHelper:initShowToastAreas ()
+function MyAreaHelper.initShowToastAreas ()
   -- local arr = { wolf, ox }
   -- for i, v in ipairs(arr) do
   --   if (v.generate) then -- 如果需要生成怪物
@@ -24,8 +24,8 @@ function MyAreaHelper:initShowToastAreas ()
 end
 
 -- 初始化所有actor可打开的门的位置
-function MyAreaHelper:initDoorAreas ()
-  for i, v in ipairs(self.doorPositionData) do
+function MyAreaHelper.initDoorAreas ()
+  for i, v in ipairs(MyAreaHelper.doorPositionData) do
     local pos = MyPosition:new(v[1], v[2], v[3])
     local areaid = AreaHelper:getAreaByPos(pos)
     table.insert(AreaHelper.allDoorAreas, areaid, pos)
@@ -33,6 +33,6 @@ function MyAreaHelper:initDoorAreas ()
 end
 
 -- 获取所有的门位置
-function MyAreaHelper:getDoorPositions ()
-  return self.doorPositions
+function MyAreaHelper.getDoorPositions ()
+  return MyAreaHelper.doorPositions
 end

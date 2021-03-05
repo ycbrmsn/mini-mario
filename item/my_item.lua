@@ -47,7 +47,7 @@ function Permit:useItem (objid)
     if (ableUse) then
       if (BackpackHelper:removeGridItemByItemID(objid, self.id, 1)) then
         MyStoryHelper.index = index
-        local story = MyStoryHelper:getStory()
+        local story = MyStoryHelper.getStory()
         PlayerHelper:everyPlayerDoSomeThing(function (player)
           story:enter(player.objid)
         end)
