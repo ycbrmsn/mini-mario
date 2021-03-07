@@ -82,16 +82,17 @@ function MyGameHelper.headHitBlock (player, x, y, z, isMainPlayer)
   if (player.ySpeed >= 0 and ySpeed < 0) then -- 开始下落
     player.fallHeight = player.y
   elseif (ySpeed >= 0 and player.ySpeed < 0) then -- 停止下落
-    player.fallHeight = player.fallHeight - y
-    -- LogHelper.debug(player.fallHeight)
-    if (player.fallHeight >= 3) then -- 3格高度则踩碎方块
+    -- player.fallHeight = player.fallHeight - y
+    if (player.fallHeight - y >= 3) then -- 3格高度则踩碎方块
       player:trampleBlock()
     end
-    -- 清除高度
-    player.fallHeight = 0
+    LogHelper.debug('停止下落', player.fallHeight - y)
+    -- -- 清除高度
+    -- player.fallHeight = 0
   end
   -- 持续跳跃
   if (ySpeed == 0 and player.ySpeed <= 0 and player.isKeepJumping) then -- 不是上升状态后竖直静止
+    ActorActionHelper.playJump(player.objid)
     ActorHelper.appendSpeed(player.objid, 0, 0.9, 0)
   end
   player.ySpeed = ySpeed

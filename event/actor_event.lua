@@ -3,7 +3,7 @@
 -- eventobjid, toobjid
 local actorCreate = function (event)
   LogHelper.call(function ()
-    MyActorHelper.actorCreate(event.eventobjid, event.toobjid)
+    EventHelper.actorCreate(event.eventobjid, event.toobjid)
   end)
 end
 
@@ -13,7 +13,7 @@ local actorEnterArea = function (event)
   local areaid = event['areaid']
   -- LogHelper.debug(objid .. '进入了区域' .. areaid)
   LogHelper.call(function ()
-    MyActorHelper.actorEnterArea(objid, areaid)
+    EventHelper.actorEnterArea(objid, areaid)
   end)
 end
 
@@ -23,7 +23,7 @@ local actorLeaveArea = function (event)
   local areaid = event['areaid']
   -- LogHelper.debug(objid .. '离开了区域' .. areaid)
   LogHelper.call(function ()
-    MyActorHelper.actorLeaveArea(objid, areaid)
+    EventHelper.actorLeaveArea(objid, areaid)
   end)
 end
 
@@ -32,35 +32,35 @@ local actorCollide = function (event)
   local objid = event['eventobjid']
   local toobjid = event['toobjid']
   LogHelper.call(function ()
-    MyActorHelper.actorCollide(objid, toobjid)
+    EventHelper.actorCollide(objid, toobjid)
   end)
 end
 
 -- eventobjid, toobjid
 local actorAttackHit = function (event)
   LogHelper.call(function ()
-    MyActorHelper.actorAttackHit(event.eventobjid, event.toobjid)
+    EventHelper.actorAttackHit(event.eventobjid, event.toobjid)
   end)
 end
 
 -- eventobjid, toobjid
 local actorBeat = function (event)
   LogHelper.call(function ()
-    MyActorHelper.actorBeat(event.eventobjid, event.toobjid)
+    EventHelper.actorBeat(event.eventobjid, event.toobjid)
   end)
 end
 
 -- eventobjid, actormotion
 local actorChangeMotion = function (event)
   LogHelper.call(function ()
-    MyActorHelper.actorChangeMotion(event.eventobjid, event.actormotion)
+    EventHelper.actorChangeMotion(event.eventobjid, event.actormotion)
   end)
 end
 
 -- eventobjid, toobjid, hurtlv
 local actorBeHurt = function (event)
   LogHelper.call(function ()
-    MyActorHelper.actorBeHurt(event.eventobjid, event.toobjid, event.hurtlv)
+    EventHelper.actorBeHurt(event.eventobjid, event.toobjid, event.hurtlv)
   end)
 end
 
@@ -69,28 +69,28 @@ local actorDie = function (event)
   local objid = event['eventobjid']
   local toobjid = event['toobjid']
   LogHelper.call(function ()
-    MyActorHelper.actorDie(objid, toobjid)
+    EventHelper.actorDie(objid, toobjid)
   end)
 end
 
 -- eventobjid, buffid, bufflvl
 local actorAddBuff = function (event)
   LogHelper.call(function ()
-    MyActorHelper.actorAddBuff(event.eventobjid, event.buffid, event.bufflvl)
+    EventHelper.actorAddBuff(event.eventobjid, event.buffid, event.bufflvl)
   end)
 end
 
 -- eventobjid, buffid, bufflvl
 local actorRemoveBuff = function (event)
   LogHelper.call(function ()
-    MyActorHelper.actorRemoveBuff(event.eventobjid, event.buffid, event.bufflvl)
+    EventHelper.actorRemoveBuff(event.eventobjid, event.buffid, event.bufflvl)
   end)
 end
 
 -- eventobjid, actorattr
 local actorChangeAttr = function (event)
   LogHelper.call(function ()
-    MyActorHelper.actorChangeAttr(event.eventobjid, event.actorattr)
+    EventHelper.actorChangeAttr(event.eventobjid, event.actorattr)
   end)
 end
 

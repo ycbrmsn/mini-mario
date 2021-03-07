@@ -353,3 +353,7 @@ end
 function ActorActionHelper.playStretch (objid, afterSeconds)
   ActorActionHelper.playAct(objid, ActorHelper.ACT.STRETCH, afterSeconds)
 end
+
+function ActorActionHelper.playJump (objid, afterSeconds)
+  ActorActionHelper.playAct(objid, ActorHelper.ACT.JUMP, afterSeconds)
+end
