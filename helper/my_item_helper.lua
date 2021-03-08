@@ -39,24 +39,17 @@ end
 -- 事件
 
 -- 投掷物命中
-function MyItemHelper.projectileHit (projectileid, toobjid, blockid, x, y, z)
-  ItemHelper.projectileHit(projectileid, toobjid, blockid, x, y, z)
-  -- body
+EventHelper.addEvent('projectileHit', function (projectileid, toobjid, blockid, x, y, z)
   if (not(ActorHelper.isPlayer(toobjid))) then -- 不是玩家
     local actorid = CreatureHelper.getActorID(toobjid)
     if (actorid) then
       if (actorid == 3400 or actorid == 3407) then -- 鸡、狼
         local itemid = ItemHelper.getMissileItemid(projectileid)
-        if (itemid and itemid == MyMap.ITEM.FLY_FLOOR) then
+        if (itemid and itemid == MyMap.ITEM.FLY_FLOWER) then
           local player = PlayerHelper.getHostPlayer()
           player:knockCreature(toobjid)
         end
       end
     end
   end
-end
-
--- 投掷物被创建
-function MyItemHelper.missileCreate (objid, toobjid, itemid, x, y, z)
-  ItemHelper.missileCreate(objid, toobjid, itemid, x, y, z)
-end
+end)

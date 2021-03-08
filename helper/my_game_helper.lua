@@ -126,25 +126,14 @@ end
 -- 事件
 
 -- 开始游戏
-function MyGameHelper.startGame ()
-  LogHelper.debug('开始游戏')
-  GameHelper.startGame()
-  MyBlockHelper.init()
-  MyActorHelper.init()
-  MyMonsterHelper.init()
-  MyAreaHelper.init()
-  MyStoryHelper.init()
-  -- body
+EventHelper.addEvent('startGame', function ()
   -- 游戏开始计时
   MyGameHelper.timerid = TimerHelper.getTimer(timername)
   TimerHelper.startBackwardTimer(MyGameHelper.timerid, MyStoryHelper.getStory().backwardTimer)
-end
+end)
 
 -- 游戏运行时
-function MyGameHelper.runGame ()
-  GameHelper.runGame()
-  MyGameHelper.index = MyGameHelper.index + 1
-  -- body
+EventHelper.addEvent('runGame', function ()
   for i, player in ipairs(PlayerHelper.getActivePlayers()) do
     local x, y, z = ActorHelper.getPosition(player.objid)
     if (x) then
@@ -168,29 +157,15 @@ function MyGameHelper.runGame ()
       -- end
     end
   end
-end
+end)
 
 -- 结束游戏
-function MyGameHelper.endGame ()
-  GameHelper.endGame()
-  -- body
+EventHelper.addEvent('endGame', function ()
   MyGameHelper.setGBattleUI()
-end
-
--- 世界时间到[n]点
-function MyGameHelper.atHour (hour)
-  GameHelper.atHour(hour)
-end
-
--- 世界时间到[n]秒
-function MyGameHelper.atSecond (second)
-  GameHelper.atSecond(second)
-end
+end)
 
 -- 任意计时器发生变化
-function MyGameHelper.minitimerChange (timerid, timername)
-  GameHelper.minitimerChange(timerid, timername)
-  -- body
+EventHelper.addEvent('minitimerChange', function ()
   local hostPlayer = PlayerHelper.getHostPlayer()
   local color = ''
   local time = TimerHelper.getTimerTime(MyGameHelper.timerid)
@@ -221,4 +196,4 @@ function MyGameHelper.minitimerChange (timerid, timername)
     end
   end
   MyItemHelper.findPipe()
-end
+end)
