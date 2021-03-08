@@ -50,7 +50,7 @@ EventHelper.addEvent('actorCollide', function (objid, toobjid)
         else
           eyeHeight = ActorHelper.getEyeHeight(objid)
         end
-        local x, y, z = ActorHelper.getPosition(objid)
+        local x, y, z = CacheHelper.getPosition(objid)
         -- LogHelper.debug(y + eyeHeight)
         -- LogHelper.debug(player.y)
         -- if (y + eyeHeight < player.y) then -- 在玩家下方

@@ -135,7 +135,7 @@ end)
 -- 游戏运行时
 EventHelper.addEvent('runGame', function ()
   for i, player in ipairs(PlayerHelper.getActivePlayers()) do
-    local x, y, z = ActorHelper.getPosition(player.objid)
+    local x, y, z = CacheHelper.getPosition(player.objid)
     if (x) then
       if (not(MyGameHelper.judgeDeath(player, y))) then -- 玩家没有位置过低死亡
         -- LogHelper.debug(z)

@@ -33,13 +33,13 @@ end
 -- 玩家离开游戏
 function EventHelper.playerLeaveGame (objid)
   PlayerHelper.playerLeaveGame(objid)
-  EventHelper.customEvent('playerLeaveGame', objid, toobjid)
+  EventHelper.customEvent('playerLeaveGame', objid)
 end
 
 -- 玩家进入区域
 function EventHelper.playerEnterArea (objid, areaid)
   PlayerHelper.playerEnterArea(objid, areaid)
-  EventHelper.customEvent('playerEnterArea', objid, toobjid)
+  EventHelper.customEvent('playerEnterArea', objid, areaid)
 end
 
 -- 玩家离开区域

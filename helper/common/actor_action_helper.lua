@@ -253,7 +253,7 @@ function ActorActionHelper.actionMove (want)
       want.actor:setPosition(want.toPos)
       want.actor.cantMoveTime = 0
     else
-      local selfPos = ActorHelper.getMyPosition(want.actor.objid)
+      local selfPos = CacheHelper.getMyPosition(want.actor.objid)
       if (selfPos) then
         ActorActionHelper.runTo(want.actor, want.toPos, want.speed)
       end
