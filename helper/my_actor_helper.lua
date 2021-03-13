@@ -47,14 +47,18 @@ EventHelper.addEvent('actorCollide', function (objid, toobjid)
           eyeHeight = 0.2
         elseif (actorid == 3407) then -- 狼
           eyeHeight = 0.2
+        elseif (actorid == 3608) then -- 黄呆呆鱼
+          eyeHeight = 999
         else
           eyeHeight = ActorHelper.getEyeHeight(objid)
         end
+        LogHelper.info('actorid: ', actorid)
+        LogHelper.info('eyeHeight: ', eyeHeight)
         local x, y, z = CacheHelper.getPosition(objid)
         -- LogHelper.debug(y + eyeHeight)
         -- LogHelper.debug(player.y)
         -- if (y + eyeHeight < player.y) then -- 在玩家下方
-        LogHelper.debug(eyeHeight)
+        -- LogHelper.debug(eyeHeight)
         LogHelper.debug(player.fallHeight - player.y)
         if (eyeHeight < player.fallHeight - player.y) then
           -- 生物假死30秒
