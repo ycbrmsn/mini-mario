@@ -541,7 +541,7 @@ function ActorHelper.addGravity (obj)
         if (obj.index > 20) then
           TimeHelper.callFnFastRuns(function ()
             TimeHelper.delFnContinueRuns(t)
-            WorldHelper.despawnActor(obj.objid)
+            CacheHelper.despawnActor(obj.objid)
           end, 3)
         end
       else
@@ -581,7 +581,7 @@ function ActorHelper.damageActor (objid, toobjid, val, item)
       hp = hp - val
       PlayerHelper.setHp(toobjid, hp)
       if (isPlayer) then
-        MyPlayerHelper.playerDamageActor(objid, toobjid, val)
+        EventHelper.playerDamageActor(objid, toobjid, val)
       end
     else -- 玩家可能会死亡，则检测玩家是否可被杀死
       local ableBeKilled = PlayerHelper.getPlayerEnableBeKilled(toobjid)
@@ -589,14 +589,14 @@ function ActorHelper.damageActor (objid, toobjid, val, item)
         PlayerHelper.setHp(toobjid, -1)
         -- ActorHelper.killSelf(toobjid)
         if (isPlayer) then -- 攻击者是玩家
-          MyPlayerHelper.playerDamageActor(objid, toobjid, val)
-          MyPlayerHelper.playerDefeatActor(objid, toobjid, item)
+          EventHelper.playerDamageActor(objid, toobjid, val)
+          EventHelper.playerDefeatActor(objid, toobjid, item)
         else -- 攻击者是生物，目前暂不处理
         end
       else -- 不能被杀死
         PlayerHelper.setHp(toobjid, 1)
         if (isPlayer) then -- 攻击者是玩家
-          MyPlayerHelper.playerDamageActor(objid, toobjid, hp - 1)
+          EventHelper.playerDamageActor(objid, toobjid, hp - 1)
         end
       end
     end
@@ -609,7 +609,7 @@ function ActorHelper.damageActor (objid, toobjid, val, item)
       hp = hp - val
       CreatureHelper.setHp(toobjid, hp)
       if (isPlayer) then
-        MyPlayerHelper.playerDamageActor(objid, toobjid, val)
+        EventHelper.playerDamageActor(objid, toobjid, val)
       end
     else -- 生物可能会死亡，则检测生物是否可被杀死
       local ableBeKilled = ActorHelper.getEnableBeKilledState(toobjid)
@@ -617,14 +617,14 @@ function ActorHelper.damageActor (objid, toobjid, val, item)
         CreatureHelper.setHp(toobjid, -1)
         ActorHelper.killSelf(toobjid)
         if (isPlayer) then -- 攻击者是玩家
-          MyPlayerHelper.playerDamageActor(objid, toobjid, val)
-          MyPlayerHelper.playerDefeatActor(objid, toobjid, item)
+          EventHelper.playerDamageActor(objid, toobjid, val)
+          EventHelper.playerDefeatActor(objid, toobjid, item)
         else -- 攻击者是生物，目前暂不处理
         end
       else -- 不能被杀死
         CreatureHelper.setHp(toobjid, 1)
         if (isPlayer) then -- 攻击者是玩家
-          MyPlayerHelper.playerDamageActor(objid, toobjid, hp - 1)
+          EventHelper.playerDamageActor(objid, toobjid, hp - 1)
         end
       end
     end

@@ -155,9 +155,8 @@ end
 
 -- eventobjid, toobjid
 local playerMoveOneBlockSize = function (event)
-  local objid = event['eventobjid']
   LogHelper.call(function ()
-    EventHelper.playerMoveOneBlockSize(objid)
+    EventHelper.playerMoveOneBlockSize(event.eventobjid, event.toobjid)
   end)
 end
 

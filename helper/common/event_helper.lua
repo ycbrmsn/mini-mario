@@ -65,6 +65,7 @@ end
 function EventHelper.playerAddItem (objid, itemid, itemnum)
   PlayerHelper.playerAddItem(objid, itemid, itemnum)
   EventHelper.customEvent('playerAddItem', objid, itemid, itemnum)
+  TaskHelper.addItem(objid, itemid, true)
 end
 
 -- 玩家使用道具
@@ -91,10 +92,18 @@ function EventHelper.playerDamageActor (objid, toobjid, hurtlv)
   EventHelper.customEvent('playerDamageActor', objid, toobjid, hurtlv)
 end
 
--- 玩家击败目标
-function EventHelper.playerDefeatActor (objid, toobjid)
+-- 玩家击败目标 item参数是自己加的，为自定义道具
+function EventHelper.playerDefeatActor (objid, toobjid, item)
   local realDefeat = PlayerHelper.playerDefeatActor(objid, toobjid)
-  EventHelper.customEvent('playerDefeatActor', objid, toobjid)
+  if (not(realDefeat)) then -- 是重复击败，则不执行下面的内容
+    return
+  end
+  if (ActorHelper.isPlayer(toobjid)) then -- 击败玩家
+    TaskHelper.killActor(objid, -1, true)
+  else
+    TaskHelper.killActor(objid, CreatureHelper.getActorID(toobjid), true)
+  end
+  EventHelper.customEvent('playerDefeatActor', objid, toobjid, item)
 end
 
 -- 玩家受到伤害
@@ -134,9 +143,9 @@ function EventHelper.playerMotionStateChange (objid, playermotion)
 end
 
 -- 玩家移动一格
-function EventHelper.playerMoveOneBlockSize (objid)
-  PlayerHelper.playerMoveOneBlockSize(objid)
-  EventHelper.customEvent('playerMoveOneBlockSize', objid)
+function EventHelper.playerMoveOneBlockSize (objid, toobjid)
+  PlayerHelper.playerMoveOneBlockSize(objid, toobjid)
+  EventHelper.customEvent('playerMoveOneBlockSize', objid, toobjid)
 end
 
 -- 玩家骑乘
