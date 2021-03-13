@@ -147,12 +147,20 @@ function BasePlayer:enableBeAttacked (enable)
   return PlayerHelper.setPlayerEnableBeAttacked(self.objid, enable)
 end
 
-function BasePlayer:getPosition ()
-  return CacheHelper.getPosition(self.objid)
+function BasePlayer:getPosition (notUseCache)
+  if (notUseCache) then
+    return ActorHelper.getPosition(self.objid)
+  else
+    return CacheHelper.getPosition(self.objid)
+  end
 end
 
-function BasePlayer:getMyPosition ()
-  return CacheHelper.getMyPosition(self.objid)
+function BasePlayer:getMyPosition (notUseCache)
+  if (notUseCache) then
+    return ActorHelper.getMyPosition(self.objid)
+  else
+    return CacheHelper.getMyPosition(self.objid)
+  end
 end
 
 function BasePlayer:setPosition (x, y, z)

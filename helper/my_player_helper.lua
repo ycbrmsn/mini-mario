@@ -83,10 +83,12 @@ EventHelper.addEvent('playerEnterArea', function (objid, areaid)
       p:goOutPipe()
     end)
   elseif (story:isHideBlockArea(areaid)) then -- 进入第一关隐藏方块区域
-    local pos = player:getMyPosition()
+    local pos = player:getMyPosition(true)
+    LogHelper.info('进入隐藏区域：', pos.y - player.y)
     if (pos.y - player.y > 0) then -- 在上升中
       local dimension = PlayerHelper.getDimension(objid)
-      local height = (ActorHelper.getEyeHeight(objid) + 0.6) * dimension
+      local height = ActorHelper.getEyeHeight(objid) * dimension
+      LogHelper.info('height: ', pos.y + height)
       if (AreaHelper.posInArea(MyPosition:new(pos.x, pos.y + height, pos.z), areaid)) then
         AreaHelper.fillBlock(areaid, MyMap.BLOCK.LUCKY) -- 填充幸运方块
         player:headHitBlock(true)

@@ -135,12 +135,20 @@ function BaseActor:stopRun ()
 end
 
 -- 获取生物位置
-function BaseActor:getPosition ()
-  return CacheHelper.getPosition(self.objid)
+function BaseActor:getPosition (notUseCache)
+  if (notUseCache) then
+    return ActorHelper.getPosition(self.objid)
+  else
+    return CacheHelper.getPosition(self.objid)
+  end
 end
 
-function BaseActor:getMyPosition ()
-  return CacheHelper.getMyPosition(self.objid)
+function BaseActor:getMyPosition (notUseCache)
+  if (notUseCache) then
+    return ActorHelper.getMyPosition(self.objid)
+  else
+    return CacheHelper.getMyPosition(self.objid)
+  end
 end
 
 -- 设置生物位置
