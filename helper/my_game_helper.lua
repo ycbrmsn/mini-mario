@@ -87,8 +87,10 @@ function MyGameHelper.headHitBlock (player, x, y, z, isMainPlayer)
       player:trampleBlock()
     end
     LogHelper.debug('停止下落', player.fallHeight - y)
-    -- -- 清除高度
-    -- player.fallHeight = 0
+    -- 落地之后清除高度。因高度原因，与碰撞生物事件先后执行情况不确定，这里便简单延迟置到下一帧0
+    TimeHelper.callFnFastRuns(function ()
+      player.fallHeight = 0
+    end, 0.05)
   end
   -- 持续跳跃
   if (ySpeed == 0 and player.ySpeed <= 0 and player.isKeepJumping) then -- 不是上升状态后竖直静止
