@@ -88,9 +88,9 @@ end
 -- 显示飘窗信息
 function PlayerHelper.showToast (objid, ...)
   local info = StringHelper.concat(...)
-  TimeHelper.callFnInterval(objid, 'toast', function (p)
+  TimeHelper.callFnInterval(function (p)
     PlayerHelper.notifyGameInfo2Self(objid, info)
-  end, 2)
+  end, 2, objid .. 'toast')
 end
 
 -- 显示actor当前生命值

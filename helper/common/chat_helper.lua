@@ -14,11 +14,11 @@ end
 
 -- 发送间隔的消息
 function ChatHelper.sendSpacedMsg (objid, t, seconds, ...)
-  t = t or 'default'
+  t = t or 'sendSpacedMsg'
   local content = StringHelper.concat(...)
-  TimeHelper.callFnCanRun(objid, t, function ()
+  TimeHelper.callFnCanRun(function ()
     ChatHelper.sendMsg(objid, content)
-  end, seconds)
+  end, seconds, objid .. t)
 end
 
 -- 说
