@@ -87,7 +87,7 @@ EventHelper.addEvent('playerEnterArea', function (objid, areaid)
     LogHelper.info('进入隐藏区域：', pos.y - player.y)
     if (pos.y - player.y > 0) then -- 在上升中
       local dimension = PlayerHelper.getDimension(objid)
-      local height = ActorHelper.getEyeHeight(objid) * dimension
+      local height = (ActorHelper.getEyeHeight(objid) - 0.2) * dimension
       LogHelper.info('height: ', pos.y + height)
       if (AreaHelper.posInArea(MyPosition:new(pos.x, pos.y + height, pos.z), areaid)) then
         AreaHelper.fillBlock(areaid, MyMap.BLOCK.LUCKY) -- 填充幸运方块
