@@ -186,22 +186,26 @@ EventHelper.addEvent('playerMotionStateChange', function (objid, playermotion)
   local story = MyStoryHelper.getStory()
   if (playermotion == PLAYERMOTION.STATIC) then -- 静止
     if (story) then
-      local pos = player:getMyPosition()
-      local x = story.initPos.x
-      if (player.isWatchStyle) then -- 在观战
-        x = x - 2
-      end
-      local yaw = ActorHelper.getFaceYaw(objid)
-      local pitch = ActorHelper.getFacePitch(objid)
-      PlayerHelper.setPosition(objid, x, pos.y, pos.z)
-      ActorHelper.setFaceYaw(objid, yaw)
-      ActorHelper.setFacePitch(objid, pitch)
+      TimeHelper.callFnCanRun(function ()
+        local pos = player:getMyPosition()
+        local x = story.initPos.x
+        if (player.isWatchStyle) then -- 在观战
+          x = x - 2
+        end
+        local yaw = ActorHelper.getFaceYaw(objid)
+        local pitch = ActorHelper.getFacePitch(objid)
+        PlayerHelper.setPosition(objid, x, pos.y, pos.z)
+        ActorHelper.setFaceYaw(objid, yaw)
+        ActorHelper.setFacePitch(objid, pitch)
+      end, 1, objid .. 'STATIC')
+      LogHelper.info('adjust')
     end
-  elseif (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
+  -- elseif (playermotion == PLAYERMOTION.JUMP) then -- 跳跃
     -- ActorHelper.appendSpeed(objid, 0, 0.6, 0)
   -- elseif (playermotion == PLAYERMOTION.WALK) then -- 行走
     -- player.isRunning = false
   -- elseif (playermotion == PLAYERMOTION.FALL_GROUND) then -- 落地
+    -- LogHelper.info('落地')
   elseif (playermotion == PLAYERMOTION.SNEAK) then -- 潜行
     local pos = player:getMyPosition()
     if (AreaHelper.posInArea(pos, story.enterArea)) then
