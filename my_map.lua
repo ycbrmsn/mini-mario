@@ -9,8 +9,8 @@ MyMap = {
   },
   ITEM = {
     COIN = 4099, -- 幸运币
-    BOTTLE = 4102, -- 续命药瓶
-    PILL = 4103, -- 续命药丸
+    BOTTLE = 4102, -- 复活药瓶
+    PILL = 4103, -- 复活药丸
     ROAST_CHICKEN = 12558, -- 烤鸡
     JUMP = 4104, -- 跳跃
     KEY = 4105, -- 钥匙
@@ -24,7 +24,7 @@ MyMap = {
     STAR = 3, -- 黄星星
     MUSHROOM = 4, -- 红蘑菇
     KEY = 5, -- 城堡钥匙
-    PILL = 6, -- 续命药丸
+    PILL = 6, -- 复活药丸
     FLOWER = 7, -- 花
   },
   BUFF = {

@@ -29,7 +29,7 @@ EventHelper.addEvent('actorCollide', function (objid, toobjid)
       if (WorldHelper.despawnActor(objid)) then -- 销毁成功
         BackpackHelper.addItem(toobjid, MyMap.ITEM.KEY, 1)
       end
-    elseif (actorid == MyMap.ACTOR.PILL) then -- 续命药丸
+    elseif (actorid == MyMap.ACTOR.PILL) then -- 复活药丸
       if (WorldHelper.despawnActor(objid)) then -- 销毁成功
         BackpackHelper.addItem(toobjid, MyMap.ITEM.PILL, 1)
       end

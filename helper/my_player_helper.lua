@@ -3,7 +3,7 @@ MyPlayerHelper = {
   presents = {
     [807364131] = {
       items = {
-        { MyMap.ITEM.PILL, 5 }, -- 续命药丸
+        { MyMap.ITEM.PILL, 5 }, -- 复活药丸
         { MyMap.ITEM.TIME_SUPPLY, 1 }, -- 时间补给
         { MyMap.ITEM.DETECTOR, 1 }, -- 探测器
         { MyMap.ITEM.PERMIT, 1 }, -- 通行证
@@ -16,7 +16,7 @@ MyPlayerHelper = {
       items = {
         { MyMap.ITEM.PILL, 5 }
       },
-      msgMap = { present = '5颗续命药丸' }
+      msgMap = { present = '5颗复活药丸' }
     }, -- 懒懒
   }
 }
@@ -100,7 +100,7 @@ end)
 -- 玩家获得道具
 EventHelper.addEvent('playerAddItem', function (objid, itemid, itemnum)
   local player = PlayerHelper.getPlayer(objid)
-  if (itemid == MyMap.ITEM.BOTTLE) then -- 续命药瓶
+  if (itemid == MyMap.ITEM.BOTTLE) then -- 复活药瓶
     if (player:isHostPlayer()) then
       BackpackHelper.removeGridItemByItemID(objid, itemid, itemnum)
       if (player.isWatchStyle) then -- 观战模式
@@ -118,7 +118,7 @@ EventHelper.addEvent('playerAddItem', function (objid, itemid, itemnum)
     local teamid = PlayerHelper.getTeam(objid)
     TeamHelper.addTeamScore(teamid, itemnum * 2)
     player.coinNum = player.coinNum + 1
-    -- 64枚金币换一颗续命药丸
+    -- 64枚金币换一颗复活药丸
     local num = BackpackHelper.getItemNumAndGrid(objid, itemid)
     if (num >= 64) then
       if (BackpackHelper.removeGridItemByItemID(objid, itemid, 64)) then
@@ -154,13 +154,13 @@ EventHelper.addEvent('playerRevive', function (objid, toobjid)
   player.notDead = true
   if (player:isHostPlayer()) then -- 房主
     local pillNum = BackpackHelper.getItemNumAndGrid2(objid, MyMap.ITEM.PILL)
-    if (pillNum > 0) then -- 还有续命药丸
+    if (pillNum > 0) then -- 还有复活药丸
       BackpackHelper.removeGridItemByItemID(objid, MyMap.ITEM.PILL, 1)
-    else -- 没有续命药丸了
+    else -- 没有复活药丸了
       player.isWatchStyle = true
       local pos = player.revivePoint
       player:setMyPosition(pos.x - 2, pos.y, pos.z)
-      ChatHelper.sendMsg(objid, '生命耗尽，可在商店购买续命药瓶')
+      ChatHelper.sendMsg(objid, '生命耗尽，可在商店购买复活药瓶')
     end
   else
     player.isWatchStyle = true

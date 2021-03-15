@@ -165,7 +165,7 @@ function MyPlayer:hitLuckyBlock (x, y, z)
     local objids = WorldHelper.spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.KEY, 1)
     CreatureHelper.closeAI(objids[1])
     ActorHelper.setFaceYaw(objids[1], 90)
-  elseif (category == 5) then -- 续命药丸
+  elseif (category == 5) then -- 复活药丸
     local objids = WorldHelper.spawnCreature(x + 0.5, y - 1, z + 0.5, MyMap.ACTOR.PILL, 1)
     CreatureHelper.closeAI(objids[1])
     ActorHelper.setFaceYaw(objids[1], 90)
